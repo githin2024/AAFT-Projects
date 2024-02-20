@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\ExtHomeController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -17,4 +17,5 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::view("layout", "shared/layout");
+Route::get('home', [ExtHomeController::class, 'index']);
+Route::get("campaign", [ExtHomeController::class, 'campaign']);
