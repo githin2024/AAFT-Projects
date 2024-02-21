@@ -23,9 +23,16 @@
     <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
     <!-- Nepcha Analytics (nepcha.com) -->
     <!-- Nepcha is a easy-to-use web analytics. No cookies and fully compliant with GDPR, CCPA and PECR. -->
-    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script> -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.1/js/bootstrap.min.js"></script>
+    <!-- <script src="https://cdn.datatables.net/2.0.0/js/dataTables.bootstrap5.min.js"></script> -->
     <script defer data-site="YOUR_DOMAIN_HERE" src="https://api.nepcha.com/js/nepcha-analytics.js"></script>
+    <style>
+      .card-backgroundcolor {
+        background-color: white !important;
+      }
+    </style>
   </head>
   <body class="g-sidenav-show  bg-gray-200">  
     <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3   bg-gradient-dark" id="sidenav-main">
@@ -39,7 +46,7 @@
       <div class="collapse navbar-collapse  w-auto " id="sidenav-collapse-main">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link text-white active bg-gradient-primary" href="{{ url('home') }}">
+            <a class="nav-link text-white active bg-gradient-primary" id="extCampaignHomeID" href="{{ url('home') }}">
               <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                 <i class="material-symbols-outlined">home</i>
               </div>
@@ -47,7 +54,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-white" href="{{ url('campaign') }}">
+            <a class="nav-link text-white" id="extCampaignID" href="{{ url('campaign') }}">
               <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                 <i class="material-symbols-outlined">campaign</i>
               </div>
@@ -99,23 +106,36 @@
       </div>
     </main>
     <!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        ...
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+          <form name="add-campaign" id="add-campaign" method="post" action="#">
+            @csrf
+            <div class="row form-group">
+              <div class="col-md-3">
+                <label for="exampleInputEmail1">Institution</label>
+              </div>
+              <div class="col-md-7">
+                <select name="campaign-institution" class="form-control" id="campaign-institution">
+                  <option value="">--Select--</option>
+                  <option value="xyz">xyz</option>
+                </select>
+              </div>
+            </div>
+            <div class=" form-group">
+              <button type="submit" class="btn btn-primary" id="generate" title="Generate">Generate</button>
+              <button data-bs-dismiss="modal" class="btn btn-secondary" title="Cancel">Cancel</button>
+            </div>
+          </form>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
   </body>
 
 </html>

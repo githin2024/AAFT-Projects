@@ -4,7 +4,7 @@
     <div class="row">
         <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
             <div class="card">
-                <div class="card-header p-3 pt-2">
+                <div class="card-header p-3 pt-2 card-backgroundcolor">
                     <div class="icon icon-lg icon-shape bg-gradient-dark shadow-dark text-center border-radius-xl mt-n4 position-absolute">
                         <i class="material-symbols-outlined">task_alt</i>
                     </div>
@@ -21,7 +21,7 @@
         </div>
         <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
             <div class="card">
-                <div class="card-header p-3 pt-2">
+                <div class="card-header p-3 pt-2 card-backgroundcolor">
                     <div class="icon icon-lg icon-shape bg-gradient-primary shadow-primary text-center border-radius-xl mt-n4 position-absolute">
                         <i class="material-symbols-outlined">pause_circle</i>
                     </div>
@@ -38,7 +38,7 @@
         </div>
         <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
             <div class="card">
-                <div class="card-header p-3 pt-2">
+                <div class="card-header p-3 pt-2 card-backgroundcolor">
                     <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute">
                         <i class="material-symbols-outlined">new_releases</i>
                     </div>
@@ -55,7 +55,7 @@
         </div>
         <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
             <div class="card">
-                <div class="card-header p-3 pt-2">
+                <div class="card-header p-3 pt-2 card-backgroundcolor">
                     <div class="icon icon-lg icon-shape bg-gradient-info shadow-info text-center border-radius-xl mt-n4 position-absolute">
                         <i class="material-symbols-outlined">delete</i>
                     </div>
@@ -75,7 +75,7 @@
     <div class="row mt-4">
         <div class="col-lg-12 col-md-6 mb-md-0 mb-4">
           <div class="card">
-            <div class="card-header pb-0">
+            <div class="card-header pb-0 card-backgroundcolor">
               <div class="row">
                 <div class="col-lg-6 col-7">
                   <h5>Campaigns</h5>                  

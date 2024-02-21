@@ -4,31 +4,31 @@
 <div class="row mt-4">
     <div class="col-lg-12 col-md-6 mb-md-0 mb-4">
         <div class="card">
-        <div class="card-header pb-0">
-            <div class="row">
-                <div class="col-lg-6 col-6">
-                    <h6>Campaigns</h6>                
-                </div>
-                <div class="col-lg-6 col-6 my-auto text-end">
-                <div class="dropdown float-lg-end pe-4">
-                    <a class="btn btn-primary" id="createCampaign" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="createCampaign()">
-                        <i class="fa fa-plus"> &nbsp;Create</i>
-                    </a>                
-                </div>
-            </div>                  
+            <div class="card-header pb-0 card-backgroundcolor">
+                <div class="row">
+                    <div class="col-lg-6 col-6">
+                        <h5>Campaigns</h5>                
+                    </div>
+                    <div class="col-lg-6 col-6 my-auto text-end">
+                    <div class="dropdown float-lg-end pe-4">
+                        <a class="btn btn-primary" id="createCampaign" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="createCampaign()">
+                            <i class="fa fa-plus" style="font-size: small;"> &nbsp;Create</i>
+                        </a>                
+                    </div>
+                </div>                  
             </div>            
         </div>
-        <div class="card-body px-0 pb-2">
+        <div class="card-body px-1 pb-2">
             <div class="table-responsive">
-            <table class="table align-items-center mb-0">
+            <table class="table table-striped align-items-center mb-1" id="campaignTable">
                 <thead>
                 <tr>
                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">Institution</th>
                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">Program Type</th>
                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">Campaign</th>
                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">Lead Source</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">Course</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">Campaign Status</th>
+                    <!-- <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">Course</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">Campaign Status</th> -->
                 </tr>
                 </thead>
                 <tbody>
@@ -270,13 +270,19 @@
         </div>
     </div>        
 </div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.js"></script>
+<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.1/js/bootstrap.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap5.min.js"></script>
 <script type="text/javascript">
+
+    $(document).ready(function() {
+        debugger;
+        $( "#extCampaignID" ).addClass( "active bg-gradient-primary" );
+        $( "#extCampaignHomeID" ).removeClass( "active bg-gradient-primary" );
+        $('#campaignTable').dataTable();
+    });
     
-    function createCampaign(){
-        // debugger;
-        // document.getElementById("exampleModal").modal('show');
-        //$('#exampleModal').modal('show'); 
-    }
-       
 </script>
 @endsection
