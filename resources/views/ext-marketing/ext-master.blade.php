@@ -107,29 +107,177 @@
     </main>
     <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
+      <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+            <h5 class="modal-title" id="exampleModalLabel"></h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-          <form name="add-campaign" id="add-campaign" method="post" action="#">
+          <form name="add-campaign" id="add-campaign" method="post" action="{url('store')}">
             @csrf
             <div class="row form-group">
               <div class="col-md-3">
-                <label for="exampleInputEmail1">Institution</label>
+                <label class="form-label" for="campaign-institution">Institution</label>
+                <span class="text-danger">*</span>
               </div>
               <div class="col-md-7">
-                <select name="campaign-institution" class="form-control" id="campaign-institution">
-                  <option value="">--Select--</option>
-                  <option value="xyz">xyz</option>
+                <select name="campaign-institution" class="form-control" id="campaign-institution" onchange="getCourses();">                  
                 </select>
               </div>
             </div>
-            <div class=" form-group">
-              <button type="submit" class="btn btn-primary" id="generate" title="Generate">Generate</button>
-              <button data-bs-dismiss="modal" class="btn btn-secondary" title="Cancel">Cancel</button>
+            <div class="row form-group mt-2">
+              <div class="col-md-3">
+                <label class="form-label" for="programType">Program Type</label>
+                <span class="text-danger">*</span>
+              </div>
+              <div class="col-md-7">
+                <select name="programType" class="form-control" id="programType">                  
+                </select>
+              </div>
+            </div>
+            <div class="row form-group mt-2">
+              <div class="col-md-3">
+                <label class="form-label" for="marketingAgency">Marketing Agency</label>
+                <span class="text-danger">*</span>
+              </div>
+              <div class="col-md-7">
+                <select name="marketingAgency" class="form-control" id="marketingAgency">
+                  
+                </select>
+              </div>
+            </div>
+            <div class="row form-group mt-2">
+              <div class="col-md-3">
+                <label class="form-label" for="leadSource">Lead Source</label>
+                <span class="text-danger">*</span>
+              </div>
+              <div class="col-md-7">
+                <select name="leadSource" class="form-control" id="leadSource">
+                  
+                </select>
+              </div>
+            </div>
+            <div class="row form-group mt-2">
+              <div class="col-md-3">
+                <label class="form-label" for="targetLocation">Target Location</label>
+                <span class="text-danger">*</span>
+              </div>
+              <div class="col-md-7">
+                <select name="targetLocation" class="form-control" id="targetLocation">
+                  
+                </select>
+              </div>
+            </div>
+            <div class="row form-group mt-2">
+              <div class="col-md-3">
+                <label class="form-label" for="persona">Persona</label>
+                <span class="text-danger">*</span>
+              </div>
+              <div class="col-md-7">
+                <select name="persona" class="form-control" id="persona">
+                  
+                </select>
+              </div>
+            </div>
+            <div class="row form-group mt-2">
+              <div class="col-md-3">
+                <label class="form-label" for="price">Price</label>
+                <span class="text-danger">*</span>
+              </div>
+              <div class="col-md-7">
+                <select name="price" class="form-control" id="price">
+                  
+                </select>
+              </div>
+            </div>
+            <div class="row form-group mt-2">
+              <div class="col-md-3">
+                <label class="form-label" for="courses">Courses</label>
+                <span class="text-danger">*</span>
+              </div>
+              <div class="col-md-7">
+                <select name="courses" class="form-control" id="courses">
+                  <option value="">--Select--</option>
+                </select>
+              </div>
+            </div>
+            <div class="row form-group mt-2">
+              <div class="col-md-3">
+                <label class="form-label" for="campaignDate">Date</label>
+                <span class="text-danger">*</span>
+              </div>
+              <div class="col-md-7">
+                <input type="date" name="campaignDate" class="form-control" id="campaignDate" />
+              </div>
+            </div>
+            <div class="row form-group mt-2">
+              <div class="col-md-3">
+                <label class="form-label" for="headline">Headline</label>
+                <span class="text-danger">*</span>
+              </div>
+              <div class="col-md-7">
+                <select name="headline" class="form-control" id="headline">                  
+                </select>
+              </div>
+            </div>
+            <div class="row form-group mt-2">
+              <div class="col-md-3">
+                <label class="form-label" for="targetSegment">Target Segment</label>
+                <span class="text-danger">*</span>
+              </div>
+              <div class="col-md-7">
+                <select name="targetSegment" class="form-control" id="targetSegment">
+                </select>
+              </div>
+            </div>
+            <div class="row form-group mt-2">
+              <div class="col-md-3">
+                <label class="form-label" for="campaignType">Type</label>
+                <span class="text-danger">*</span>
+              </div>
+              <div class="col-md-7">
+                <select name="campaignType" class="form-control" id="campaignType">                  
+                </select>
+              </div>
+            </div>
+            <div class="row form-group mt-2">
+              <div class="col-md-3">
+                <label class="form-label" for="campaignSize">Size</label>
+                <span class="text-danger">*</span>
+              </div>
+              <div class="col-md-7">
+                <select name="campaignSize" class="form-control" id="campaignSize">
+                </select>
+              </div>
+            </div>
+            <div class="row form-group mt-2">
+              <div class="col-md-3">
+                <label class="form-label" for="campaignVersion">Version</label>
+                <span class="text-danger">*</span>
+              </div>
+              <div class="col-md-7">
+                <select name="campaignVersion" class="form-control" id="campaignVersion">
+                </select>
+              </div>
+            </div>
+            <hr />
+            <div class="row form-group mt-2">
+              <div class="col-md-5">
+                <button type="submit" class="btn btn-primary" id="generate" title="Generate">Generate</button>
+                <button data-bs-dismiss="modal" class="btn btn-danger" title="Cancel">Cancel</button>
+              </div>
+            </div>
+            <div class="row mt-2">
+              
+                @if ($errors->any())
+                  <ul>
+                      @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                      @endforeach
+                  </ul>
+                @endif
+              
             </div>
           </form>
           </div>
@@ -139,3 +287,24 @@
   </body>
 
 </html>
+
+<script type="text/javascript">
+  function getCourses(){
+    var institutionCode = $("#campaign-institution").val();
+    $.ajax({
+      type:'get',
+      url: "/courses/",
+      data: {'institutionCode' : institutionCode},
+      success:function(data){
+        var coursesId = $("#courses").empty();
+          coursesId.append('<option selected="selected" value="">--Select--</option>');
+        if(data) {        
+          for(var i = 0; i < data.courses.length;i++){
+              var courses_item_el = '<option value="' + data.courses[i]['course_code']+'">'+ data.courses[i]['course_name']+'</option>';
+              coursesId.append(courses_item_el);
+          }
+        }
+      }
+    });
+  }
+</script>

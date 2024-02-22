@@ -11,7 +11,7 @@
                     </div>
                     <div class="col-lg-6 col-6 my-auto text-end">
                     <div class="dropdown float-lg-end pe-4">
-                        <a class="btn btn-primary" id="createCampaign" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="createCampaign()">
+                        <a class="btn btn-primary" id="createCampaignID" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="createCampaign()">
                             <i class="fa fa-plus" style="font-size: small;"> &nbsp;Create</i>
                         </a>                
                     </div>
@@ -20,7 +20,7 @@
         </div>
         <div class="card-body px-1 pb-2">
             <div class="table-responsive">
-            <table class="table table-striped align-items-center mb-1" id="campaignTable">
+            <table class="table align-items-center mb-1" id="campaignTable">
                 <thead>
                 <tr>
                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">Institution</th>
@@ -277,12 +277,106 @@
 <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap5.min.js"></script>
 <script type="text/javascript">
 
-    $(document).ready(function() {
-        debugger;
-        $( "#extCampaignID" ).addClass( "active bg-gradient-primary" );
-        $( "#extCampaignHomeID" ).removeClass( "active bg-gradient-primary" );
+    $(document).ready(function() {        
+        $("#extCampaignID").addClass( "active bg-gradient-primary" );
+        $("#extCampaignHomeID").removeClass( "active bg-gradient-primary" );
         $('#campaignTable').dataTable();
     });
     
+    function createCampaign() {
+        $("#exampleModalLabel").html("Create New Campaign");
+        $.ajax({
+            type:'get',
+            url: "/create-campaign",
+            success:function(data){
+                if(data){                    
+                    var institutionId = $("#campaign-institution").empty();
+                    institutionId.append('<option selected="selected" value="">--Select--</option>');
+                    for(var i = 0; i < Object.keys(data['institution']).length;i++){
+                        var institution_item_el = '<option value="'+data.institution[i]['institution_code']+'">'+data.institution[i]['institution_name']+'</option>';
+                        institutionId.append(institution_item_el);
+                    }
+                    
+                    var programTypeId = $("#programType").empty();
+                    programTypeId.append('<option selected="selected" value="">--Select--</option>');
+                    for(var i = 0; i < data.programType.length;i++){
+                        var programType_item_el = '<option value="'+ data.programType[i]['program_code'] +'">'+data.programType[i]['program_type_name']+'</option>';
+                        programTypeId.append(programType_item_el);
+                    }
+
+                    var marketingAgencyId = $("#marketingAgency").empty();
+                    marketingAgencyId.append('<option selected="selected" value="">--Select--</option>');
+                    for(var i = 0; i < data.marketingAgency.length;i++){
+                        var marketingAgency_item_el = '<option value="'+ data.marketingAgency[i]['agency_code'] +'">'+data.marketingAgency[i]['agency_name']+'</option>';
+                        marketingAgencyId.append(marketingAgency_item_el);
+                    }
+
+                    var leadSourceId = $("#leadSource").empty();
+                    leadSourceId.append('<option selected="selected" value="">--Select--</option>');
+                    for(var i = 0; i < data.leadSource.length;i++){
+                        var leadSource_item_el = '<option value="'+ data.leadSource[i]['leadsource_name'] +'">'+ data.leadSource[i]['leadsource_name']+'</option>';
+                        leadSourceId.append(leadSource_item_el);
+                    }
+
+                    var targetLocationId = $("#targetLocation").empty();
+                    targetLocationId.append('<option selected="selected" value="">--Select--</option>');
+                    for(var i = 0; i < data.targetLocation.length;i++){
+                        var targetLocation_item_el = '<option value="'+ data.targetLocation[i]['target_location_code'] +'">'+ data.targetLocation[i]['target_location_name']+'</option>';
+                        targetLocationId.append(targetLocation_item_el);
+                    }
+
+                    var personaId = $("#persona").empty();
+                    personaId.append('<option selected="selected" value="">--Select--</option>');
+                    for(var i = 0; i < data.persona.length;i++){
+                        var persona_item_el = '<option value="'+ data.persona[i]['persona_code'] +'">'+ data.persona[i]['persona_name']+'</option>';
+                        personaId.append(persona_item_el);
+                    }
+
+                    var priceId = $("#price").empty();
+                    priceId.append('<option selected="selected" value="">--Select--</option>');
+                    for(var i = 0; i < data.price.length;i++){
+                        var price_item_el = '<option value="'+ data.price[i]['campaign_price_code'] +'">'+ data.price[i]['campaign_price_name']+'</option>';
+                        priceId.append(price_item_el);
+                    }
+
+                    var headlineId = $("#headline").empty();
+                    headlineId.append('<option selected="selected" value="">--Select--</option>');
+                    for(var i = 0; i < data.headline.length;i++){
+                        var headline_item_el = '<option value="'+ data.headline[i]['headline_code'] +'">'+ data.headline[i]['headline_name']+'</option>';
+                        headlineId.append(headline_item_el);
+                    }
+
+                    var targetSegmentId = $("#targetSegment").empty();
+                    targetSegmentId.append('<option selected="selected" value="">--Select--</option>');
+                    for(var i = 0; i < data.targetSegment.length;i++){
+                        var targetSegment_item_el = '<option value="'+ data.targetSegment[i]['target_segment_code'] +'">'+ data.targetSegment[i]['target_segment_name']+'</option>';
+                        targetSegmentId.append(targetSegment_item_el);
+                    }
+
+                    var campaignTypeId = $("#campaignType").empty();
+                    campaignTypeId.append('<option selected="selected" value="">--Select--</option>');
+                    for(var i = 0; i < data.campaignType.length;i++){
+                        var campaignType_item_el = '<option value="'+ data.campaignType[i]['campaign_type_code'] +'">'+ data.campaignType[i]['campaign_type_name']+'</option>';
+                        campaignTypeId.append(campaignType_item_el);
+                    }
+
+                    var campaignSizeId = $("#campaignSize").empty();
+                    campaignSizeId.append('<option selected="selected" value="">--Select--</option>');
+                    for(var i = 0; i < data.campaignSize.length;i++){
+                        var campaignSize_item_el = '<option value="'+ data.campaignSize[i]['campaign_size_code'] +'">'+ data.campaignSize[i]['campaign_size_name']+'</option>';
+                        campaignSizeId.append(campaignSize_item_el);
+                    }
+
+                    var campaignVersionId = $("#campaignVersion").empty();
+                    campaignVersionId.append('<option selected="selected" value="">--Select--</option>');
+                    for(var i = 0; i < data.campaignVersion.length;i++){
+                        var campaignVersion_item_el = '<option value="'+ data.campaignVersion[i]['campaign_version_code'] +'">'+ data.campaignVersion[i]['campaign_version_name']+'</option>';
+                        campaignVersionId.append(campaignVersion_item_el);
+                    }
+                }
+            }
+        });
+    }
+
 </script>
 @endsection

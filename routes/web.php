@@ -19,3 +19,6 @@ Route::get('/', function () {
 
 Route::get('home', [ExtHomeController::class, 'index']);
 Route::get("campaign", [ExtHomeController::class, 'campaign']);
+Route::get('create-campaign', [ExtHomeController::class, 'createCampaign']);
+Route::get('courses', [ExtHomeController::class, 'getCourses']);
+Route::post('store-campaign', [ExtHomeController::class, 'storeCampaign']);
