@@ -270,6 +270,185 @@
         </div>
     </div>        
 </div>
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel"></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+          <form name="add-campaign" id="add-campaign" method="post" action="store-campaign">
+            @csrf
+            <div class="row form-group">
+              <div class="col-md-3">
+                <label class="form-label" for="campaign-institution">Institution</label>
+                <span class="text-danger">*</span>
+              </div>
+              <div class="col-md-7">
+                <select name="campaign-institution" required class="form-control" id="campaign-institution" onchange="getCourses();">                  
+                </select>
+              </div>
+            </div>
+            <div class="row form-group mt-2">
+              <div class="col-md-3">
+                <label class="form-label" for="programType">Program Type</label>
+                <span class="text-danger">*</span>
+              </div>
+              <div class="col-md-7">
+                <select name="programType" class="form-control" required id="programType">                  
+                </select>
+              </div>
+            </div>
+            <div class="row form-group mt-2">
+              <div class="col-md-3">
+                <label class="form-label" for="marketingAgency">Marketing Agency</label>
+                <span class="text-danger">*</span>
+              </div>
+              <div class="col-md-7">
+                <select name="marketingAgency" class="form-control" required id="marketingAgency">
+                  
+                </select>
+              </div>
+            </div>
+            <div class="row form-group mt-2">
+              <div class="col-md-3">
+                <label class="form-label" for="leadSource">Lead Source</label>
+                <span class="text-danger">*</span>
+              </div>
+              <div class="col-md-7">
+                <select name="leadSource" class="form-control" required id="leadSource">
+                  
+                </select>
+              </div>
+            </div>
+            <div class="row form-group mt-2">
+              <div class="col-md-3">
+                <label class="form-label" for="targetLocation">Target Location</label>
+                <span class="text-danger">*</span>
+              </div>
+              <div class="col-md-7">
+                <select name="targetLocation" class="form-control" required id="targetLocation">
+                  
+                </select>
+              </div>
+            </div>
+            <div class="row form-group mt-2">
+              <div class="col-md-3">
+                <label class="form-label" for="persona">Persona</label>
+                <span class="text-danger">*</span>
+              </div>
+              <div class="col-md-7">
+                <select name="persona" class="form-control" required id="persona">
+                  
+                </select>
+              </div>
+            </div>
+            <div class="row form-group mt-2">
+              <div class="col-md-3">
+                <label class="form-label" for="price">Price</label>
+                <span class="text-danger">*</span>
+              </div>
+              <div class="col-md-7">
+                <select name="price" class="form-control" required id="price">
+                  
+                </select>
+              </div>
+            </div>
+            <div class="row form-group mt-2">
+              <div class="col-md-3">
+                <label class="form-label" for="courses">Courses</label>
+                <span class="text-danger">*</span>
+              </div>
+              <div class="col-md-7">
+                <select name="courses" class="form-control" required id="courses">
+                  <option value="">--Select--</option>
+                </select>
+              </div>
+            </div>
+            <div class="row form-group mt-2">
+              <div class="col-md-3">
+                <label class="form-label" for="campaignDate">Date</label>
+                <span class="text-danger">*</span>
+              </div>
+              <div class="col-md-7">
+                <input type="date" name="campaignDate" required class="form-control" id="campaignDate" />
+              </div>
+            </div>
+            <div class="row form-group mt-2">
+              <div class="col-md-3">
+                <label class="form-label" for="headline">Headline</label>
+                <span class="text-danger">*</span>
+              </div>
+              <div class="col-md-7">
+                <select name="headline" class="form-control" required id="headline">                  
+                </select>
+              </div>
+            </div>
+            <div class="row form-group mt-2">
+              <div class="col-md-3">
+                <label class="form-label" for="targetSegment">Target Segment</label>
+                <span class="text-danger">*</span>
+              </div>
+              <div class="col-md-7">
+                <select name="targetSegment" class="form-control" required id="targetSegment">
+                </select>
+              </div>
+            </div>
+            <div class="row form-group mt-2">
+              <div class="col-md-3">
+                <label class="form-label" for="campaignType">Type</label>
+                <span class="text-danger">*</span>
+              </div>
+              <div class="col-md-7">
+                <select name="campaignType" class="form-control" required id="campaignType">                  
+                </select>
+              </div>
+            </div>
+            <div class="row form-group mt-2">
+              <div class="col-md-3">
+                <label class="form-label" for="campaignSize">Size</label>
+                <span class="text-danger">*</span>
+              </div>
+              <div class="col-md-7">
+                <select name="campaignSize" class="form-control" required id="campaignSize">
+                </select>
+              </div>
+            </div>
+            <div class="row form-group mt-2">
+              <div class="col-md-3">
+                <label class="form-label" for="campaignVersion">Version</label>
+                <span class="text-danger">*</span>
+              </div>
+              <div class="col-md-7">
+                <select name="campaignVersion" class="form-control" required id="campaignVersion">
+                </select>
+              </div>
+            </div>
+            <hr />
+            <div class="row form-group mt-2">
+              <div class="col-md-5">
+                <button type="submit" class="btn btn-primary" id="generate" title="Generate">Generate</button>
+                <button data-bs-dismiss="modal" class="btn btn-danger" title="Cancel">Cancel</button>
+              </div>
+            </div>
+            <div class="row mt-2">
+              
+                @if ($errors->any())
+                  <ul class="m-3">
+                      @foreach ($errors->all() as $error)
+                        <li class="text-danger">{{ $error }}</li>
+                      @endforeach
+                  </ul>
+                @endif
+              
+            </div>
+          </form>
+          </div>
+        </div>
+      </div>
+    </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>  
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.js"></script>
 <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
@@ -282,6 +461,11 @@
         $("#extCampaignHomeID").removeClass( "active bg-gradient-primary" );
         $('#campaignTable').dataTable();
     });
+
+    // function generateCampaign() {
+    //     debugger;
+    //     $("#campaignDate").val();
+    // }
     
     function createCampaign() {
         $("#exampleModalLabel").html("Create New Campaign");
@@ -314,7 +498,7 @@
                     var leadSourceId = $("#leadSource").empty();
                     leadSourceId.append('<option selected="selected" value="">--Select--</option>');
                     for(var i = 0; i < data.leadSource.length;i++){
-                        var leadSource_item_el = '<option value="'+ data.leadSource[i]['leadsource_name'] +'">'+ data.leadSource[i]['leadsource_name']+'</option>';
+                        var leadSource_item_el = '<option value="'+ data.leadSource[i]['leadsource_id'] +'">'+ data.leadSource[i]['leadsource_name']+'</option>';
                         leadSourceId.append(leadSource_item_el);
                     }
 
