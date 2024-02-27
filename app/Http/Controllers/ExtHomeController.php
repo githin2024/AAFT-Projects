@@ -29,9 +29,9 @@ class ExtHomeController extends Controller
         $campaignType = DB::table('campaign_type')->where('active', 1)->get();
         $campaignSize = DB::table('campaign_size')->where('active', 1)->get();
         $campaignVersion = DB::table('campaign_version')->where('active', 1)->get();
-        return response()->json(['institution' => $institution, 'programType' => $programType, 'marketingAgency' => $marketingAgency, 'leadSource' => $leadSource,
-            'targetLocation' => $targetLocation, 'persona' => $persona, 'price' => $price, 'headline' => $headline, 'targetSegment' => $targetSegment, 'campaignType' => $campaignType,
-             'campaignSize' => $campaignSize, 'campaignVersion' => $campaignVersion]);
+        return view('ext-marketing.ext-create-campaign', ['institutions' => $institution, 'programTypes' => $programType, 'marketingAgencies' => $marketingAgency, 'leadSources' => $leadSource,
+            'targetLocations' => $targetLocation, 'personas' => $persona, 'prices' => $price, 'headlines' => $headline, 'targetSegments' => $targetSegment, 'campaignTypes' => $campaignType,
+            'campaignSizes' => $campaignSize, 'campaignVersions' => $campaignVersion]);
     }
 
     public function getCourses(Request $req) {
@@ -78,27 +78,27 @@ class ExtHomeController extends Controller
         $campSize = DB::table('campaign_size')->select('campaign_size_id', 'campaign_size_name', 'campaign_size_code')->where('campaign_size_code', $reqValidatedData['campaignSize'])->get();
         $campVersion = DB::table('campaign_version')->select('campaign_version_id', 'campaign_version_name', 'campaign_version_code')->where('campaign_version_code', $reqValidatedData['campaignVersion'])->get();
 
-        $campaignName = strval($institution->pluck('institution_code')).''. strval($programType->pluck('program_code')) . '_' . strval($agency->pluck('agency_code')) . '_' . strval($courses->pluck('course_code')) . '_' . strval($campaignMonth) .''. strval($campaignYear);
-        $campaignAdsetName = $campaignName . '_' . strval($persona->pluck('persona_code')) . '_' . strval($targetLocation->pluck('target_location_code'));
-        $campaignAdName = $campaignAdsetName . '_' . strval($price->pluck('campaign_price_code')) . '_' . strval($campType->pluck('campaign_type_code')) . '_' . strval($targetSegment->pluck('target_segment_code')) . '_' . strval($campVersion->pluck('campaign_version_code'));
-        $campaignCreative = $campaignName . '_' . strval($price->pluck('campaign_price_code')) . '_' . strval($persona->pluck('persona_code')) . '_' . strval($headline->pluck('headline_code')) . '_' . strval($campSize->pluck('campaign_size_name')) . '_' . strval($campVersion->pluck('campaign_version_code'));
-        $leadSourceName = strval($institution->pluck('institution_code')) .''. strval($programType->pluck('program_code')) . '_' . strval($agency->pluck('agency_code')) . '_' . strval($courses->pluck('course_code')) . '_' . strval($leadSource->pluck('leadsource_name'));
+        $campaignName = $institution->institution_code.''. $programType->program_code . '_' . $agency->agency_code . '_' . $courses->course_code . '_' . $campaignMonth .''. $campaignYear;
+        $campaignAdsetName = $campaignName . '_' . $persona->persona_code . '_' . $targetLocation->target_location_code;
+        $campaignAdName = $campaignAdsetName . '_' . $price->campaign_price_code . '_' . $campType->campaign_type_code . '_' . $targetSegment->target_segment_code . '_' . $campVersion->campaign_version_code;
+        $campaignCreative = $campaignName . '_' . $price->campaign_price_code . '_' . $persona->persona_code . '_' . $headline->headline_code . '_' . $campSize->campaign_size_name . '_' . $campVersion->campaign_version_code;
+        $leadSourceName = $institution->institution_code .''. $programType->program_code . '_' . $agency->agency_code . '_' . $courses->course_code . '_' . $leadSource->leadsource_name;
 
         DB::table('campaigns')->insert([
             'campaign_name' => $campaignName,
-            'fk_course_id' => $courses->pluck('course_id'),
-            'fk_program_type_id' => $programType->pluck('program_type_id'),
-            'fk_agency_id' => $agency->pluck('agency_id'),
-            'fk_lead_source_id' => $leadSource->pluck('leadsource_id'),
-            'fk_persona_id' => $persona->pluck('persona_id'),
-            'fk_campaign_price_id' => $price->pluck('campaign_price_id'),
+            'fk_course_id' => $courses->course_id,
+            'fk_program_type_id' => $programType->program_type_id,
+            'fk_agency_id' => $agency->agency_id,
+            'fk_lead_source_id' => $leadSource->leadsource_id,
+            'fk_persona_id' => $persona->persona_id,
+            'fk_campaign_price_id' => $price->campaign_price_id,
             'campaign_date' => $campDate,
-            'fk_headline_id' => $headline->pluck('headline_id'),
-            'fk_target_location_id' => $targetLocation->pluck('target_location_id'),
-            'fk_target_segment_id' => $targetSegment->pluck('target_segment_id'),
-            'fk_campaign_size_id' => $campSize->pluck('campaign_size_id'),
-            'fk_campaign_version_id' => $campVersion->pluck('campaign_version_id'),
-            'fk_campaign_type_id' => $campType->pluck('campaign_type_id'),
+            'fk_headline_id' => $headline->headline_id,
+            'fk_target_location_id' => $targetLocation->target_location_id,
+            'fk_target_segment_id' => $targetSegment->target_segment_id,
+            'fk_campaign_size_id' => $campSize->campaign_size_id,
+            'fk_campaign_version_id' => $campVersion->campaign_version_id,
+            'fk_campaign_type_id' => $campType->campaign_type_id,
             'fk_user_id' => 3,
             'fk_campaign_status_id' => 1,
             'adset_name' => $campaignAdsetName,

@@ -1,4 +1,4 @@
-@extends('ext-marketing.ext-master')
+@extends('int-marketing-shared.int-master')
 
 @section('content')
 <div class="row mt-4">
@@ -7,12 +7,12 @@
             <div class="card-header pb-0 card-backgroundcolor">
                 <div class="row">
                     <div class="col-lg-6 col-6">
-                        <h5>Campaigns</h5>                
+                        <h5>Landing Page</h5>                
                     </div>
                     <div class="col-lg-6 col-6 my-auto text-end">
                     <div class="dropdown float-lg-end pe-4">
-                        <a class="btn btn-primary" id="createCampaignID" onclick="createCampaign();">
-                            <i class="fa fa-plus" style="font-size: small;"> &nbsp;Create</i>
+                        <a class="btn btn-primary" id="createCampaignID" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="createCampaign();">
+                            <i class="fa fa-plus" style="font-size: small;">&nbsp; Create</i>                            
                         </a>                
                     </div>
                 </div>                  
@@ -270,199 +270,16 @@
         </div>
     </div>        
 </div>
-<!-- Modal -->
-<div class="modal fade" id="createCampaignModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true">
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel"></h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-          <form name="add-campaign" id="add-campaign" method="post" action="store-campaign">
-            @csrf
-            <div class="row form-group">
-              <div class="col-md-3">
-                <label class="form-label" for="campaign-institution">Institution</label>
-                <span class="text-danger">*</span>
-              </div>
-              <div class="col-md-7">
-                <select name="campaign-institution" class="form-control" id="campaign-institution" onchange="getCourses();">                  
-                </select>                
-                <span id="institution-error" class="text-danger"></span>
-              </div>
-            </div>
-            <div class="row form-group mt-2">
-              <div class="col-md-3">
-                <label class="form-label" for="programType">Program Type</label>
-                <span class="text-danger">*</span>
-              </div>
-              <div class="col-md-7">
-                <select name="programType" class="form-control" id="programType">                  
-                </select>                
-                <span id="programType-error" class="text-danger"></span>
-              </div>
-            </div>
-            <div class="row form-group mt-2">
-              <div class="col-md-3">
-                <label class="form-label" for="marketingAgency">Marketing Agency</label>
-                <span class="text-danger">*</span>
-              </div>
-              <div class="col-md-7">
-                <select name="marketingAgency" class="form-control" id="marketingAgency">                  
-                </select>                
-                <span id="marketingAgency-error" class="text-danger"></span>
-              </div>
-            </div>
-            <div class="row form-group mt-2">
-              <div class="col-md-3">
-                <label class="form-label" for="leadSource">Lead Source</label>
-                <span class="text-danger">*</span>
-              </div>
-              <div class="col-md-7">
-                <select name="leadSource" class="form-control" id="leadSource">                  
-                </select>                
-                <span id="leadSource-error" class="text-danger"></span>
-              </div>
-            </div>
-            <div class="row form-group mt-2">
-              <div class="col-md-3">
-                <label class="form-label" for="targetLocation">Target Location</label>
-                <span class="text-danger">*</span>
-              </div>
-              <div class="col-md-7">
-                <select name="targetLocation" class="form-control" id="targetLocation">                  
-                </select>                
-                <span id="targetLocation-error" class="text-danger"></span>
-              </div>
-            </div>
-            <div class="row form-group mt-2">
-              <div class="col-md-3">
-                <label class="form-label" for="persona">Persona</label>
-                <span class="text-danger">*</span>
-              </div>
-              <div class="col-md-7">
-                <select name="persona" class="form-control" id="persona">                  
-                </select>                
-                <span id="persona-error" class="text-danger"></span>
-              </div>
-            </div>
-            <div class="row form-group mt-2">
-              <div class="col-md-3">
-                <label class="form-label" for="price">Price</label>
-                <span class="text-danger">*</span>
-              </div>
-              <div class="col-md-7">
-                <select name="price" class="form-control" id="price">                  
-                </select>                
-                <span id="price-error" class="text-danger"></span>
-              </div>
-            </div>
-            <div class="row form-group mt-2">
-              <div class="col-md-3">
-                <label class="form-label" for="courses">Courses</label>
-                <span class="text-danger">*</span>
-              </div>
-              <div class="col-md-7">
-                <select name="courses" class="form-control" id="courses">
-                  <option value="">--Select--</option>
-                </select>                
-                <span id="courses-error" class="text-danger"></span>
-              </div>
-            </div>
-            <div class="row form-group mt-2">
-              <div class="col-md-3">
-                <label class="form-label" for="campaignDate">Date</label>
-                <span class="text-danger">*</span>
-              </div>
-              <div class="col-md-7">
-                <input type="date" name="campaignDate" class="form-control" id="campaignDate" />                
-                <span id="campaignDate-error" class="text-danger"></span>
-              </div>
-            </div>
-            <div class="row form-group mt-2">
-              <div class="col-md-3">
-                <label class="form-label" for="headline">Headline</label>
-                <span class="text-danger">*</span>
-              </div>
-              <div class="col-md-7">
-                <select name="headline" class="form-control" id="headline">                  
-                </select>                
-                <span id="headline-error" class="text-danger"></span>
-              </div>
-            </div>
-            <div class="row form-group mt-2">
-              <div class="col-md-3">
-                <label class="form-label" for="targetSegment">Target Segment</label>
-                <span class="text-danger">*</span>
-              </div>
-              <div class="col-md-7">
-                <select name="targetSegment" class="form-control" id="targetSegment">
-                </select>                
-                <span id="targetSegment-error" class="text-danger"></span>
-              </div>
-            </div>
-            <div class="row form-group mt-2">
-              <div class="col-md-3">
-                <label class="form-label" for="campaignType">Type</label>
-                <span class="text-danger">*</span>
-              </div>
-              <div class="col-md-7">
-                <select name="campaignType" class="form-control" id="campaignType">                  
-                </select>                
-                <span id="campaignType-error" class="text-danger"></span>
-              </div>
-            </div>
-            <div class="row form-group mt-2">
-              <div class="col-md-3">
-                <label class="form-label" for="campaignSize">Size</label>
-                <span class="text-danger">*</span>
-              </div>
-              <div class="col-md-7">
-                <select name="campaignSize" class="form-control" id="campaignSize">
-                </select>                
-                <span id="campaignSize-error" class="text-danger"></span>
-              </div>
-            </div>
-            <div class="row form-group mt-2">
-              <div class="col-md-3">
-                <label class="form-label" for="campaignVersion">Version</label>
-                <span class="text-danger">*</span>
-              </div>
-              <div class="col-md-7">
-                <select name="campaignVersion" class="form-control" id="campaignVersion">
-                </select>                
-                <span id="campaignVersion-error" class="text-danger"></span>
-              </div>
-            </div>
-            <hr />
-            <div class="row form-group mt-2">
-              <div class="col-md-5">
-                <button type="submit" class="btn btn-primary" id="generate" title="Generate" onclick="VerifyCampaign();">Generate</button>
-                <button data-bs-dismiss="modal" class="btn btn-danger" title="Cancel">Cancel</button>
-              </div>
-            </div>
-          </form>
-          </div>
-        </div>
-      </div>
-    </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>  
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.js"></script>
 <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.1/js/bootstrap.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap5.min.js"></script>
 <script type="text/javascript">
-
     $(document).ready(function() {        
-        $("#extCampaignID").addClass( "active bg-gradient-primary" );
-        $("#extCampaignHomeID").removeClass( "active bg-gradient-primary" );
-        $('#campaignTable').dataTable();
+        $("#intCampaignHomeID").removeClass( "active bg-gradient-primary" );
+        $("#intLandingPageID").addClass( "active bg-gradient-primary" );
+        $("#intCampaignID").removeclass( "active bg-gradient-primary" );          
     });
-
-    function createCampaign() {
-      window.location.href = "{{ url('create-campaign')}}"; 
-    }
-
 </script>
 @endsection

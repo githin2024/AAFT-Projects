@@ -1,4 +1,4 @@
-@extends('ext-marketing.ext-master')
+@extends('int-marketing-shared.int-master')
 
 @section('content')
     <div class="row">
@@ -336,9 +336,9 @@
       </div>
       <script type="text/javascript">
         $(document).ready(function() {        
-          $("#extCampaignID").removeClass( "active bg-gradient-primary" );
-          $("#extCampaignHomeID").addClass( "active bg-gradient-primary" );
-          
+          $("#intCampaignHomeID").addClass( "active bg-gradient-primary" );
+          $("#intLandingPageID").removeClass( "active bg-gradient-primary" );
+          $("#intCampaignID").removeclass( "active bg-gradient-primary" );          
         });
       </script>
     

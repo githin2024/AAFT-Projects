@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ExtHomeController;
+use App\Http\Controllers\IntHomeController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -22,3 +23,8 @@ Route::get("campaign", [ExtHomeController::class, 'campaign']);
 Route::get('create-campaign', [ExtHomeController::class, 'createCampaign']);
 Route::get('courses', [ExtHomeController::class, 'getCourses']);
 Route::post('store-campaign', [ExtHomeController::class, 'storeCampaign']);
+
+//Internal Marketing Dashboard
+Route::get('int-home', [IntHomeController::class, 'InternalIndex']);
+Route::get('int-landing-page', [IntHomeController::class, 'LandingPage']);
+Route::get('int-campaign', [IntHomeController::class, 'InternalCampaign']);
