@@ -5,11 +5,15 @@
     "keywords": ["laravel", "framework"],
     "license": "MIT",
     "require": {
-        "php": "^8.1",
+        "php": "^8.2",
+        "ext-gd": "*",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",
-        "laravel/tinker": "^2.8"
+        "laravel/tinker": "^2.8",
+        "maatwebsite/excel": "^3.1",
+        "phpoffice/phpspreadsheet": "*",
+        "psr/simple-cache": "1.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
@@ -49,7 +53,9 @@
     },
     "extra": {
         "laravel": {
-            "dont-discover": []
+            "dont-discover": [
+                "laravel/dusk"
+            ]
         }
     },
     "config": {
@@ -61,6 +67,7 @@
             "php-http/discovery": true
         }
     },
+    
     "minimum-stability": "stable",
     "prefer-stable": true
 }
