@@ -5,7 +5,7 @@
         <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
             <div class="card">
                 <div class="card-header p-3 pt-2 card-backgroundcolor">
-                    <div class="icon icon-lg icon-shape bg-gradient-dark shadow-dark text-center border-radius-xl mt-n4 position-absolute">
+                    <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute">
                         <i class="material-symbols-outlined">task_alt</i>
                     </div>
                     <div class="text-end pt-1">
@@ -22,7 +22,7 @@
         <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
             <div class="card">
                 <div class="card-header p-3 pt-2 card-backgroundcolor">
-                    <div class="icon icon-lg icon-shape bg-gradient-primary shadow-primary text-center border-radius-xl mt-n4 position-absolute">
+                    <div class="icon icon-lg icon-shape bg-gradient-warning shadow-warning text-center border-radius-xl mt-n4 position-absolute">
                         <i class="material-symbols-outlined">pause_circle</i>
                     </div>
                     <div class="text-end pt-1">
@@ -39,7 +39,7 @@
         <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
             <div class="card">
                 <div class="card-header p-3 pt-2 card-backgroundcolor">
-                    <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute">
+                    <div class="icon icon-lg icon-shape bg-gradient-info shadow-info text-center border-radius-xl mt-n4 position-absolute">
                         <i class="material-symbols-outlined">new_releases</i>
                     </div>
                     <div class="text-end pt-1">
@@ -56,7 +56,7 @@
         <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
             <div class="card">
                 <div class="card-header p-3 pt-2 card-backgroundcolor">
-                    <div class="icon icon-lg icon-shape bg-gradient-info shadow-info text-center border-radius-xl mt-n4 position-absolute">
+                    <div class="icon icon-lg icon-shape bg-gradient-primary shadow-primary text-center border-radius-xl mt-n4 position-absolute">
                         <i class="material-symbols-outlined">delete</i>
                     </div>
                     <div class="text-end pt-1">
@@ -81,7 +81,7 @@
                   <h5>Campaigns</h5>                  
                 </div>
                 <div class="col-lg-6 col-6 my-auto text-end">
-                  <div class="dropdown float-lg-end pe-4">
+                  <div class="dropdown float-lg-end pe-0">
                     <a class="btn btn-primary" href="{{ url('excel-campaign') }}" title="Download">
                       <i class="fa fa-file-excel-o" style="font-size: small;">&nbsp; Download</i>
                     </a>
