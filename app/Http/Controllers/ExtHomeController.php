@@ -32,6 +32,10 @@ class ExtHomeController extends Controller
         $deleteCount = DB::scalar("SELECT COUNT(c.campaign_id) FROM campaigns c
                                 LEFT JOIN campaign_status cs ON c.fk_campaign_status_id = cs.campaign_status_id
                                 WHERE cs.campaign_status_name = ?", ["Delete"]);
+
+        $statusChart = DB::select("SELECT cs.campaign_status_name, COUNT(c.fk_campaign_status_id) AS `Campaign_Status_Count` FROM campaigns c
+                                            LEFT JOIN campaign_status cs ON c.fk_campaign_status_id = cs.campaign_status_id
+                                            GROUP BY c.fk_campaign_status_id, cs.campaign_status_name");      
         
         return view('ext-marketing.ext-home', compact(['campaignList', 'activeCount', 'newCount', 'onHoldCount', 'deleteCount']));
     }
@@ -60,7 +64,6 @@ class ExtHomeController extends Controller
         $institution = DB::table('institution')->where('active', 1)->get();
         $programType = DB::table('program_type')->where('active', 1)->get();
         $marketingAgency = DB::table('agency')->where('active', 1)->get(); 
-        $leadSource = DB::table('leadsource')->where('active', 1)->get();
         $targetLocation = DB::table('target_location')->where('active', 1)->get();
         $persona = DB::table('persona')->where('active', 1)->get();
         $price = DB::table('campaign_price')->where('active', 1)->get();
@@ -213,11 +216,6 @@ class ExtHomeController extends Controller
     }
 
     public function parameterCampaign(Request $req) {
-        $data = $req->all();
-        //return $data;
-        // if(($req->input('published') == "off" || $req->input('published') == "true") && ($req->input('course-campaign') == "off" || $req->input('course-campaign') == "true")){ {
-            
-        // }
         if($req->input('published') == "true" && $req->input('course-campaign') == "true"){
             DB::table('campaign_parameters_check')->insert([
                 'fk_campaign_id' => $req->input('campaignId'),

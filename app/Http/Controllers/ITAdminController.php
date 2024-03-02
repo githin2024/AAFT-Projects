@@ -2,19 +2,11 @@
 
 namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
-use App\Exports\ExportAdminCampaign;
 use Illuminate\Http\Request;
-use Maatwebsite\Excel\Facades\Excel;
 
-class AdminController extends Controller
+class ITAdminController extends Controller
 {
-    public function AdminInstitution()
-    {
-        $institution_List = DB::select('Select institution_id, institution_name FROM institution WHERE active = 1');
-        return view('admin-shared.admin-institution', compact(['institution_List', 'campaignList']));
-    }
-
-    public function AdminHomeInstitution()
+    public function ITAdminHome()
     {
         $campaignList = DB::select("SELECT c.campaign_id, i.institution_name, pt.program_type_name, c.campaign_name, ls.leadsource_name, 
                                     cs.course_name, cps.campaign_status_name 
@@ -36,36 +28,27 @@ class AdminController extends Controller
         
         $labels = $campaignLeadCollect->keys();
         $leadCount = $campaignLeadCollect->values();
-        
-        return view('admin-shared.admin-home', compact(['campaignList', 'labels', 'leadCount']));
+
+        return view('it-admin-shared.it-admin-home', compact(['campaignList', 'labels', 'leadCount']));
     }
 
-    public function AdminCampaignInstitution()
+    public function ITAdminCampaign()
     {
-        $institutionList = DB::table('institution')->where('active', 1)->get();
-        return view('admin-shared.admin-campaign', ['institutionList' => $institutionList]);
-    }
-
-    public function AdminCampaignListInstitution(Request $req)
-    {
-        $institutionId = $req->get('institutionId');
         $campaignList = DB::select("SELECT c.campaign_id, i.institution_name, pt.program_type_name, c.campaign_name, ls.leadsource_name, 
-                                            cs.course_name, cps.campaign_status_name 
+                                            cs.course_name, cps.campaign_status_name, cpc.camp_param_check_id, clr.lead_request_id, 
+                                            cer.camp_edit_request_id, cdr.camp_delete_request_id, cer.active AS `Edit_Active`, clr.active AS `Lead_Active` 
                                             FROM campaigns c
                                             LEFT JOIN program_type pt ON c.fk_program_type_id = pt.program_type_id 
                                             LEFT JOIN leadsource ls ON c.fk_lead_source_id = ls.leadsource_id
                                             LEFT JOIN courses cs ON c.fk_course_id = cs.course_id
                                             LEFT JOIN institution i ON i.institution_id = cs.fk_institution_id
                                             LEFT JOIN campaign_status cps ON c.fk_campaign_status_id = cps.campaign_status_id
-                                            WHERE i.institution_id = ?", [$institutionId]);
+                                            LEFT JOIN campaign_parameters_check cpc ON cpc.fk_campaign_id = c.campaign_id
+                                            LEFT JOIN campaign_lead_request clr ON clr.fk_campaign_id = c.campaign_id
+                                            LEFT JOIN campaign_edit_request cer ON cer.fk_campaign_id = c.campaign_id
+                                            LEFT JOIN campaign_delete_request cdr ON cdr.fk_campaign_id = c.campaign_id
+                                            WHERE c.active = 1");
         
-        return response()->json(['campaignList' => $campaignList]);
+        return view('it-admin-shared.it-admin-campaign', ['campaignList' => $campaignList]);
     }
-    
-    public function AdminCampaignDownload(Request $req)
-    {        
-        $fileName = "campaign - " . date("Y-m-d") . ".xlsx";
-        return Excel::download(new ExportAdminCampaign($req->get('institutionId')), $fileName);
-    }
-    
 }

@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ExtHomeController;
 use App\Http\Controllers\IntHomeController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ITAdminController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -37,5 +39,13 @@ Route::get('int-campaign', [IntHomeController::class, 'InternalCampaign']);
 
 //Admin Dashboard
 Route::get('admin-institution', [AdminController::class, 'AdminInstitution']);
-Route::get('admin-home/{id}', [AdminController::class, 'AdminHomeInstitution']);
+Route::get('admin-home', [AdminController::class, 'AdminHomeInstitution']);
+Route::get('admin-campaign', [AdminController::class, 'AdminCampaignInstitution']);
+Route::get('admin-campaign-list', [AdminController::class, 'AdminCampaignListInstitution']);
+Route::get('admin-campaign-download', [AdminController::class, 'AdminCampaignDownload']);
+
+//IT Admin Dashboard
+Route::get('it-admin-home', [ITAdminController::class, 'ITAdminHome']);
+Route::get('it-admin-campaign', [ITAdminController::class, 'ITAdminCampaign']);
+
 

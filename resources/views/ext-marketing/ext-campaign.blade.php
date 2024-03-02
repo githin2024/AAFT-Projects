@@ -294,16 +294,13 @@
     </div>
   </div>
 </div>
-
-<!-- Lead Generation Confirmation Modal -->
-<div class="modal fade" id="confirmLeadModal" role="dialog">
-  <div class="modal-dialog">
-  
-    <!-- Modal content-->
+<!-- Lead Generation Modal -->
+<div class="modal fade" id="confirmLeadModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+  <div class="modal-dialog modal-md">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Lead Generation Confirmation</h4>
+        <h5 class="modal-title" >Lead Generation Confirmation</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <input type="hidden" id="hdnCampaignId" name="hdnCampaignId" />
@@ -311,12 +308,12 @@
       </div>
       <div class="modal-footer">
         <button class="btn btn-primary" id="confirmLeadGenration" title="Confirm Lead Generation" onclick="ConfirmLead();">Confirm</button>
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
       </div>
     </div>
-    
   </div>
 </div>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.js"></script>
 <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>

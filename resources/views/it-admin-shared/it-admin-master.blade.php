@@ -50,7 +50,7 @@
       <div class="collapse navbar-collapse  w-auto " id="sidenav-collapse-main">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link text-white active bg-gradient-primary" id="adminHomeID" href="{{ url('admin-home') }}">
+            <a class="nav-link text-white active bg-gradient-primary" id="it-adminHomeID" href="{{ url('it-admin-home') }}">
               <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                 <i class="material-symbols-outlined">home</i>
               </div>
@@ -58,7 +58,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-white" id="adminCampaignID" href="{{ url('admin-campaign') }}">
+            <a class="nav-link text-white" id="it-adminCampaignID" href="{{ url('it-admin-campaign') }}">
               <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                 <i class="material-symbols-outlined">campaign</i>
               </div>
@@ -66,7 +66,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-white" id="adminLandingPageID" href="{{ url('admin-landingpage') }}">
+            <a class="nav-link text-white" id="it-adminLandingPageID" href="{{ url('it-admin-landingpage') }}">
               <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                 <i class="material-symbols-outlined">article</i>
               </div>
@@ -81,7 +81,7 @@
       <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" data-scroll="true">
         <div class="container-fluid py-1 px-3">
           <nav aria-label="breadcrumb">          
-            <h6 class="font-weight-bolder mb-0" style="font-size: x-large">Welcome Admin</h6>
+            <h6 class="font-weight-bolder mb-0" style="font-size: x-large">Welcome IT Admin</h6>
           </nav>
           <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
             <div class="ms-md-auto pe-md-3 d-flex align-items-center">
@@ -99,7 +99,7 @@
       </nav>
       <!-- End Navbar -->
       <div class="container-fluid py-4">
-        @yield('adminContent')
+        @yield('it-adminContent')
         <footer class="footer py-4  ">
           <div class="container-fluid">
             <div class="row align-items-center justify-content-lg-between">

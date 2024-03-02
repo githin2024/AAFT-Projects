@@ -1,6 +1,7 @@
-@extends('admin-shared.admin-master')
+@extends('it-admin-shared.it-admin-master')
 
-@section('adminContent')
+@section('it-adminContent')
+
     <div class="row">
         <div class="col-lg-6 col-md-6 mb-md-0 mb-4">
             <div class="card">
@@ -9,7 +10,7 @@
                 </div>
                 <div class="card-body">
                     <div class="col-md-12">
-                        <canvas id="campaignChart" height="150px"></canvas>
+                        <canvas id="itAdminCampaignChart" height="100px"></canvas>
                     </div>
                     <hr />
                     <div class="table-responsive">
@@ -56,35 +57,25 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="text/javascript">
         $(document).ready(function() {        
-          $("#adminCampaignID").removeClass( "active bg-gradient-primary" );
-          $("#adminLandingPageID").removeClass( "active bg-gradient-primary" );
-          $("#adminHomeID").addClass( "active bg-gradient-primary" );
+          $("#it-adminCampaignID").removeClass( "active bg-gradient-primary" );
+          $("#it-adminLandingPageID").removeClass( "active bg-gradient-primary" );
+          $("#it-adminHomeID").addClass( "active bg-gradient-primary" );
         });
-        var ctx = document.getElementById('campaignChart').getContext('2d');
+        var ctx = document.getElementById('itAdminCampaignChart').getContext('2d');
         var myChart = new Chart(ctx, {
-            type: 'bar',
+            type: 'doughnut',
             data: {
                 labels: @json($labels),
                 datasets: [{
                     label: 'Campaigns',
                     data: @json($leadCount),
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    backgroundColor: ['#003f5c', '#374c80', '#7a5195', '#bc5090', '#ef5675', '#ff764a', '#ffa600'],
                     borderColor: 'rgba(75, 192, 192, 1)',
                     borderWidth: 1
                 }]
-            },
-            options: {
-                scales: {
-                    y: {                        
-                        beginAtZero: true,
-                        text: 'Number of Campaigns'
-                    },
-                    x: {
-                        text: 'Lead Source'
-                    }
-                }
             }
         });
       
     </script>
+
 @endsection
