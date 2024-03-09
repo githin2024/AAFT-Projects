@@ -10,7 +10,7 @@
                 </div>
                 <div class="card-body">
                     <div class="col-md-12">
-                        <canvas id="itAdminCampaignChart" height="100px"></canvas>
+                        <canvas id="itAdminCampaignChart" style="height=100px; !important"></canvas>
                     </div>
                     <hr />
                     <div class="table-responsive">
@@ -60,6 +60,7 @@
           $("#it-adminCampaignID").removeClass( "active bg-gradient-primary" );
           $("#it-adminLandingPageID").removeClass( "active bg-gradient-primary" );
           $("#it-adminHomeID").addClass( "active bg-gradient-primary" );
+          $("#it-adminSettingsID").removeClass( "active bg-gradient-primary" );
         });
         var ctx = document.getElementById('itAdminCampaignChart').getContext('2d');
         var myChart = new Chart(ctx, {

@@ -71,15 +71,20 @@
                     type:'get',
                     url: "/admin-campaign-list",
                     data: {'institutionId' : institutionID},
-                    success:function(data){                        
+                    success:function(data){    
+                        $('#adminCampaignTable').dataTable();                    
                         if(data){
                             var campaignTableBody = $("#adminCampaignTableBody").empty();
                             for(var i = 0; i < data.campaignList.length;i++) {
                                 var campaignTableTr = "<tr><td>" + data.campaignList[i]['institution_name'] + "</td><td>" + data.campaignList[i]['program_type_name'] + "</td><td>" + data.campaignList[i]['campaign_name'] + "</td><td>" + data.campaignList[i]['leadsource_name'] + "</td><td>" + data.campaignList[i]['course_name'] + "</td><td>" + data.campaignList[i]['campaign_status_name'] + "</td></tr>";
                                 campaignTableBody.append(campaignTableTr);
                             }
-                            $('#adminCampaignTable').dataTable();
+                            //$('#adminCampaignTable').dataTable();
                             $("#adminCampaignDiv").show();
+                        }
+                        else {
+                            $("#adminCampaignTableBody").empty();
+                            
                         }
                     }
                 });
@@ -88,7 +93,7 @@
 
         function clearAdminCampaign() {
             $('#admin-institution').val("");
-            
+            $("#adminCampaignDiv").hide();
         }
 
     </script>

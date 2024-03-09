@@ -43,8 +43,8 @@ class ExtHomeController extends Controller
     public function campaign()
     {
         $campaignList = DB::select("SELECT c.campaign_id, i.institution_name, pt.program_type_name, c.campaign_name, ls.leadsource_name, 
-                                            cs.course_name, cps.campaign_status_name, cpc.camp_param_check_id, clr.lead_request_id, 
-                                            cer.camp_edit_request_id, cdr.camp_delete_request_id, cer.active AS `Edit_Active`, clr.active AS `Lead_Active` 
+                                            cs.course_name, cps.campaign_status_name, cpc.camp_param_check_id, clr.lead_request_id, clr.campaign_lead_accept,
+                                            cer.camp_edit_request_id, cer.camp_edit_request, cer.camp_edit_accept, cdr.camp_delete_request_id, cer.active AS `Edit_Active`, clr.active AS `Lead_Active` 
                                             FROM campaigns c
                                             LEFT JOIN program_type pt ON c.fk_program_type_id = pt.program_type_id 
                                             LEFT JOIN leadsource ls ON c.fk_lead_source_id = ls.leadsource_id
@@ -60,7 +60,7 @@ class ExtHomeController extends Controller
         return view('ext-marketing.ext-campaign', ['campaignList' => $campaignList]);
     }
 
-    public function createCampaign() {
+    public function createCampaign(Request $req) {
         $institution = DB::table('institution')->where('active', 1)->get();
         $programType = DB::table('program_type')->where('active', 1)->get();
         $marketingAgency = DB::table('agency')->where('active', 1)->get(); 
@@ -71,11 +71,18 @@ class ExtHomeController extends Controller
         $targetSegment = DB::table('target_segment')->where('active', 1)->get();
         $campaignType = DB::table('campaign_type')->where('active', 1)->get();
         $campaignSize = DB::table('campaign_size')->where('active', 1)->get();
+        $leadSource = DB::table('leadsource')->where('active', 1)->get();
         $campaignVersion = DB::table('campaign_version')->where('active', 1)->get();
+        $campaign = DB::select("SELECT c.fk_course_id, c.campaign_date, c.fk_program_type_id, c.fk_agency_id, c.fk_lead_source_id, c.fk_persona_id, c.fk_campaign_price_id, c.fk_headline_id, c.fk_target_location_id, c.fk_target_segment_id,
+                                       c.fk_campaign_size_id, c.fk_campaign_version_id, c.fk_campaign_type_id, c.fk_campaign_status_id, i.institution_id 
+                                        FROM campaigns c
+                                        LEFT JOIN courses cs ON c.fk_course_id = cs.course_id
+                                        LEFT JOIN institution i ON cs.fk_institution_id = i.institution_id
+                                        WHERE c.campaign_id = ?", [$req->get('campaignId')]);
         
         return response()->json(['institution' => $institution, 'programType' => $programType, 'marketingAgency' => $marketingAgency, 'leadSource' => $leadSource,
             'targetLocation' => $targetLocation, 'persona' => $persona, 'price' => $price, 'headline' => $headline, 'targetSegment' => $targetSegment, 'campaignType' => $campaignType,
-             'campaignSize' => $campaignSize, 'campaignVersion' => $campaignVersion]);
+             'campaignSize' => $campaignSize, 'campaignVersion' => $campaignVersion, 'campaign' => $campaign]);
     }
 
     public function getCourses(Request $req) {
@@ -87,7 +94,6 @@ class ExtHomeController extends Controller
 
     public function storeCampaign(Request $req) {
         //Check Validation
-
         $reqValidatedData = $req->validate([
             'campaign-institution' => 'required',
             'programType' => 'required',
@@ -234,7 +240,88 @@ class ExtHomeController extends Controller
     }
 
     public function confirmLead(Request $req) {
-        $data = $req->all();
-        return $data;
+        $campaignId = $req->get('campaignId');
+        DB::table('campaign_lead_request')
+            ->where('fk_campaign_id', $campaignId)
+            ->update(['campaign_lead_accept' => 1, 
+                      'campaign_lead_accept-date' => now(),
+                      'updated_by' => "githin.thomas",
+                      'updated_date' => now()]);
+        $campaignStatusList = DB::select("select campaign_status_id from campaign_status where campaign_status_name = 'Active'");
+        foreach($campaignStatusList as $status) {
+            $campaignStatusId = $status->campaign_status_id;
+        }
+        
+        DB::table('campaigns')
+            ->where('campaign_id', $campaignId)
+            ->update(['fk_campaign_status_id' => $campaignStatusId,
+                      'updated_by' => "githin.thomas",
+                      'updated_date' => now()]);
+
+        return response()->json(["Lead request accepted successfully."]);
+    }
+
+    public function editCampaignRequest(Request $req)
+    {
+        $campaignId = $req->get('campaignId');
+        DB::table('campaign_edit_request')
+            ->insert([
+                'fk_campaign_id' => $campaignId,
+                'fk_user_id' => 3,
+                'camp_edit_request' => 1,
+                'camp_edit_request_date' => now(),
+                'created_date' => now(),
+                'updated_date' => now(),
+                'active' => 1,
+                'created_by' => "githin.thomas",
+                'updated_by' => "githin.thomas"
+            ]);
+        
+        return response()->json(["Edit request sent successfully."]);
+    }
+
+    public function getCampaign(Request $req)
+    {
+        $campaignList = DB::select("SELECT c.campaign_id, c.campaign_name, c.adset_name, 
+                                            c.adname, c.creative, c.leadsource_name,
+                                            i.institution_name, cs.course_name, 
+                                            c.fk_campaign_status_id,
+                                            l.leadsource_name AS `Lead_Source`
+                                    FROM campaigns c 
+                                    LEFT JOIN courses cs ON cs.course_id = c.fk_course_id
+                                    LEFT JOIN institution i ON cs.fk_institution_id = i.institution_id
+                                    LEFT JOIN leadsource l ON c.fk_lead_source_id = l.leadsource_id
+                                    WHERE c.campaign_id = ?", [$req->get('campaignId')]);
+        
+        $campaignStatusList = DB::select("SELECT campaign_status_id, campaign_status_name FROM campaign_status");
+        
+        return response()->json(['campaignList' => $campaignList, 'campaignStatusList' => $campaignStatusList]);
+    }
+
+    public function updateCampaign(Request $req)
+    {
+        $campaignStatusId = $req->input('campaignStatusId');
+        $campaignId = $req->input('campId');
+
+        DB::table('campaigns')
+            ->where('campaign_id', $campaignId)
+            ->update([
+                'fk_campaign_status_id' => $campaignStatusId,
+                'updated_date' => now(),
+                'updated_by' => "githin.thomas"
+            ]);
+
+        DB::table('campaign_edit_request')
+            ->where('fk_campaign_id', $campaignId)
+            ->update([
+                'camp_edit_request' => 0,
+                'camp_edit_accept' => 0,
+                'camp_edit_request_date' => null,
+                'camp_edit_accept_date' => null,
+                'updated_by' => "githin.thomas",
+                'updated_date' => now()
+            ]);
+
+        return redirect()->back()->with('message', 'Campaign updated successfully.');
     }
 }

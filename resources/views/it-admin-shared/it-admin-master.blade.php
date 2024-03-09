@@ -72,6 +72,14 @@
               </div>
               <span class="nav-link-text ms-1">Landing Page</span>
             </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" id="it-adminSettingsID" href="{{ url('it-admin-settings') }}">
+              <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                <i class="material-symbols-outlined">settings</i>
+              </div>
+              <span class="nav-link-text ms-1">Settings</span>
+            </a>
           </li>        
         </ul>
       </div>    
@@ -122,5 +130,10 @@
 </html>
 
 <script type="text/javascript">
+  function goBack() 
+  {
+    window.location.href = "{{ url('it-admin-settings') }}";
+  }
+
   
 </script>

@@ -50,16 +50,16 @@
                       <td style="padding-left: 15px;">
                         @if(is_null($campaign->camp_param_check_id))
                           <button type="button" class="btn btn-info" title="Parameter Check" onclick="parameterCheckCampaign({{ $campaign->campaign_id }})"><span style="font-size:12px;">Parameter Check</span></button>
+                        @elseif(!is_null($campaign->lead_request_id) && $campaign->campaign_lead_accept == 0)
+                          <button type="button" class="btn btn-info" title="Lead Accept" onclick="leadAcceptCampaign({{ $campaign->campaign_id }})"><span style="font-size:12px;">Lead Accept</span></button>                        
                         @elseif(is_null($campaign->lead_request_id))
-                          <button type="button" class="btn btn-info" title="Lead Request" onclick="leadRequestCampaign({{ $campaign->campaign_id }})"><span style="font-size:12px;">Lead Request</span></button>
-                        @endif
-                        @if(is_null($campaign->camp_edit_request_id) && $campaign->Edit_Active == 0 && $campaign->Lead_Active == 1 && is_null($campaign->camp_delete_request_id))
+                          <p>Campaign approval pending</p>                        
+                        @elseif(is_null($campaign->camp_edit_request_id) || $campaign->camp_edit_request == 0 && $campaign->Lead_Active == 1)
                           <button type="button" class="btn btn-warning" title="Edit Request" onclick="editRequestCampaign({{ $campaign->campaign_id }})"><span style="font-size:12px;">Edit Request</span></button>
-                          <button type="button" class="btn btn-danger" title="Delete Request" onclick="deleteRequestCampaing({{ $campaign->campaign_id }})"><span style="font-size:12px;">Delete Request</span></button>
-                        @elseif(!is_null($campaign->camp_edit_request_id) && $campaign->Edit_Active == 0 && $campaign->Lead_Active == 1 && is_null($campaign->camp_delete_request_id))
-                          <button type="button" class="btn btn-warning" title="Edit Campaign" onclick="editCampaign({{ $campaign->campaign_id }})"><i class="fa fa-pencil-square-o">&nbsp;Edit</i></button>
-                        @elseif(!is_null($campaign->camp_delete_request_id))
-                          <button type="button" class="btn btn-danger" title="Delete Campaign" onclick="deleteCampaign({{ $campaign->campaign_id }})"><i class="fa fa-trash-o">&nbsp;Delete</i></button>
+                        @elseif($campaign->camp_edit_accept == 0 && $campaign->camp_edit_request == 1)
+                          <p>Edit approval pending</p>
+                        @elseif(!is_null($campaign->camp_edit_request_id) && $campaign->Edit_Active == 1 && $campaign->Lead_Active == 1)
+                          <button type="button" class="btn btn-primary" title="Edit Campaign" onclick="editCampaign({{ $campaign->campaign_id }})"><span style="font-size:12px;">Edit</span></button>
                         @endif
                       </td>
                     </tr>
@@ -88,7 +88,7 @@
               <span class="text-danger">*</span>
             </div>
             <div class="col-md-7">
-              <select name="campaign-institution" class="form-control" id="campaign-institution" onchange="getCourses();">                  
+              <select name="campaign-institution" class="form-control" id="campaign-institution" onchange="getCourses('');">                  
               </select>                
               <span id="institution-error" class="text-danger"></span>
             </div>
@@ -294,12 +294,12 @@
     </div>
   </div>
 </div>
-<!-- Lead Generation Modal -->
+<!-- Lead Acceptance Modal -->
 <div class="modal fade" id="confirmLeadModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true">
   <div class="modal-dialog modal-md">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" >Lead Generation Confirmation</h5>
+        <h5 class="modal-title" id="leadTitleId">Lead Generation Confirmation</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -307,8 +307,55 @@
         <p>Do you wish to confirm the lead generation is initiated? </p>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-primary" id="confirmLeadGenration" title="Confirm Lead Generation" onclick="ConfirmLead();">Confirm</button>
+        <button class="btn btn-primary" id="confirmLeadbuttonId" title="Confirm Lead Generation" onclick="ConfirmLeadGeneration();">Confirm</button>
         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Request Modal -->
+<div class="modal fade" id="requestModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalTitleId">Edit Request</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="hdnCampId" name="hdnCampId" />
+        <p id="descriptionId">Do you wish to confirm the lead generation is initiated? </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="buttonId" title="Request">Request</button>
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Campaign Modal -->
+<div class="modal fade" id="editCampaignModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalTitleId">Edit Campaign</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">        
+        <form action="{{ url('update-campaign')}}" method="post" id="editCampaignForm">
+          @csrf
+          <input type="hidden" id="campId" name="campId" />
+          <table class="table table-bordered" id="editCampaignTable">            
+          </table>
+          <hr />
+          <div class="row form-group mt-2">
+            <div class="col-md-5">
+              <button class="btn btn-primary" id="update" title="Update" onclick="UpdateCampaign();">Update</button>
+              <button data-bs-dismiss="modal" class="btn btn-danger" title="Cancel">Cancel</button>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -332,7 +379,7 @@
     });
 
     function createCampaign() {
-        $("#exampleModalLabel").html("Create New Campaign");
+      $("#exampleModalLabel").html("Create New Campaign");
         $("#createCampaignModal").modal('show');
         $("#institution-error").html(''); 
         $("#programType-error").html(''); 
@@ -347,13 +394,14 @@
         $("#leadSource-error").html('');
         $("#targetLocation-error").html('');
         $("#persona-error").html('');
-        $("#price-error").html(''); 
+        $("#price-error").html('');
+        $("#campaignDate").val('');
         $.ajax({
             type:'get',
-            url: "/create-campaign",
+            url: "/create-campaign",            
             success:function(data){
                 if(data){                    
-                    var institutionId = $("#campaign-institution").empty();
+                  var institutionId = $("#campaign-institution").empty();
                     institutionId.append('<option selected="selected" value="">--Select--</option>');
                     for(var i = 0; i < Object.keys(data['institution']).length;i++){
                         var institution_item_el = '<option value="'+data.institution[i]['institution_code']+'">'+data.institution[i]['institution_name']+'</option>';
@@ -457,6 +505,7 @@
       var campaignType = $("#campaignType").val();
       var campaignSize = $("#campaignSize").val();
       var campaignVersion = $("#campaignVersion").val();
+      var campaignStatus = $("#campaignStatus").val();
       
       if(institution == "" || institution == "undefined"){
         $("#institution-error").html("Please select an Institution");         
@@ -547,12 +596,12 @@
       }
       else {
         $("#campaignVersion-error").html("");
-      }
+      }      
       $("#add-campaign").submit(function (e) {
         if($("#institution-error").text() != "" || $("#programType-error").text() != "" || $("#campaignVersion-error").text() != "" || $("#campaignSize-error").text() != ""
         || $("#campaignType-error").text() != "" || $("#targetSegment-error").text() != "" || $("#headline-error").text() != "" || $("#campaignDate-error").text() != ""
         || $("#courses-error").text() != "" || $("#marketingAgency-error").text() != "" || $("#leadSource-error").text() != "" || $("#targetLocation-error").text() != ""
-        || $("#persona-error").text() != "" || $("#price-error").text() != ""){
+        || $("#persona-error").text() != "" || $("#price-error").text() != "" || $("#campaignStatus-error").text() != ""){
           e.preventDefault();
           return false;
         }
@@ -598,24 +647,113 @@
       $("#successMesgID").hide();
     }
 
-    function leadRequestCampaign(campaignId) {
+    function leadAcceptCampaign(campaignId) {
       $("#confirmLeadModal").modal('show');
-      $("#hdnCampLeadId").val(campaignId);
+      $("#hdnCampaignId").val(campaignId);
     }
 
-    function ConfirmLead(){
-      var campId = $("#hdnCampLeadId").val();
+    function ConfirmLeadGeneration(){
+      var campId = $("#hdnCampaignId").val();
       $.ajax({
-          type:'post',
+          type:'get',
           url: "/confirm-lead",
           data: {'campaignId' : campId},
           success:function(data){
             if(data){
-              console.log(data);
+              $.notify(data, "success");
+              $("#confirmLeadModal").modal('hide');
+              window.location.href="{{'campaign'}}";
             }
           }
       });
     }
+
+    function editRequestCampaign(campaignId) {
+      $("#requestModal").modal('show');
+      $("#hdnCampId").val(campaignId);
+      $("#modalTitleId").empty().html("Edit Campaign Request");
+      $("#descriptionId").empty().html("Do you wish to send the request to edit the campaign?");
+      $("#buttonId").attr('onclick', 'editRequest()');
+    }
     
+    function editRequest(){
+      var campId = $("#hdnCampId").val();
+      $.ajax({
+          type:'get',
+          url: "/ext-edit-campaign-request",
+          data: {'campaignId' : campId},
+          success:function(data){
+            if(data){
+              $.notify(data, "success");
+              $("#requestModal").modal('hide');
+              window.location.href="{{'campaign'}}"; 
+            }
+          }
+      });
+    }
+
+    function editCampaign(campaignId) {
+      $("#editCampaignModal").modal('show');
+      $("#campId").val(campaignId);
+      $.ajax({
+          type:'get',
+          url: "/ext-get-campaign",
+          data: {'campaignId' : campaignId},
+          success:function(data){
+            
+            if(data){
+              var editCampaignTable = $("#editCampaignTable").empty();
+              var campaignStatusId;
+              for(var i = 0; i < data.campaignList.length;i++){
+                var editCampaignTable_item_el = '<tr><td>Campaign Name</td><td>' + data.campaignList[i]['campaign_name']+'</td></tr>' + 
+                                                '<tr><td>Adset Name</td><td>' + data.campaignList[i]['adset_name'] + '</td></tr>' +
+                                                '<tr><td>Ad Name</td><td>' + data.campaignList[i]['adname'] + '</td></tr>' +
+                                                '<tr><td>Creative</td><td>' + data.campaignList[i]['creative'] + '</td></tr>' +
+                                                '<tr><td>Lead Source</td><td>' + data.campaignList[i]['leadsource_name'] + '</td></tr>' +
+                                                '<tr><td>Institution</td><td>' + data.campaignList[i]['institution_name'] + '</td></tr>' +
+                                                '<tr><td>Course</td><td>' + data.campaignList[i]['course_name'] + '</td></tr>'+
+                                                '<tr><td>Lead Source Name</td><td>' + data.campaignList[i]['Lead_Source'] + '</td></tr>'
+                editCampaignTable.append(editCampaignTable_item_el);                                
+                campaignStatusId = data.campaignList[i]['fk_campaign_status_id'];  
+              }
+              var editCampaignTable_item_el = "<tr><td>Campaign Status</td><td><select class='form-control' name='campaignStatusId' id='campaignStatusId'>";
+              editCampaignTable.append(editCampaignTable_item_el);
+              var campaignStatusSelect = $("#campaignStatusId").empty();
+              var campaignStatusSelect_el = "<option value=''>--Select--</option>";  
+              campaignStatusSelect.append(campaignStatusSelect_el);          
+              for(var j=0; j < data.campaignStatusList.length; j++){                
+                if(campaignStatusId == data.campaignStatusList[j]['campaign_status_id']){
+                  campaignStatusSelect_el = '<option value="'+ data.campaignStatusList[j]['campaign_status_id']+'" selected>'+data.campaignStatusList[j]['campaign_status_name']+'</option>';
+                }
+                else {
+                  campaignStatusSelect_el = '<option value="'+data.campaignStatusList[j]['campaign_status_id']+'">'+data.campaignStatusList[j]['campaign_status_name']+'</option>';
+                }
+                campaignStatusSelect.append(campaignStatusSelect_el);
+              }
+              editCampaignTable.append("</select><td></td><td><span class='text-danger' id='campaignStatusError'></td></span></td></tr>");
+            }
+          }
+      });
+    }
+
+    function UpdateCampaign() {
+      
+      var campaignStatusId = $("#campaignStatusId").val();
+      if(campaignStatusId == ""){
+        $("#campaignStatusError").text("Please select a status");
+      }
+      else {
+        $("#campaignStatusError").text("");
+      }
+
+      $("#editCampaignForm").submit(function (e) {
+        if($("#campaignStatusError").text() != ""){
+          e.preventDefault();
+          return false;
+        }
+      }); 
+
+
+    }
 </script>
 @endsection

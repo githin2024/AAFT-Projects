@@ -2,6 +2,12 @@
 
 @section('it-adminContent')
 <div class="row mt-4">
+    @if(session()->has('message'))
+      <div class="alert alert-success" id="successMesgID" role="alert" aria-live="assertive" aria-atomic="true" class="toast" data-autohide="false" style="display: none">
+        {{ session()->get('message') }}
+        <button type="button" onclick="campNotify();" class="btn-close" style="float: right;" aria-label="Close"></button>
+      </div>
+    @endif
     <div class="col-lg-12 col-md-6 mb-md-0 mb-4">
         <div class="card">
             <div class="card-header pb-0 card-backgroundcolor">
@@ -11,7 +17,7 @@
                     </div>
                     <div class="col-lg-6 col-6 my-auto text-end">
                         <div class="dropdown float-lg-end pe-4">
-                            <a class="btn btn-primary" id="it-adminCampaignDownloadId" }}" title="Download">
+                            <a class="btn btn-primary" id="it-adminCampaignDownloadId" href="{{ url('it-admin-campaign-download')}}" title="Download">
                                 <span class="fa fa-file-excel" style="font-size: small;">&nbsp; Download</span>
                             </a>                
                         </div>
@@ -42,7 +48,12 @@
                             <td style="padding-left: 15px;">{{ $campaign->course_name }}</td>
                             <td style="padding-left: 15px;">{{ $campaign->campaign_status_name }}</td>
                             <td style="padding-left: 15px;">
-                            <button type="button" class="btn btn-danger" title="Delete Campaign" onclick="deleteCampaign({{ $campaign->campaign_id }})"><i class="fa fa-trash-o">&nbsp;Delete</i></button> 
+                            @if(!is_null($campaign->camp_param_check_id) && is_null($campaign->lead_request_id))
+                                <button type="button" class="btn btn-info" title="Lead Request" onclick="leadRequestCampaign({{ $campaign->campaign_id }})"><span style="font-size:12px;">Lead Request</span></button>
+                            @elseif(!is_null($campaign->camp_edit_request_id) && $campaign-> camp_edit_accept == 0 && $campaign -> camp_edit_request ==1)
+                                <button type="button" class="btn btn-success" title="Allow Edit" onclick="editAllowCampaign({{ $campaign->campaign_id }})"><span style="font-size:12px;">Allow Edit</span></button>
+                            @endif
+                                <button type="button" class="btn btn-primary" title="View" onclick="viewCampaign({{ $campaign->campaign_id }})"><span style="font-size:12px;">View</span></button>
                             </td>
                             </tr>
                         @endforeach
@@ -53,6 +64,64 @@
         </div>
     </div>        
 </div>
+<!-- Lead Generation Modal -->
+<div class="modal fade" id="leadRequestModal" tabindex="-1" role="dialog" aria-labelledby="leadRequestModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" >Lead Request</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="hdnCampaignId" name="hdnCampaignId" />
+        <p>Do you wish to send the request to check if lead is generated in CRM? </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="leadRequestId" title="Lead Request" onclick="leadRequest();">Confirm</button>
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- View Campaign Modal -->
+<div class="modal fade" id="viewCampaignModal" tabindex="-1" role="dialog" aria-labelledby="leadRequestModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" >Campaign Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">        
+        <table class="table table-bordered" id="campaignViewId">
+
+        </table>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+<!-- Edit Accept Modal -->
+<div class="modal fade" id="editAcceptModal" tabindex="-1" role="dialog" aria-labelledby="leadRequestModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalTitleId" >Edit Accept</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">        
+        <input type="hidden" id="hdnCampId" name="hdnCampId" />
+        <p id="modalDescriptionId">Do you wish to approve the request to edit the campaign? </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="EditAcceptId" title="Confirm" onclick="EditAcceptConfirm();">Confirm</button>
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>      
+    </div>
+    
+</div>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.js"></script>
 <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
@@ -64,7 +133,99 @@
         $("#it-adminCampaignID").addClass( "active bg-gradient-primary" );
         $("#it-adminLandingPageID").removeClass( "active bg-gradient-primary" );
         $("#it-adminHomeID").removeClass( "active bg-gradient-primary" );
+        $("#it-adminSettingsID").removeClass( "active bg-gradient-primary" );
+        $("#it-campaignTable").DataTable();
+        if($("#successMesgID").text() !="") {
+          $.notify($("#successMesgID").text(), "success");          
+        }
     });
     
+    function leadRequestCampaign(campaignId) {        
+        $("#leadRequestModal").modal('show');
+        $("#hdnCampaignId").val(campaignId);
+    }
+
+    function leadRequest() {
+        var campId = $("#hdnCampaignId").val();
+        $.ajax({
+            type:'get',
+            url: "/lead-request-campaign",
+            data: {'campaignId' : campId},
+            success:function(data){                
+                if(data){
+                    $.notify(data, "success");
+                    $("#leadRequestModal").modal('hide');
+                    window.location.href="{{'it-admin-campaign'}}" 
+                }
+            }
+        });
+    }
+
+    function viewCampaign(campaignId) {
+        $("#viewCampaignModal").modal('show');
+        $.ajax({
+            type:'get',
+            url: "/it-admin-view-campaign",
+            data: {'campaignId' : campaignId},
+            success:function(data){  
+                debugger;              
+                if(data){
+                    var campaignViewId = $("#campaignViewId").empty();
+                    for(var i = 0; i < data.campaignList.length;i++){
+                        var campaignDetail = "<tr>" + 
+                                                "<td>Institution</td>" + 
+                                                "<td>" + data.campaignList[i]['institution_name'] + "</td>" +
+                                            "</tr>" +
+                                            "<tr>" + 
+                                                "<td>Program Type</td>" + 
+                                                "<td>" + data.campaignList[i]['program_type_name'] + "</td>" +
+                                            "</tr>" +
+                                            "<tr>" + 
+                                                "<td>Campaign</td>" + 
+                                                "<td>" + data.campaignList[i]['campaign_name'] + "</td>" +
+                                            "</tr>" +
+                                            "<tr>" + 
+                                                "<td>Lead Source</td>" + 
+                                                "<td>" + data.campaignList[i]['leadsource_name'] + "</td>" +
+                                            "</tr>" +
+                                            "<tr>" + 
+                                                "<td>Course</td>" + 
+                                                "<td>" + data.campaignList[i]['course_name'] + "</td>" +
+                                            "</tr>" +
+                                            "<tr>" + 
+                                                "<td>Status</td>" + 
+                                                "<td>" + data.campaignList[i]['campaign_status_name'] + "</td>" +
+                                            "</tr>";
+                        campaignViewId.html(campaignDetail);
+                    }           
+                }
+            }
+        });
+    }
+
+    function editAllowCampaign(campaignId) {
+        $("#editAcceptModal").modal('show');
+        $("#hdnCampId").val(campaignId);
+    }
+
+    function EditAcceptConfirm() {
+        var campId = $("#hdnCampId").val();
+        $.ajax({
+            type:'get',
+            url: "/edit-accept-campaign",
+            data: {'campaignId' : campId},
+            success:function(data){                
+                if(data){
+                    $.notify(data, {
+                        showDuration: 2000,
+                        className: 'success',
+                    });
+                    $("#editAcceptModal").modal('hide');
+                    window.location.href="{{'it-admin-campaign'}}" 
+                }
+            }
+        });
+    }
+
 </script>
 @endsection
