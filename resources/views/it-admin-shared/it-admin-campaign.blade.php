@@ -64,6 +64,7 @@
         </div>
     </div>        
 </div>
+
 <!-- Lead Generation Modal -->
 <div class="modal fade" id="leadRequestModal" tabindex="-1" role="dialog" aria-labelledby="leadRequestModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true">
   <div class="modal-dialog modal-md">
@@ -122,19 +123,13 @@
     
 </div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.js"></script>
-<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.1/js/bootstrap.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap5.min.js"></script>
-<script src="https://cdn.tutorialjinni.com/notify/0.4.2/notify.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function() {        
         $("#it-adminCampaignID").addClass( "active bg-gradient-primary" );
         $("#it-adminLandingPageID").removeClass( "active bg-gradient-primary" );
         $("#it-adminHomeID").removeClass( "active bg-gradient-primary" );
         $("#it-adminSettingsID").removeClass( "active bg-gradient-primary" );
-        $("#it-campaignTable").DataTable();
+        $("#it-campaignTable").dataTable();
         if($("#successMesgID").text() !="") {
           $.notify($("#successMesgID").text(), "success");          
         }

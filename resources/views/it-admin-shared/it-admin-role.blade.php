@@ -50,7 +50,9 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <button type="button" class="btn btn-primary" title="Edit Role" onclick="createRole({{ $role->role_id }})"><span style="font-size:12px;">Edit</span></button>
+                                        @if($role->active == 1)
+                                            <button type="button" class="btn btn-primary" title="Edit Role" onclick="createRole({{ $role->role_id }})"><span style="font-size:12px;">Edit</span></button>
+                                        @endif
                                         @if($role->active == 1)
                                             <button type="button" class="btn btn-danger" title="Delete Role" onclick="deleteRole({{ $role->role_id }}, 0)"><span style="font-size:12px;">Delete</span></button>
                                         @else
@@ -67,12 +69,6 @@
         </div>
     </div>
 </div>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.js"></script>
-<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.1/js/bootstrap.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap5.min.js"></script>
-<script src="https://cdn.tutorialjinni.com/notify/0.4.2/notify.min.js"></script>
 
 <!-- Create Role Modal -->
 <div class="modal fade" id="createRoleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true">

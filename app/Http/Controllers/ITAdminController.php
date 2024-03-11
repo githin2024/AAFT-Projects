@@ -98,6 +98,11 @@ class ITAdminController extends Controller
         return response()->json(["Edit request accepted successfully."]);
     }
 
+    public function ITAdminCampaignDownload()
+    {
+        return Excel::download(new ExportCampaign(), 'campaigns'.now() . '.xlsx');
+    }
+
     public function ITAdminSettings()
     {
         return view('it-admin-shared.it-admin-settings');
@@ -695,4 +700,530 @@ class ITAdminController extends Controller
     }
 
     //End Headline Management
+
+    //Target Location Management
+
+    public function ITAdminTargetLocation()
+    {
+        $targetLocationList = DB::table('target_location')->get();
+        return view('it-admin-shared.it-admin-target-location', ['targetLocationList' => $targetLocationList]);
+    }
+
+    public function ITAdminCreateTargetLocation(Request $req)
+    {
+        $targetLocationId = $req->input('hdnTargetLocationId');
+        $mesg = "";
+        if($targetLocationId == 0) 
+        {
+            DB::table('target_location')->insert([
+                'target_location_name' => $req->input('targetLocationName'),
+                'target_location_code' => $req->input('targetLocationCode'),
+                'created_by' => "githin.thomas",
+                'updated_by' => "githin.thomas",
+                'created_date' => now(),
+                'updated_date' => now(),
+                'active' => 1
+            ]);
+            $mesg = "Target location created successfully.";
+        }
+        else 
+        {
+            DB::table('target_location')->where('target_location_id', $targetLocationId)->update([
+                'target_location_name' => $req->input('targetLocationName'),
+                'target_location_code' => $req->input('targetLocationCode'),
+                'updated_by' => "githin.thomas",
+                'updated_date' => now()
+            ]);
+
+            $mesg = "Target Location updated successfully.";
+        }
+
+        return redirect()->back()->with('message', $mesg);
+    }
+
+    public function ITAdminDeleteTargetLocation(Request $req)
+    {
+        $targetLocationId = $req->get('targetLocationId');
+        $active = 0;
+        $mesg = "";
+        if($req->get('identification') == 0) {
+            $active = 0;
+            $mesg = "Target location deleted successfully.";
+        }
+        else {
+            $active = 1;
+            $mesg = "Target location restored successfully.";
+        }
+
+        DB::table('target_location')->where('target_location_id', $targetLocationId)->update([
+            'active' => $active,
+            'updated_by' => "githin.thomas",
+            'updated_date' => now()
+        ]);
+
+        return response()->json([$mesg]);
+    }
+
+    public function ITAdminGetTargetLocation(Request $req)
+    {
+        $targetLocationId = $req->get('targetLocationId');
+        $targetLocationList =  DB::table('target_location')->where('target_location_id', $targetLocationId)->get();
+        return $targetLocationList;
+    }
+
+    public function ITAdminTargetLocationCheck(Request $req)
+    {
+        $mesg;
+        $targetLocationCode = $req->get('targetLocationCode');
+        $targetLocationId = $req->get('targetLocationId');
+        if($targetLocationId != 0 )
+        {
+            $targetLocationList = DB::select("SELECT COUNT(*) AS count FROM target_location t
+                                      WHERE t.target_location_id <> ? AND t.target_location_code = ?", [$targetLocationId, $targetLocationCode]);
+        }
+        else 
+        {
+            $targetLocationList = DB::select("SELECT COUNT(*) AS count FROM target_location t
+                                      WHERE t.target_location_code = ?", [$targetLocationCode]);
+        }
+
+        return response()->json($targetLocationList);        
+    }
+
+    //End Target Location Management
+
+    //Campaign Type Management
+
+    public function ITAdminCampaignType()
+    {
+        $campaignTypeList = DB::table('campaign_type')->get();
+        return view('it-admin-shared.it-admin-campaign-type', ['campaignTypeList' => $campaignTypeList]);
+    }
+
+    public function ITAdminCreateCampaignType(Request $req)
+    {
+        $campaignTypeId = $req->input('hdnCampaignTypeId');
+        $mesg = "";
+        if($campaignTypeId == 0) 
+        {
+            DB::table('campaign_type')->insert([
+                'campaign_type_name' => $req->input('campaignTypeName'),
+                'campaign_type_code' => $req->input('campaignTypeCode'),
+                'created_by' => "githin.thomas",
+                'updated_by' => "githin.thomas",
+                'created_date' => now(),
+                'updated_date' => now(),
+                'active' => 1
+            ]);
+            $mesg = "Campaign Type created successfully.";
+        }
+        else 
+        {
+            DB::table('campaign_type')->where('campaign_type_id', $campaignTypeId)->update([
+                'campaign_type_name' => $req->input('campaignTypeName'),
+                'campaign_type_code' => $req->input('campaignTypeCode'),
+                'updated_by' => "githin.thomas",
+                'updated_date' => now()
+            ]);
+
+            $mesg = "Campaign Type updated successfully.";
+        }
+
+        return redirect()->back()->with('message', $mesg);
+    }
+
+    public function ITAdminDeleteCampaignType(Request $req)
+    {
+        $campaignTypeId = $req->get('campaignTypeId');
+        $active = 0;
+        $mesg = "";
+        if($req->get('identification') == 0) {
+            $active = 0;
+            $mesg = "Campaign type deleted successfully.";
+        }
+        else {
+            $active = 1;
+            $mesg = "Campaign type restored successfully.";
+        }
+
+        DB::table('campaign_type')->where('campaign_type_id', $campaignTypeId)->update([
+            'active' => $active,
+            'updated_by' => "githin.thomas",
+            'updated_date' => now()
+        ]);
+
+        return response()->json([$mesg]);
+    }
+
+    public function ITAdminGetCampaignType(Request $req)
+    {
+        $campaignTypeId = $req->get('campaignTypeId');
+        $campaignTypeList =  DB::table('campaign_type')->where('campaign_type_id', $campaignTypeId)->get();
+        return $campaignTypeList;
+    }
+
+    public function ITAdminCampaignTypeCheck(Request $req)
+    {
+        $mesg;
+        $campaignTypeCode = $req->get('campaignTypeCode');
+        $campaignTypeId = $req->get('campaignTypeId');
+        if($campaignTypeId != 0 )
+        {
+            $campaignTypeList = DB::select("SELECT COUNT(*) AS count FROM campaign_type ct
+                                      WHERE ct.campaign_type_id <> ? AND ct.campaign_type_code = ?", [$campaignTypeId, $campaignTypeCode]);
+        }
+        else 
+        {
+            $campaignTypeList = DB::select("SELECT COUNT(*) AS count FROM campaign_type ct
+                                      WHERE ct.campaign_type_code = ?", [$campaignTypeCode]);
+        }
+
+        return response()->json($campaignTypeList);        
+    }
+
+    //End Campaign Type Management
+
+    //Campaign Size Management
+
+    public function ITAdminCampaignSize()
+    {
+        $campaignSizeList = DB::table('campaign_size')->get();
+        return view('it-admin-shared.it-admin-campaign-size', ['campaignSizeList' => $campaignSizeList]);
+    }
+
+    public function ITAdminCreateCampaignSize(Request $req)
+    {
+        $campaignSizeId = $req->input('hdnCampaignSizeId');
+        $mesg = "";
+        if($campaignSizeId == 0) 
+        {
+            DB::table('campaign_size')->insert([
+                'campaign_size_name' => $req->input('campaignSizeName'),
+                'campaign_size_code' => $req->input('campaignSizeCode'),
+                'created_by' => "githin.thomas",
+                'updated_by' => "githin.thomas",
+                'created_date' => now(),
+                'updated_date' => now(),
+                'active' => 1
+            ]);
+            $mesg = "Campaign size created successfully.";
+        }
+        else 
+        {
+            DB::table('campaign_size')->where('campaign_size_id', $campaignSizeId)->update([
+                'campaign_size_name' => $req->input('campaignSizeName'),
+                'campaign_size_code' => $req->input('campaignSizeCode'),
+                'updated_by' => "githin.thomas",
+                'updated_date' => now()
+            ]);
+
+            $mesg = "Campaign size updated successfully.";
+        }
+
+        return redirect()->back()->with('message', $mesg);
+    }
+
+    public function ITAdminDeleteCampaignSize(Request $req)
+    {
+        $campaignSizeId = $req->get('campaignSizeId');
+        $active = 0;
+        $mesg = "";
+        if($req->get('identification') == 0) {
+            $active = 0;
+            $mesg = "Campaign size deleted successfully.";
+        }
+        else {
+            $active = 1;
+            $mesg = "Campaign size restored successfully.";
+        }
+
+        DB::table('campaign_size')->where('campaign_size_id', $campaignSizeId)->update([
+            'active' => $active,
+            'updated_by' => "githin.thomas",
+            'updated_date' => now()
+        ]);
+
+        return response()->json([$mesg]);
+    }
+
+    public function ITAdminGetCampaignSize(Request $req)
+    {
+        $campaignSizeId = $req->get('campaignSizeId');
+        $campaignSizeList =  DB::table('campaign_size')->where('campaign_size_id', $campaignSizeId)->get();
+        return $campaignSizeList;
+    }
+
+    public function ITAdminCampaignSizeCheck(Request $req)
+    {
+        $mesg;
+        $campaignSizeCode = $req->get('campaignSizeCode');
+        $campaignSizeId = $req->get('campaignSizeId');
+        if($campaignSizeId != 0 )
+        {
+            $campaignSizeList = DB::select("SELECT COUNT(*) AS count FROM campaign_size ct
+                                      WHERE ct.campaign_size_id <> ? AND ct.campaign_size_code = ?", [$campaignSizeId, $campaignSizeCode]);
+        }
+        else 
+        {
+            $campaignSizeList = DB::select("SELECT COUNT(*) AS count FROM campaign_size ct
+                                      WHERE ct.campaign_size_code = ?", [$campaignSizeCode]);
+        }
+
+        return response()->json($campaignSizeList);        
+    }
+
+    //End Campaign Size Management
+
+    //Campaign Version Management
+
+    public function ITAdminCampaignVersion()
+    {
+        $campaignVersionList = DB::table('campaign_version')->get();
+        return view('it-admin-shared.it-admin-campaign-version', ['campaignVersionList' => $campaignVersionList]);
+    }
+
+    public function ITAdminCreateCampaignVersion(Request $req)
+    {
+        $campaignVersionId = $req->input('hdnCampaignVersionId');
+        $mesg = "";
+        if($campaignVersionId == 0) 
+        {
+            DB::table('campaign_version')->insert([
+                'campaign_version_name' => $req->input('campaignVersionName'),
+                'campaign_version_code' => $req->input('campaignVersionCode'),
+                'created_by' => "githin.thomas",
+                'updated_by' => "githin.thomas",
+                'created_date' => now(),
+                'updated_date' => now(),
+                'active' => 1
+            ]);
+            $mesg = "Campaign version created successfully.";
+        }
+        else 
+        {
+            DB::table('campaign_version')->where('campaign_version_id', $campaignVersionId)->update([
+                'campaign_version_name' => $req->input('campaignVersionName'),
+                'campaign_version_code' => $req->input('campaignVersionCode'),
+                'updated_by' => "githin.thomas",
+                'updated_date' => now()
+            ]);
+
+            $mesg = "Campaign version updated successfully.";
+        }
+
+        return redirect()->back()->with('message', $mesg);
+    }
+
+    public function ITAdminDeleteCampaignVersion(Request $req)
+    {
+        $campaignVersionId = $req->get('campaignVersionId');
+        $active = 0;
+        $mesg = "";
+        if($req->get('identification') == 0) {
+            $active = 0;
+            $mesg = "Campaign version deleted successfully.";
+        }
+        else {
+            $active = 1;
+            $mesg = "Campaign version restored successfully.";
+        }
+
+        DB::table('campaign_version')->where('campaign_version_id', $campaignVersionId)->update([
+            'active' => $active,
+            'updated_by' => "githin.thomas",
+            'updated_date' => now()
+        ]);
+
+        return response()->json([$mesg]);
+    }
+
+    public function ITAdminGetCampaignVersion(Request $req)
+    {
+        $campaignVersionId = $req->get('campaignVersionId');
+        $campaignVersionList =  DB::table('campaign_Version')->where('campaign_version_id', $campaignVersionId)->get();
+        return $campaignVersionList;
+    }
+
+    public function ITAdminCampaignVersionCheck(Request $req)
+    {
+        $mesg;
+        $campaignVersionCode = $req->get('campaignVersionCode');
+        $campaignVersionId = $req->get('campaignVersionId');
+        if($campaignVersionId != 0 )
+        {
+            $campaignVersionList = DB::select("SELECT COUNT(*) AS count FROM campaign_version ct
+                                      WHERE ct.campaign_version_id <> ? AND ct.campaign_version_code = ?", [$campaignVersionId, $campaignVersionCode]);
+        }
+        else 
+        {
+            $campaignVersionList = DB::select("SELECT COUNT(*) AS count FROM campaign_version ct
+                                      WHERE ct.campaign_version_code = ?", [$campaignVersionCode]);
+        }
+
+        return response()->json($campaignVersionList);        
+    }
+
+    //End Campaign Version Management
+
+    //Campaign Status Management
+
+    public function ITAdminCampaignStatus()
+    {
+        $campaignStatusList = DB::table('campaign_status')->get();
+        return view('it-admin-shared.it-admin-campaign-status', ['campaignStatusList' => $campaignStatusList]);
+    }
+
+    public function ITAdminCreateCampaignStatus(Request $req)
+    {
+        $campaignStatusId = $req->input('hdnCampaignStatusId');
+        $mesg = "";
+        if($campaignStatusId == 0) 
+        {
+            DB::table('campaign_status')->insert([
+                'campaign_status_name' => $req->input('campaignStatusName'),                
+                'created_by' => "githin.thomas",
+                'updated_by' => "githin.thomas",
+                'created_date' => now(),
+                'updated_date' => now(),
+                'active' => 1
+            ]);
+            $mesg = "Campaign status created successfully.";
+        }
+        else 
+        {
+            DB::table('campaign_status')->where('campaign_status_id', $campaignStatusId)->update([
+                'campaign_status_name' => $req->input('campaignStatusName'),                
+                'updated_by' => "githin.thomas",
+                'updated_date' => now()
+            ]);
+
+            $mesg = "Campaign status updated successfully.";
+        }
+
+        return redirect()->back()->with('message', $mesg);
+    }
+
+    public function ITAdminDeleteCampaignStatus(Request $req)
+    {
+        $campaignStatusId = $req->get('campaignStatusId');
+        $active = 0;
+        $mesg = "";
+        if($req->get('identification') == 0) {
+            $active = 0;
+            $mesg = "Campaign status deleted successfully.";
+        }
+        else {
+            $active = 1;
+            $mesg = "Campaign status restored successfully.";
+        }
+
+        DB::table('campaign_status')->where('campaign_status_id', $campaignStatusId)->update([
+            'active' => $active,
+            'updated_by' => "githin.thomas",
+            'updated_date' => now()
+        ]);
+
+        return response()->json([$mesg]);
+    }
+
+    public function ITAdminGetCampaignStatus(Request $req)
+    {
+        $campaignStatusId = $req->get('campaignStatusId');
+        $campaignStatusList =  DB::table('campaign_Status')->where('campaign_status_id', $campaignStatusId)->get();
+        return $campaignStatusList;
+    }
+
+    //End Campaign Status Management
+
+    //Target Segment Management
+
+    public function ITAdminTargetSegment()
+    {
+        $targetSegmentList = DB::table('target_segment')->get();
+        return view('it-admin-shared.it-admin-target-segment', ['targetSegmentList' => $targetSegmentList]);
+    }
+
+    public function ITAdminCreateTargetSegment(Request $req)
+    {
+        $targetSegmentId = $req->input('hdnTargetSegmentId');
+        $mesg = "";
+        if($targetSegmentId == 0) 
+        {
+            DB::table('target_segment')->insert([
+                'target_segment_name' => $req->input('targetSegmentName'),
+                'target_segment_code' => $req->input('targetSegmentCode'),
+                'created_by' => "githin.thomas",
+                'updated_by' => "githin.thomas",
+                'created_date' => now(),
+                'updated_date' => now(),
+                'active' => 1
+            ]);
+            $mesg = "Target segment created successfully.";
+        }
+        else 
+        {
+            DB::table('target_segment')->where('target_segment_id', $targetSegmentId)->update([
+                'target_segment_name' => $req->input('targetSegmentName'),
+                'target_segment_code' => $req->input('targetSegmentCode'),
+                'updated_by' => "githin.thomas",
+                'updated_date' => now()
+            ]);
+
+            $mesg = "Target segment updated successfully.";
+        }
+
+        return redirect()->back()->with('message', $mesg);
+    }
+
+    public function ITAdminDeleteTargetSegment(Request $req)
+    {
+        $targetSegmentId = $req->get('targetSegmentId');
+        $active = 0;
+        $mesg = "";
+        if($req->get('identification') == 0) {
+            $active = 0;
+            $mesg = "Target segment deleted successfully.";
+        }
+        else {
+            $active = 1;
+            $mesg = "Target segment restored successfully.";
+        }
+
+        DB::table('target_segment')->where('target_segment_id', $targetSegmentId)->update([
+            'active' => $active,
+            'updated_by' => "githin.thomas",
+            'updated_date' => now()
+        ]);
+
+        return response()->json([$mesg]);
+    }
+
+    public function ITAdminGetTargetSegment(Request $req)
+    {
+        $targetSegmentId = $req->get('targetSegmentId');
+        $targetSegmentList =  DB::table('target_segment')->where('target_segment_id', $targetSegmentId)->get();
+        return $targetSegmentList;
+    }
+
+    public function ITAdminTargetSegmentCheck(Request $req)
+    {
+        $mesg;
+        $targetSegmentCode = $req->get('targetSegmentCode');
+        $targetSegmentId = $req->get('targetSegmentId');
+        if($targetSegmentId != 0 )
+        {
+            $targetSegmentList = DB::select("SELECT COUNT(*) AS count FROM target_segment ct
+                                      WHERE ct.target_segment_id <> ? AND ct.target_segment_code = ?", [$targetSegmentId, $targetSegmentCode]);
+        }
+        else 
+        {
+            $targetSegmentList = DB::select("SELECT COUNT(*) AS count FROM target_segment ct
+                                      WHERE ct.target_segment_code = ?", [$targetSegmentCode]);
+        }
+
+        return response()->json($targetSegmentList);        
+    }
+
+    //End Target Segment Management
+
 }

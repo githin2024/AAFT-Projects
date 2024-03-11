@@ -32,6 +32,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.1/js/bootstrap.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.tutorialjinni.com/notify/0.4.2/notify.min.js"></script>
+    
     <style>
       .card-backgroundcolor {
         background-color: white !important;

@@ -54,14 +54,8 @@ Route::get('lead-request-campaign', [ITAdminController::class, 'ITAdminCampaignL
 Route::get('it-admin-view-campaign', [ITAdminController::class, 'ITAdminView']);
 Route::get('edit-accept-campaign', [ITAdminController::class, 'ITAdminEditAccept']);
 Route::get('it-admin-settings', [ITAdminController::class, 'ITAdminSettings']);
+Route::get('it-admin-campaign-download', [ITAdminController::class, 'ITAdminCampaignDownload']);
 Route::get('it-admin-users', [ITAdminController::class, 'ITAdminUsers']);
-
-Route::get('it-admin-target-location', [ITAdminController::class, 'ITAdminTargetLocation']);
-Route::get('it-admin-campaign-type', [ITAdminController::class, 'ITAdminCampaignType']);
-Route::get('it-admin-campaign-size', [ITAdminController::class, 'ITAdminCampaignSize']);
-Route::get('it-admin-campaign-version', [ITAdminController::class, 'ITAdminCampaignVersion']);
-Route::get('it-admin-campaign-status', [ITAdminController::class, 'ITAdminCampaignStatus']);
-Route::get('it-admin-target-segment', [ITAdminController::class, 'ITAdminTargetSegment']);
 
 //Setting Role
 Route::get('it-admin-role', [ITAdminController::class, 'ITAdminRole']);
@@ -110,3 +104,44 @@ Route::post('it-admin-headline-create', [ITAdminController::class, 'ITAdminCreat
 Route::get('it-admin-headline-delete', [ITAdminController::class, 'ITAdminDeleteHeadline']);
 Route::get('it-admin-headline-check', [ITAdminController::class, 'ITAdminHeadlineCheck']);
 
+//Settings Target Location
+Route::get('it-admin-target-location', [ITAdminController::class, 'ITAdminTargetLocation']);
+Route::get('it-admin-target-location-edit', [ITAdminController::class, 'ITAdminGetTargetLocation']);
+Route::post('it-admin-target-location-create', [ITAdminController::class, 'ITAdminCreateTargetLocation']);
+Route::get('it-admin-target-location-delete', [ITAdminController::class, 'ITAdminDeleteTargetLocation']);
+Route::get('it-admin-target-location-check', [ITAdminController::class, 'ITAdminTargetLocationCheck']);
+
+//Settings Campaign Type
+Route::get('it-admin-campaign-type', [ITAdminController::class, 'ITAdminCampaignType']);
+Route::get('it-admin-campaign-type-edit', [ITAdminController::class, 'ITAdminGetCampaignType']);
+Route::post('it-admin-campaign-type-create', [ITAdminController::class, 'ITAdminCreateCampaignType']);
+Route::get('it-admin-campaign-type-delete', [ITAdminController::class, 'ITAdminDeleteCampaignType']);
+Route::get('it-admin-campaign-type-check', [ITAdminController::class, 'ITAdminCampaignTypeCheck']);
+
+//Settings Campaign Size
+Route::get('it-admin-campaign-size', [ITAdminController::class, 'ITAdminCampaignSize']);
+Route::get('it-admin-campaign-size-edit', [ITAdminController::class, 'ITAdminGetCampaignSize']);
+Route::post('it-admin-campaign-size-create', [ITAdminController::class, 'ITAdminCreateCampaignSize']);
+Route::get('it-admin-campaign-size-delete', [ITAdminController::class, 'ITAdminDeleteCampaignSize']);
+Route::get('it-admin-campaign-size-check', [ITAdminController::class, 'ITAdminCampaignSizeCheck']);
+
+//Settings Campaign Version
+Route::get('it-admin-campaign-version', [ITAdminController::class, 'ITAdminCampaignVersion']);
+Route::get('it-admin-campaign-version-edit', [ITAdminController::class, 'ITAdminGetCampaignVersion']);
+Route::post('it-admin-campaign-version-create', [ITAdminController::class, 'ITAdminCreateCampaignVersion']);
+Route::get('it-admin-campaign-version-delete', [ITAdminController::class, 'ITAdminDeleteCampaignVersion']);
+Route::get('it-admin-campaign-version-check', [ITAdminController::class, 'ITAdminCampaignVersionCheck']);
+
+//Settings Campaign Status
+Route::get('it-admin-campaign-status', [ITAdminController::class, 'ITAdminCampaignStatus']);
+Route::get('it-admin-campaign-status-edit', [ITAdminController::class, 'ITAdminGetCampaignStatus']);
+Route::post('it-admin-campaign-status-create', [ITAdminController::class, 'ITAdminCreateCampaignStatus']);
+Route::get('it-admin-campaign-status-delete', [ITAdminController::class, 'ITAdminDeleteCampaignStatus']);
+Route::get('it-admin-campaign-status-check', [ITAdminController::class, 'ITAdminCampaignStatusCheck']);
+
+//Settings Target Segment
+Route::get('it-admin-target-segment', [ITAdminController::class, 'ITAdminTargetSegment']);
+Route::get('it-admin-target-segment-edit', [ITAdminController::class, 'ITAdminGetTargetSegment']);
+Route::post('it-admin-target-segment-create', [ITAdminController::class, 'ITAdminCreateTargetSegment']);
+Route::get('it-admin-target-segment-delete', [ITAdminController::class, 'ITAdminDeleteTargetSegment']);
+Route::get('it-admin-target-segment-check', [ITAdminController::class, 'ITAdminTargetSegmentCheck']);
