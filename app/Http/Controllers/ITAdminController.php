@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Exports\ExportCampaign;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Hash;
+
 class ITAdminController extends Controller
 {
     public function ITAdminHome()
@@ -1225,5 +1227,89 @@ class ITAdminController extends Controller
     }
 
     //End Target Segment Management
+
+    //User Registration Management
+    public function ITAdminUsers()
+    {
+        $userRegistrationList = DB::select("SELECT u.user_id, CONCAT(u.first_name, ' ',u.last_name) AS name, u.email, u.username, r.role_name, u.active 
+                                            FROM users u
+                                            LEFT JOIN role r ON u.fk_role_id = r.role_id");
+        $roleList = DB::table('role')->get();
+        return view('it-admin-shared.it-admin-users', ['userRegistrationList' => $userRegistrationList, 'roleList' => $roleList]);
+    }
+
+    public function ITAdminCreateUsers(Request $req)
+    {
+        $userId = $req->input('hdnUserId');
+        $mesg = "";
+        $hashPassword = Hash::make($req->input('password'));
+        if($userId == 0) 
+        {
+            DB::table('users')->insert([
+                'first_name' => $req->input('firstName'),
+                'last_name' => $req->input('lastName'),
+                'email' => $req->input('email'),
+                'username' => $req->input('username'),
+                'password' => $hashPassword,
+                'first_login' => 1,
+                'fk_role_id' => $req->input('role'),
+                'created_by' => "githin.thomas",
+                'updated_by' => "githin.thomas",
+                'created_date' => now(),
+                'updated_date' => now(),
+                'active' => 1
+            ]);
+            $mesg = "User created successfully.";
+        }
+        else 
+        {
+            DB::table('users')->where('user_id', $userId)->update([
+                'first_name' => $req->input('firstName'),
+                'last_name' => $req->input('lastName'),
+                'email' => $req->input('email'),
+                'username' => $req->input('username'),
+                'fk_role_id' => $req->input('role'),
+                'updated_by' => "githin.thomas",
+                'updated_date' => now(),
+                'active' => 1
+            ]);
+
+            $mesg = "User updated successfully.";
+        }
+
+        return redirect()->back()->with('message', $mesg);
+    }
+
+    public function ITAdminGetUsers(Request $req)
+    {
+        $userId = $req->get('userId');
+        $userList =  DB::table('users')->where('user_id', $userId)->get();
+        return $userList;
+    }
+
+    public function ITAdminDeleteUsers(Request $req)
+    {
+        $userId = $req->get('userId');
+        $active = 0;
+        $mesg = "";
+        if($req->get('identification') == 0) {
+            $active = 0;
+            $mesg = "User deleted successfully.";
+        }
+        else {
+            $active = 1;
+            $mesg = "User restored successfully.";
+        }
+
+        DB::table('users')->where('user_id', $userId)->update([
+            'active' => $active,
+            'updated_by' => "githin.thomas",
+            'updated_date' => now()
+        ]);
+
+        return response()->json([$mesg]);
+    }
+
+    //End User Registration Management
 
 }

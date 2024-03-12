@@ -19,7 +19,7 @@ use App\Http\Controllers\ITAdminController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('user-login');
 });
 
 //External Marketing Dashboard
@@ -145,3 +145,9 @@ Route::get('it-admin-target-segment-edit', [ITAdminController::class, 'ITAdminGe
 Route::post('it-admin-target-segment-create', [ITAdminController::class, 'ITAdminCreateTargetSegment']);
 Route::get('it-admin-target-segment-delete', [ITAdminController::class, 'ITAdminDeleteTargetSegment']);
 Route::get('it-admin-target-segment-check', [ITAdminController::class, 'ITAdminTargetSegmentCheck']);
+
+//Settings Target Segment
+Route::get('it-admin-users', [ITAdminController::class, 'ITAdminUsers']);
+Route::get('it-admin-users-edit', [ITAdminController::class, 'ITAdminGetUsers']);
+Route::post('it-admin-users-create', [ITAdminController::class, 'ITAdminCreateUsers']);
+Route::get('it-admin-users-delete', [ITAdminController::class, 'ITAdminDeleteUsers']);
