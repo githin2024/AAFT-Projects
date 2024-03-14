@@ -83,17 +83,7 @@
       <div class="modal-body">        
         <form action="{{ url('it-admin-campaign-price-create')}}" method="post" id="campaginPriceForm">
           @csrf
-          <input type="hidden" id="hdnCampaignPriceId" name="hdnCampaignPriceId" />
-          <div class="row form-group">
-            <div class="col-md-5">
-              <label for="campaignPriceName">Campaign Price</label>
-              <span class="text-danger">*</span>
-            </div>
-            <div class="col-md-7">
-              <input type="text" class="form-control" id="campaignPriceName" name="campaignPriceName"  />
-              <span id="campaign-price-error" class="text-danger"></span>
-            </div>
-          </div>
+          <input type="hidden" id="hdnCampaignPriceId" name="hdnCampaignPriceId" />          
           <div class="row form-group mt-2">
             <div class="col-md-5">
               <label for="campaignPriceCode">Campaign Price Code</label>
@@ -102,6 +92,16 @@
             <div class="col-md-7">
               <input type="text" class="form-control" id="campaignPriceCode" name="campaignPriceCode" onchange="checkCampaignPriceCode();" maxlength="5" />
               <span id="campaign-price-code-error" class="text-danger"></span>
+            </div>
+          </div>
+          <div class="row form-group">
+            <div class="col-md-5">
+              <label for="campaignPriceName">Campaign Price</label>
+              <span class="text-danger">*</span>
+            </div>
+            <div class="col-md-7">
+              <input type="text" class="form-control" id="campaignPriceName" name="campaignPriceName"  />
+              <span id="campaign-price-error" class="text-danger"></span>
             </div>
           </div>
           <hr />
