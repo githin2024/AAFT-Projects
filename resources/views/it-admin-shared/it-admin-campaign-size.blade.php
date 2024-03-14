@@ -84,6 +84,16 @@
         <form action="{{ url('it-admin-campaign-size-create')}}" method="post" id="campaignSizeForm">
           @csrf
           <input type="hidden" id="hdnCampaignSizeId" name="hdnCampaignSizeId" />
+          <div class="row form-group mt-2">
+            <div class="col-md-5">
+              <label for="campaignSizeCode">Campaign Size Code</label>
+              <span class="text-danger">*</span>
+            </div>
+            <div class="col-md-7">
+              <input type="text" class="form-control" id="campaignSizeCode" name="campaignSizeCode" onchange="checkCampaignSizeCode();" maxlength="10" />
+              <span id="campaign-size-code-error" class="text-danger"></span>
+            </div>
+          </div>  
           <div class="row form-group">
             <div class="col-md-5">
               <label for="campaignSizeName">Campaign Size</label>
@@ -94,16 +104,7 @@
               <span id="campaign-size-error" class="text-danger"></span>
             </div>
           </div>
-          <div class="row form-group mt-2">
-            <div class="col-md-5">
-              <label for="campaignSizeCode">Campaign Size Code</label>
-              <span class="text-danger">*</span>
-            </div>
-            <div class="col-md-7">
-              <input type="text" class="form-control" id="campaignSizeCode" name="campaignSizeCode" onchange="checkCampaignSizeCode();" maxlength="10" />
-              <span id="campaign-size-code-error" class="text-danger"></span>
-            </div>
-          </div>
+          
           <hr />
           <div class="row form-group mt-2">
             <div class="col-md-5">
