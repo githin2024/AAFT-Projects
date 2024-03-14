@@ -84,6 +84,16 @@
         <form action="{{ url('it-admin-program-type-create')}}" method="post" id="programTypeForm">
           @csrf
           <input type="hidden" id="hdnProgramTypeId" name="hdnProgramTypeId" />
+          <div class="row form-group mt-2">
+            <div class="col-md-4">
+              <label for="programTypeCode">Program Type Code</label>
+              <span class="text-danger">*</span>
+            </div>
+            <div class="col-md-7">
+              <input type="text" class="form-control" id="programTypeCode" name="programTypeCode" onchange="checkProgramTypeCode();" maxlength="5" />
+              <span id="program-type-code-error" class="text-danger"></span>
+            </div>
+          </div>  
           <div class="row form-group">
             <div class="col-md-4">
               <label for="programTypeName">Program Type</label>
@@ -94,16 +104,7 @@
               <span id="program-type-error" class="text-danger"></span>
             </div>
           </div>
-          <div class="row form-group mt-2">
-            <div class="col-md-4">
-              <label for="programTypeCode">Program Type Code</label>
-              <span class="text-danger">*</span>
-            </div>
-            <div class="col-md-7">
-              <input type="text" class="form-control" id="programTypeCode" name="programTypeCode" onchange="checkProgramTypeCode();" maxlength="5" />
-              <span id="program-type-code-error" class="text-danger"></span>
-            </div>
-          </div>
+          
           <hr />
           <div class="row form-group mt-2">
             <div class="col-md-5">
