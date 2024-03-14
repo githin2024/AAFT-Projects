@@ -83,6 +83,16 @@
         <form action="{{ url('it-admin-target-segment-create')}}" method="post" id="targetSegmentForm">
           @csrf
           <input type="hidden" id="hdnTargetSegmentId" name="hdnTargetSegmentId" />
+          <div class="row form-group mt-2">
+            <div class="col-md-5">
+              <label for="targetSegmentCode">Target Segment Code</label>
+              <span class="text-danger">*</span>
+            </div>
+            <div class="col-md-7">
+              <input type="text" class="form-control" id="targetSegmentCode" name="targetSegmentCode" onchange="checkTargetSegmentCode();" maxlength="5" />
+              <span id="target-segment-code-error" class="text-danger"></span>
+            </div>
+          </div>  
           <div class="row form-group">
             <div class="col-md-5">
               <label for="targetSegmentName">Target Segment</label>
@@ -93,16 +103,7 @@
               <span id="target-segment-error" class="text-danger"></span>
             </div>
           </div>
-          <div class="row form-group mt-2">
-            <div class="col-md-5">
-              <label for="targetSegmentCode">Target Segment Code</label>
-              <span class="text-danger">*</span>
-            </div>
-            <div class="col-md-7">
-              <input type="text" class="form-control" id="targetSegmentCode" name="targetSegmentCode" onchange="checkTargetSegmentCode();" maxlength="5" />
-              <span id="target-segment-code-error" class="text-danger"></span>
-            </div>
-          </div>
+          
           <hr />
           <div class="row form-group mt-2">
             <div class="col-md-5">
