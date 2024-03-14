@@ -84,6 +84,16 @@
         <form action="{{ url('it-admin-headline-create')}}" method="post" id="headlineForm">
           @csrf
           <input type="hidden" id="hdnHeadlineId" name="hdnHeadlineId" />
+          <div class="row form-group mt-2">
+            <div class="col-md-5">
+              <label for="headlineCode">Headline Code</label>
+              <span class="text-danger">*</span>
+            </div>
+            <div class="col-md-7">
+              <input type="text" class="form-control" id="headlineCode" name="headlineCode" onchange="checkHeadlineCode();" maxlength="5" />
+              <span id="headline-code-error" class="text-danger"></span>
+            </div>
+          </div>  
           <div class="row form-group">
             <div class="col-md-5">
               <label for="headlineName">Headline</label>
@@ -94,16 +104,7 @@
               <span id="headline-error" class="text-danger"></span>
             </div>
           </div>
-          <div class="row form-group mt-2">
-            <div class="col-md-5">
-              <label for="headlineCode">Headline Code</label>
-              <span class="text-danger">*</span>
-            </div>
-            <div class="col-md-7">
-              <input type="text" class="form-control" id="headlineCode" name="headlineCode" onchange="checkHeadlineCode();" maxlength="5" />
-              <span id="headline-code-error" class="text-danger"></span>
-            </div>
-          </div>
+          
           <hr />
           <div class="row form-group mt-2">
             <div class="col-md-5">
