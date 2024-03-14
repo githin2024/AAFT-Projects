@@ -84,6 +84,16 @@
         <form action="{{ url('it-admin-target-location-create')}}" method="post" id="targetLocationForm">
           @csrf
           <input type="hidden" id="hdnTargetLocationId" name="hdnTargetLocationId" />
+          <div class="row form-group mt-2">
+            <div class="col-md-5">
+              <label for="targetLocationCode">Target Location Code</label>
+              <span class="text-danger">*</span>
+            </div>
+            <div class="col-md-7">
+              <input type="text" class="form-control" id="targetLocationCode" name="targetLocationCode" onchange="checkTargetLocationCode();" maxlength="5" />
+              <span id="target-location-code-error" class="text-danger"></span>
+            </div>
+          </div>  
           <div class="row form-group">
             <div class="col-md-5">
               <label for="targetLocationName">Target Location</label>
@@ -94,16 +104,7 @@
               <span id="target-location-error" class="text-danger"></span>
             </div>
           </div>
-          <div class="row form-group mt-2">
-            <div class="col-md-5">
-              <label for="targetLocationCode">Target Location Code</label>
-              <span class="text-danger">*</span>
-            </div>
-            <div class="col-md-7">
-              <input type="text" class="form-control" id="targetLocationCode" name="targetLocationCode" onchange="checkTargetLocationCode();" maxlength="5" />
-              <span id="target-location-code-error" class="text-danger"></span>
-            </div>
-          </div>
+          
           <hr />
           <div class="row form-group mt-2">
             <div class="col-md-5">
