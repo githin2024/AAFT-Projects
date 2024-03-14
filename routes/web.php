@@ -5,7 +5,7 @@ use App\Http\Controllers\ExtHomeController;
 use App\Http\Controllers\IntHomeController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ITAdminController;
-
+use APP\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,9 +18,17 @@ use App\Http\Controllers\ITAdminController;
 |
 */
 
-Route::get('/', function () {
+Route::get('/login', function () {
     return view('user-login');
 });
+
+Route::get('first-login', function() {
+    return view('first-login');
+});
+
+Route::post('login-user', [AdminController::class, 'LoginUser']);
+Route::get('logout', [AdminController::class, 'LogoutUser']);
+Route::post('change-password', [AdminController::class, 'ChangePassword']);
 
 //External Marketing Dashboard
 Route::get('home', [ExtHomeController::class, 'index']);

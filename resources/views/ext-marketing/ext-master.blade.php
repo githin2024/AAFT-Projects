@@ -69,17 +69,26 @@
       <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" data-scroll="true">
         <div class="container-fluid py-1 px-3">
           <nav aria-label="breadcrumb">          
-            <h6 class="font-weight-bolder mb-0" style="font-size: x-large">Welcome to Task Minder</h6>
+            <h6 class="font-weight-bolder mb-0" style="font-size: x-large">Welcome {{ session()->get('firstName'). " " . session()->get('lastName') }}</h6>
           </nav>
           <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
             <div class="ms-md-auto pe-md-3 d-flex align-items-center">
             </div>
             <ul class="navbar-nav  justify-content-end">           
-              <li class="nav-item d-flex align-items-center">
-                <a href="#" class="nav-link text-body font-weight-bold px-0">
-                  <i class="material-symbols-outlined">power_settings_new</i>
-                  <span class="d-sm-inline d-none">Logout</span>
+              <li class="nav-item dropdown pe-2 d-flex align-items-center">
+                <a href="javascript:;" class="nav-link text-body p-0" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="fa fa-user me-sm-1">&nbsp;{{ session()->get('username') }}</i>
                 </a>
+                <ul class="dropdown-menu  dropdown-menu-end  px-2 py-3 me-sm-n4" aria-labelledby="dropdownMenuButton">
+                  <li class="mb-2">
+                    <a class="dropdown-item border-radius-md" href="javascript:;">
+                      <div class="d-flex">                        
+                        <div class="my-auto">
+                          <a href="{{ url('logout') }}" class="dropdown-item">Logout</a>
+                        </div>
+                      </div>
+                    </a>
+                  </li>                
               </li>
             </ul>
           </div>

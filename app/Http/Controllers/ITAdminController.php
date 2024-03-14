@@ -12,59 +12,73 @@ class ITAdminController extends Controller
 {
     public function ITAdminHome()
     {
-        $campaignList = DB::select("SELECT c.campaign_id, i.institution_name, pt.program_type_name, c.campaign_name, ls.leadsource_name, 
-                                    cs.course_name, cps.campaign_status_name 
-                                    FROM campaigns c
-                                    LEFT JOIN program_type pt ON c.fk_program_type_id = pt.program_type_id 
-                                    LEFT JOIN leadsource ls ON c.fk_lead_source_id = ls.leadsource_id
-                                    LEFT JOIN courses cs ON c.fk_course_id = cs.course_id
-                                    LEFT JOIN institution i ON i.institution_id = cs.fk_institution_id
-                                    LEFT JOIN campaign_status cps ON c.fk_campaign_status_id = cps.campaign_status_id
-                                    WHERE c.active = 1 AND i.institution_id = ? ORDER BY c.created_by DESC", [1]);
+        if(session('username') != "")
+        {
+            $campaignList = DB::select("SELECT c.campaign_id, i.institution_name, pt.program_type_name, c.campaign_name, ls.leadsource_name, 
+                                        cs.course_name, cps.campaign_status_name 
+                                        FROM campaigns c
+                                        LEFT JOIN program_type pt ON c.fk_program_type_id = pt.program_type_id 
+                                        LEFT JOIN leadsource ls ON c.fk_lead_source_id = ls.leadsource_id
+                                        LEFT JOIN courses cs ON c.fk_course_id = cs.course_id
+                                        LEFT JOIN institution i ON i.institution_id = cs.fk_institution_id
+                                        LEFT JOIN campaign_status cps ON c.fk_campaign_status_id = cps.campaign_status_id
+                                        WHERE c.active = 1 AND i.institution_id = ? ORDER BY c.created_by DESC", [1]);
 
-        $campaignLeadCount = DB::select("SELECT l.leadsource_name as `Leadsource_Name`, COUNT(c.campaign_id) AS `Campaign_Count` FROM campaigns c
-                                            LEFT JOIN leadsource l ON c.fk_lead_source_id = l.leadsource_id
-                                            LEFT JOIN courses cs ON c.fk_course_id = cs.course_id
-                                            LEFT JOIN institution i ON i.institution_id = cs.fk_institution_id                                            
-                                            GROUP BY l.leadsource_id, l.leadsource_name");
-        
-        $campaignLeadCollect = collect($campaignLeadCount)->pluck('Campaign_Count', 'Leadsource_Name');
-        
-        $labels = $campaignLeadCollect->keys();
-        $leadCount = $campaignLeadCollect->values();
+            $campaignLeadCount = DB::select("SELECT l.leadsource_name as `Leadsource_Name`, COUNT(c.campaign_id) AS `Campaign_Count` FROM campaigns c
+                                                LEFT JOIN leadsource l ON c.fk_lead_source_id = l.leadsource_id
+                                                LEFT JOIN courses cs ON c.fk_course_id = cs.course_id
+                                                LEFT JOIN institution i ON i.institution_id = cs.fk_institution_id                                            
+                                                GROUP BY l.leadsource_id, l.leadsource_name");
+            
+            $campaignLeadCollect = collect($campaignLeadCount)->pluck('Campaign_Count', 'Leadsource_Name');
+            
+            $labels = $campaignLeadCollect->keys();
+            $leadCount = $campaignLeadCollect->values();
 
-        return view('it-admin-shared.it-admin-home', compact(['campaignList', 'labels', 'leadCount']));
+            return view('it-admin-shared.it-admin-home', compact(['campaignList', 'labels', 'leadCount']));
+        }
+        else 
+        {
+            return view('user-login');
+        }
     }
 
     public function ITAdminCampaign()
     {
-        $campaignList = DB::select("SELECT c.campaign_id, i.institution_name, pt.program_type_name, c.campaign_name, ls.leadsource_name, 
-                                            cs.course_name, cps.campaign_status_name, cpc.camp_param_check_id, clr.lead_request_id, 
-                                            cer.camp_edit_request_id, cer.camp_edit_request, cer.camp_edit_accept, cdr.camp_delete_request_id, cer.active AS `Edit_Active`, clr.active AS `Lead_Active` 
-                                            FROM campaigns c
-                                            LEFT JOIN program_type pt ON c.fk_program_type_id = pt.program_type_id 
-                                            LEFT JOIN leadsource ls ON c.fk_lead_source_id = ls.leadsource_id
-                                            LEFT JOIN courses cs ON c.fk_course_id = cs.course_id
-                                            LEFT JOIN institution i ON i.institution_id = cs.fk_institution_id
-                                            LEFT JOIN campaign_status cps ON c.fk_campaign_status_id = cps.campaign_status_id
-                                            LEFT JOIN campaign_parameters_check cpc ON cpc.fk_campaign_id = c.campaign_id
-                                            LEFT JOIN campaign_lead_request clr ON clr.fk_campaign_id = c.campaign_id
-                                            LEFT JOIN campaign_edit_request cer ON cer.fk_campaign_id = c.campaign_id
-                                            LEFT JOIN campaign_delete_request cdr ON cdr.fk_campaign_id = c.campaign_id
-                                            WHERE c.active = 1");
-        
-        return view('it-admin-shared.it-admin-campaign', ['campaignList' => $campaignList]);
+        if(session('username') != "")
+        {
+            $campaignList = DB::select("SELECT c.campaign_id, i.institution_name, pt.program_type_name, c.campaign_name, ls.leadsource_name, 
+                                                cs.course_name, cps.campaign_status_name, cpc.camp_param_check_id, clr.lead_request_id, 
+                                                cer.camp_edit_request_id, cer.camp_edit_request, cer.camp_edit_accept, cdr.camp_delete_request_id, cer.active AS `Edit_Active`, clr.active AS `Lead_Active` 
+                                                FROM campaigns c
+                                                LEFT JOIN program_type pt ON c.fk_program_type_id = pt.program_type_id 
+                                                LEFT JOIN leadsource ls ON c.fk_lead_source_id = ls.leadsource_id
+                                                LEFT JOIN courses cs ON c.fk_course_id = cs.course_id
+                                                LEFT JOIN institution i ON i.institution_id = cs.fk_institution_id
+                                                LEFT JOIN campaign_status cps ON c.fk_campaign_status_id = cps.campaign_status_id
+                                                LEFT JOIN campaign_parameters_check cpc ON cpc.fk_campaign_id = c.campaign_id
+                                                LEFT JOIN campaign_lead_request clr ON clr.fk_campaign_id = c.campaign_id
+                                                LEFT JOIN campaign_edit_request cer ON cer.fk_campaign_id = c.campaign_id
+                                                LEFT JOIN campaign_delete_request cdr ON cdr.fk_campaign_id = c.campaign_id
+                                                WHERE c.active = 1");
+            
+            return view('it-admin-shared.it-admin-campaign', ['campaignList' => $campaignList]);
+        }
+        else {
+            return view('user-login');
+        }
     }
 
     public function ITAdminCampaignLeadRequest(Request $req)
-    {       
+    {
+               
         DB::table('campaign_lead_request')->insert([
             'fk_campaign_id' => $req->get('campaignId'),
             'fk_user_id' => 3,
             'campaign_lead_request' => 1,
             'campagin_lead_request_date' => now(),
-            'created_by' => "githin.thomas",
-            'updated_by' => "githin.thomas",
+            'created_by' => session('username'),
+            'updated_by' => session('username'),
             'created_date' => now(),
             'updated_date' => now(),
             'active' => 1   
@@ -93,7 +107,7 @@ class ITAdminController extends Controller
         DB::table('campaign_edit_request')->where('fk_campaign_id', $req->get('campaignId'))->update([
             'camp_edit_accept' => 1,
             'camp_edit_accept_date' => now(),
-            'updated_by' => "githin.thomas",
+            'updated_by' => session('username'),
             'updated_date' => now()
         ]);
 
@@ -107,15 +121,29 @@ class ITAdminController extends Controller
 
     public function ITAdminSettings()
     {
-        return view('it-admin-shared.it-admin-settings');
+        if(session('username') != "")
+        {
+            return view('it-admin-shared.it-admin-settings');
+        }
+        else
+        {
+            return view('user-login');
+        }
     }
 
     // Role Management
 
     public function ITAdminRole()
     {
-        $roleList = DB::table('role')->get();
-        return view('it-admin-shared.it-admin-role', ['roleList' => $roleList]);
+        if(session('username') != "")
+        {
+            $roleList = DB::table('role')->get();
+            return view('it-admin-shared.it-admin-role', ['roleList' => $roleList]);
+        }
+        else 
+        {
+            return view('user-login');
+        }
     }
 
     public function ITAdminCreateRole(Request $req)
@@ -183,8 +211,15 @@ class ITAdminController extends Controller
 
     public function ITAdminAgency()
     {
-        $agencyList = DB::table('agency')->get();
-        return view('it-admin-shared.it-admin-agency', ['agencyList' => $agencyList]);
+        if(session('username') != "")
+        {
+            $agencyList = DB::table('agency')->get();
+            return view('it-admin-shared.it-admin-agency', ['agencyList' => $agencyList]);
+        }
+        else 
+        {
+            return view('user-login');
+        }
     }
 
     public function ITAdminCreateAgency(Request $req)
@@ -273,8 +308,15 @@ class ITAdminController extends Controller
     // Lead Source Management
     public function ITAdminLeadSource()
     {
-        $leadsourceList = DB::table('leadsource')->get();
-        return view('it-admin-shared.it-admin-lead-source', ['leadsourceList' => $leadsourceList]);
+        if(session('username') != "")
+        {
+            $leadsourceList = DB::table('leadsource')->get();
+            return view('it-admin-shared.it-admin-lead-source', ['leadsourceList' => $leadsourceList]);
+        }
+        else 
+        {
+            return view('user-login');
+        }
     }
 
     public function ITAdminCreateLeadSource(Request $req)
@@ -343,8 +385,15 @@ class ITAdminController extends Controller
 
     public function ITAdminProgramType()
     {
-        $programTypeList = DB::table('program_type')->get();
-        return view('it-admin-shared.it-admin-program-type', ['programTypeList' => $programTypeList]);
+        if(session('username') != "")
+        {
+            $programTypeList = DB::table('program_type')->get();
+            return view('it-admin-shared.it-admin-program-type', ['programTypeList' => $programTypeList]);
+        }
+        else
+        {
+            return view('user-login');
+        }
     }
 
     public function ITAdminCreateProgramType(Request $req)
@@ -434,8 +483,15 @@ class ITAdminController extends Controller
 
     public function ITAdminPersona()
     {
-        $personaList = DB::table('persona')->get();
-        return view('it-admin-shared.it-admin-persona', ['personaList' => $personaList]);
+        if(session('username') != "")
+        {
+            $personaList = DB::table('persona')->get();
+            return view('it-admin-shared.it-admin-persona', ['personaList' => $personaList]);
+        }
+        else
+        {
+            return view('user-login');
+        }
     }
 
     public function ITAdminCreatePersona(Request $req)
@@ -525,8 +581,15 @@ class ITAdminController extends Controller
 
     public function ITAdminCampaignPrice()
     {
-        $campaignPriceList = DB::table('campaign_price')->get();
-        return view('it-admin-shared.it-admin-campaign-price', ['campaignPriceList' => $campaignPriceList]);
+        if(session('username') != "")
+        {
+            $campaignPriceList = DB::table('campaign_price')->get();
+            return view('it-admin-shared.it-admin-campaign-price', ['campaignPriceList' => $campaignPriceList]);
+        }
+        else
+        {
+            return view('user-login');
+        }
     }
 
     public function ITAdminCreateCampaignPrice(Request $req)
@@ -616,8 +679,11 @@ class ITAdminController extends Controller
 
     public function ITAdminHeadline()
     {
-        $headlineList = DB::table('headline')->get();
-        return view('it-admin-shared.it-admin-headline', ['headlineList' => $headlineList]);
+        if(session('username') != "")
+        {
+            $headlineList = DB::table('headline')->get();
+            return view('it-admin-shared.it-admin-headline', ['headlineList' => $headlineList]);
+        }
     }
 
     public function ITAdminCreateHeadline(Request $req)
@@ -707,8 +773,15 @@ class ITAdminController extends Controller
 
     public function ITAdminTargetLocation()
     {
-        $targetLocationList = DB::table('target_location')->get();
-        return view('it-admin-shared.it-admin-target-location', ['targetLocationList' => $targetLocationList]);
+        if(session('username') != "")
+        {
+            $targetLocationList = DB::table('target_location')->get();
+            return view('it-admin-shared.it-admin-target-location', ['targetLocationList' => $targetLocationList]);
+        }
+        else
+        {
+            return view('user-login');
+        }
     }
 
     public function ITAdminCreateTargetLocation(Request $req)
@@ -889,8 +962,15 @@ class ITAdminController extends Controller
 
     public function ITAdminCampaignSize()
     {
-        $campaignSizeList = DB::table('campaign_size')->get();
-        return view('it-admin-shared.it-admin-campaign-size', ['campaignSizeList' => $campaignSizeList]);
+        if(session('username') != "")
+        {
+            $campaignSizeList = DB::table('campaign_size')->get();
+            return view('it-admin-shared.it-admin-campaign-size', ['campaignSizeList' => $campaignSizeList]);
+        }
+        else
+        {
+            return view('user-login');
+        }
     }
 
     public function ITAdminCreateCampaignSize(Request $req)
@@ -980,8 +1060,15 @@ class ITAdminController extends Controller
 
     public function ITAdminCampaignVersion()
     {
-        $campaignVersionList = DB::table('campaign_version')->get();
-        return view('it-admin-shared.it-admin-campaign-version', ['campaignVersionList' => $campaignVersionList]);
+        if(session('username') != "")
+        {
+            $campaignVersionList = DB::table('campaign_version')->get();
+            return view('it-admin-shared.it-admin-campaign-version', ['campaignVersionList' => $campaignVersionList]);
+        }
+        else 
+        {
+            return view('user-login');
+        }
     }
 
     public function ITAdminCreateCampaignVersion(Request $req)
@@ -1071,8 +1158,15 @@ class ITAdminController extends Controller
 
     public function ITAdminCampaignStatus()
     {
-        $campaignStatusList = DB::table('campaign_status')->get();
-        return view('it-admin-shared.it-admin-campaign-status', ['campaignStatusList' => $campaignStatusList]);
+        if(session('username') != "")
+        {
+            $campaignStatusList = DB::table('campaign_status')->get();
+            return view('it-admin-shared.it-admin-campaign-status', ['campaignStatusList' => $campaignStatusList]);
+        }
+        else
+        {
+            return view('user-login');
+        }
     }
 
     public function ITAdminCreateCampaignStatus(Request $req)
@@ -1141,8 +1235,15 @@ class ITAdminController extends Controller
 
     public function ITAdminTargetSegment()
     {
-        $targetSegmentList = DB::table('target_segment')->get();
-        return view('it-admin-shared.it-admin-target-segment', ['targetSegmentList' => $targetSegmentList]);
+        if(session('username') != "")
+        {
+            $targetSegmentList = DB::table('target_segment')->get();
+            return view('it-admin-shared.it-admin-target-segment', ['targetSegmentList' => $targetSegmentList]);
+        }
+        else
+        {
+            return view('user-login');
+        }
     }
 
     public function ITAdminCreateTargetSegment(Request $req)
@@ -1231,18 +1332,25 @@ class ITAdminController extends Controller
     //User Registration Management
     public function ITAdminUsers()
     {
-        $userRegistrationList = DB::select("SELECT u.user_id, CONCAT(u.first_name, ' ',u.last_name) AS name, u.email, u.username, r.role_name, u.active 
-                                            FROM users u
-                                            LEFT JOIN role r ON u.fk_role_id = r.role_id");
-        $roleList = DB::table('role')->get();
-        return view('it-admin-shared.it-admin-users', ['userRegistrationList' => $userRegistrationList, 'roleList' => $roleList]);
+        if(session('username') != "")
+        {
+            $userRegistrationList = DB::select("SELECT u.user_id, CONCAT(u.first_name, ' ',u.last_name) AS name, u.email, u.username, r.role_name, u.active 
+                                                FROM users u
+                                                LEFT JOIN role r ON u.fk_role_id = r.role_id");
+            $roleList = DB::table('role')->get();
+            return view('it-admin-shared.it-admin-users', ['userRegistrationList' => $userRegistrationList, 'roleList' => $roleList]);
+        }
+        else
+        {
+            return view('user-login');
+        }
     }
 
     public function ITAdminCreateUsers(Request $req)
     {
         $userId = $req->input('hdnUserId');
         $mesg = "";
-        $hashPassword = Hash::make($req->input('password'));
+        //$hashPassword = Hash::make($req->input('password'));
         if($userId == 0) 
         {
             DB::table('users')->insert([
@@ -1250,7 +1358,7 @@ class ITAdminController extends Controller
                 'last_name' => $req->input('lastName'),
                 'email' => $req->input('email'),
                 'username' => $req->input('username'),
-                'password' => $hashPassword,
+                'password' => $req->input('password'),
                 'first_login' => 1,
                 'fk_role_id' => $req->input('role'),
                 'created_by' => "githin.thomas",

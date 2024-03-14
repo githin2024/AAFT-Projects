@@ -57,37 +57,33 @@
             <div class="card z-index-0 fadeIn3 fadeInBottom">
               <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                 <div class="bg-gradient-primary shadow-primary border-radius-lg py-3 pe-1">
-                  <h3 class="text-white font-weight-bolder text-center mt-2 mb-0">Sign in</h3>
-                  @if(session()->has('loginMessage'))
-                    <div class="alert alert-success" id="successMesgID" role="alert" aria-live="assertive" aria-atomic="true" class="toast" data-autohide="false" style="display: none">
-                      {{ session()->get('loginMessage') }}
-                      <button type="button" onclick="campNotify();" class="btn-close" style="float: right;" aria-label="Close"></button>
-                    </div>
-                  @endif
+                  <h3 class="text-white font-weight-bolder text-center mt-2 mb-0">Change Password</h3>
+                  
                 </div>
               </div>
               <div class="card-body">
-                  <form action="{{ url('login-user')}}" method="post" id="loginForm">
+                  <form action="{{ url('change-password')}}" method="post" id="changePasswordForm">
                       @csrf
                       <div class="input-group input-group-outline my-3">                            
-                          <input type="text" id="loginEmail" name="loginEmail" class="form-control" placeholder="Email">                            
+                          <input type="text" id="loginEmail" name="loginEmail" placeholder="Email" class="form-control">                             
+                      </div>
+                      <div class="input-group input-group-outline mb-3">                           
+                          
+                          <input type="password" id="newPassword" name="newPassword" placeholder="New Password" class="form-control">                            
                       </div>
                       <div class="input-group input-group-outline mb-3">                            
-                          <input type="password" id="loginPassword" name="loginPassword" placeholder="Password" class="form-control"> 
-                          <!-- <i class="fa fa-fw fa-eye field-icon toggle-password" toggle="#cnfnPassword"></i>                -->
+                          <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" class="form-control"> 
                       </div> 
                       <div class="input-group input-group-outline mb-3" id="errorsDiv" >
                         <ul class="text-danger">
-                          <li id="errorEmailLi" style="display: none;"><span class="text-danger" id="email-error"></span></li>
-                          <li id="errorPasswordLi" style="display: none;"><span class="text-danger" id="password-error"></span></li>
+                            <li id="errorEmailLi" style="display: none;"><span class="text-danger" id="error-email"></span></li>  
+                          <li id="errorNewPasswordLi" style="display: none;"><span class="text-danger" id="error-new-password"></span></li>
+                          <li id="errorChangePasswordLi" style="display: none;"><span class="text-danger" id="error-confirm-password"></span></li>
                         </ul>
                       </div>                   
                       <div class="text-center">
-                          <button title="Sign in" class="btn bg-gradient-primary w-100 my-4 mb-2" onclick="userLogin()">Sign in</button>
+                          <button title="Confirm" class="btn bg-gradient-primary w-100 my-4 mb-2" onclick="cnfmPassword()">Confirm</button>
                       </div>
-                      <p class="mt-4 text-sm text-center">
-                          <a href="#" class="text-primary text-gradient font-weight-bold">Forgot Password</a>
-                      </p>
                   </form>
               </div>
             </div>
@@ -118,38 +114,43 @@
 </html>
 
 <script type="text/javascript">
-    $(document).ready(function() {    
+
+      function cnfmPassword() {
         
-        if($("#successMesgID").text() !="") {
-          $.notify($("#successMesgID").text(), "success");          
-        }
-    });
-      function userLogin() {
-        
+        var pwd = $("#newPassword").val();
+        var cnfmPwd = $("#confirmPassword").val();
         var email = $("#loginEmail").val();
-        var password = $("#loginPassword").val();
+
+        if(pwd == "") {
+          $("#error-new-password").text("Please enter new password.");
+          $("#errorNewPasswordLi").show();
+        }
+        else {
+          $("#error-new-password").text("");
+          $("#errorNewPasswordLi").hide();
+        }
 
         if(email == "") {
-          $("#email-error").text("Please enter email.");
+          $("#error-email").text("Please enter email.");
           $("#errorEmailLi").show();
         }
         else {
-          $("#email-error").text("");
+          $("#error-email").text("");
           $("#errorEmailLi").hide();
         }
 
-        if(password == "") {
-          $("#password-error").text("Please enter password.");
-          $("#errorPasswordLi").show();
+        if(cnfmPwd == "") {
+          $("#error-confirm-password").text("Please enter confirm password.");
+          $("#errorChangePasswordLi").show();
         }
         else {
-          $("#password-error").text("");
-          $("#errorPasswordLi").hide();
+          $("#error-confirm-password").text("");
+          $("#errorChangePasswordLi").hide();
         }
 
-        $("#loginForm").submit(function (e) { 
+        $("#changePasswordForm").submit(function (e) { 
           
-          if($("#email-error").text() != "" || $("#password-error").text() != "") {
+          if($("#error-new-password").text() != "" || $("#error-confirm-password").text() != "" || $("#error-email").text() != "") {
             e.preventDefault();
             return false;
           }
@@ -157,15 +158,15 @@
 
       }
 
-    $(".toggle-password").click(function() {
-      $(this).toggleClass("fa-eye fa-eye-slash");
-      var input = $($(this).attr("toggle"));
-      if (input.attr("type") == "password") {
-        input.attr("type", "text");
-      } else {
-        input.attr("type", "password");
-      }
-    });
+    // $(".toggle-password").click(function() {
+    //   $(this).toggleClass("fa-eye fa-eye-slash");
+    //   var input = $($(this).attr("toggle"));
+    //   if (input.attr("type") == "password") {
+    //     input.attr("type", "text");
+    //   } else {
+    //     input.attr("type", "password");
+    //   }
+    // });
 
   
 </script>

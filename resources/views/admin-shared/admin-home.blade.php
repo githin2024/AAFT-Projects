@@ -1,6 +1,7 @@
 @extends('admin-shared.admin-master')
 
 @section('adminContent')
+
     <div class="row">
         <div class="col-lg-6 col-md-6 mb-md-0 mb-4">
             <div class="card">
