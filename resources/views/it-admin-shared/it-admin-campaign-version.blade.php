@@ -84,6 +84,16 @@
         <form action="{{ url('it-admin-campaign-version-create')}}" method="post" id="campaignVersionForm">
           @csrf
           <input type="hidden" id="hdnCampaignVersionId" name="hdnCampaignVersionId" />
+          <div class="row form-group mt-2">
+            <div class="col-md-5">
+              <label for="campaignVersionCode">Campaign Version Code</label>
+              <span class="text-danger">*</span>
+            </div>
+            <div class="col-md-7">
+              <input type="text" class="form-control" id="campaignVersionCode" name="campaignVersionCode" onchange="checkCampaignVersionCode();" maxlength="10" />
+              <span id="campaign-version-code-error" class="text-danger"></span>
+            </div>
+          </div>  
           <div class="row form-group">
             <div class="col-md-5">
               <label for="campaignVersionName">Campaign Version</label>
@@ -94,16 +104,7 @@
               <span id="campaign-version-error" class="text-danger"></span>
             </div>
           </div>
-          <div class="row form-group mt-2">
-            <div class="col-md-5">
-              <label for="campaignVersionCode">Campaign Version Code</label>
-              <span class="text-danger">*</span>
-            </div>
-            <div class="col-md-7">
-              <input type="text" class="form-control" id="campaignVersionCode" name="campaignVersionCode" onchange="checkCampaignVersionCode();" maxlength="10" />
-              <span id="campaign-version-code-error" class="text-danger"></span>
-            </div>
-          </div>
+          
           <hr />
           <div class="row form-group mt-2">
             <div class="col-md-5">
