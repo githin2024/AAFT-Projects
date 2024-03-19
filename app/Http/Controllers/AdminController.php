@@ -6,6 +6,8 @@ use App\Exports\ExportAdminCampaign;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 //use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
+
 
 class AdminController extends Controller
 {
@@ -48,14 +50,14 @@ class AdminController extends Controller
                                         LEFT JOIN courses cs ON c.fk_course_id = cs.course_id
                                         LEFT JOIN institution i ON i.institution_id = cs.fk_institution_id
                                         LEFT JOIN campaign_status cps ON c.fk_campaign_status_id = cps.campaign_status_id
-                                        WHERE c.active = 1 AND i.institution_id = ? ORDER BY c.created_by DESC LIMIT 5", [$req->get('institutionId')]);
+                                        WHERE c.active = 1 ORDER BY c.created_by DESC LIMIT 5");
 
             $campaignLeadCount = DB::select("SELECT l.leadsource_name as `Leadsource_Name`, COUNT(c.campaign_id) AS `Campaign_Count` FROM campaigns c
                                                 LEFT JOIN leadsource l ON c.fk_lead_source_id = l.leadsource_id
                                                 LEFT JOIN courses cs ON c.fk_course_id = cs.course_id
                                                 LEFT JOIN institution i ON i.institution_id = cs.fk_institution_id
-                                                WHERE c.active = 1 AND i.institution_id = ?                                          
-                                                GROUP BY l.leadsource_id, l.leadsource_name", [$req->get('institutionId')]);
+                                                WHERE c.active = 1                                            
+                                                GROUP BY l.leadsource_id, l.leadsource_name");
             
             $campaignLeadCollect = collect($campaignLeadCount)->pluck('Campaign_Count', 'Leadsource_Name');
             
@@ -134,7 +136,7 @@ class AdminController extends Controller
                 }
                  if($user->role_name == "Admin")
                 {
-                    return redirect()->action([AdminController::class, 'AdminInstitution']);
+                    return redirect()->action([AdminController::class, 'AdminHomeInstitution']);
                 }
                 else if($user->role_name == "IT Admin")
                 {
@@ -167,8 +169,20 @@ class AdminController extends Controller
         $email = $req->input('loginEmail');
         $password = $req->input('newPassword');
         DB::table('users')->where('email', $email)->update(['password' => $password, 'first_login' => 0]);
-        session()->put('loginMessage', "Password updated successfully.");
         return view('user-login');
+    }
+
+    public function ForgotPassword(Request $req)
+    {
+        $email = $req->get('email');
+        $status = Password::sendResetLink(
+            $email
+        );
+
+        if($status == Password::RESET_LINK_SENT){
+
+        }
+
     }
 
 }

@@ -86,16 +86,6 @@
           <input type="hidden" id="hdnCampaignPriceId" name="hdnCampaignPriceId" />
           <div class="row form-group">
             <div class="col-md-5">
-              <label for="campaignPriceName">Campaign Price</label>
-              <span class="text-danger">*</span>
-            </div>
-            <div class="col-md-7">
-              <input type="text" class="form-control" id="campaignPriceName" name="campaignPriceName"  />
-              <span id="campaign-price-error" class="text-danger"></span>
-            </div>
-          </div>
-          <div class="row form-group mt-2">
-            <div class="col-md-5">
               <label for="campaignPriceCode">Campaign Price Code</label>
               <span class="text-danger">*</span>
             </div>
@@ -104,6 +94,17 @@
               <span id="campaign-price-code-error" class="text-danger"></span>
             </div>
           </div>
+          <div class="row form-group mt-2">
+            <div class="col-md-5">
+              <label for="campaignPriceName">Campaign Price</label>
+              <span class="text-danger">*</span>
+            </div>
+            <div class="col-md-7">
+              <input type="text" class="form-control" id="campaignPriceName" name="campaignPriceName"  />
+              <span id="campaign-price-error" class="text-danger"></span>
+            </div>
+          </div>
+          
           <hr />
           <div class="row form-group mt-2">
             <div class="col-md-5">
@@ -195,12 +196,15 @@
         if($("#campaignPriceCode").val() == ""){
             $("#campaign-price-code-error").text("Please enter an campaign price code");
         }
+        else if($("#campaign-price-code-error").text() != "") {
+            $("#campaign-price-code-error").text("Please provide unique campaign price code.");
+        }
         else {
             $("#campaign-price-code-error").text("");
         }
 
         $("#campaginPriceForm").submit(function (e) {
-            debugger;
+            
             if($("#campaign-price-error").text() != "" || $("#campaign-price-code-error").text() != "") {
                 e.preventDefault();
                 return false;

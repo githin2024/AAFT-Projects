@@ -9,7 +9,7 @@
                     Campaign
                 </div>
                 <div class="card-body">
-                    <div class="col-md-12">
+                    <div class="col-md-12" style="height: 450px; padding-left: 18%;" >
                         <canvas id="itAdminCampaignChart" style="height=100px; !important"></canvas>
                     </div>
                     <hr />
@@ -17,6 +17,7 @@
                         <table class="table table-bordered mt-4" id="adminCampaignTable" style="font-size: small">
                             <thead>
                             <tr>                                
+                                <th class="text-uppercase text-secondary text-left font-weight-bolder opacity-10">Insitution</th>
                                 <th class="text-uppercase text-secondary text-left font-weight-bolder opacity-10">Program Type</th>
                                 <th class="text-uppercase text-secondary text-left font-weight-bolder opacity-10">Campaign</th>
                                 <th class="text-uppercase text-secondary text-left font-weight-bolder opacity-10">Lead Source</th>
@@ -26,7 +27,8 @@
                             </thead>
                             <tbody>
                             @foreach($campaignList as $campaign)
-                                <tr>                                    
+                                <tr>   
+                                    <td class="text-left">{{ $campaign->institution_name}}</td>                                 
                                     <td class="text-left">{{ $campaign->program_type_name }}</td>
                                     <td class="text-left">{{ $campaign->campaign_name }}</td>
                                     <td class="text-left">{{ $campaign->leadsource_name }}</td>
@@ -61,6 +63,7 @@
           $("#it-adminLandingPageID").removeClass( "active bg-gradient-primary" );
           $("#it-adminHomeID").addClass( "active bg-gradient-primary" );
           $("#it-adminSettingsID").removeClass( "active bg-gradient-primary" );
+
         });
         var ctx = document.getElementById('itAdminCampaignChart').getContext('2d');
         var myChart = new Chart(ctx, {

@@ -27,7 +27,7 @@
                         <h3 class="mt-2 mb-4">Campaign</h3>
                     </div>
                     <div class="col-lg-6 col-6 my-auto text-end">
-                        <a class="btn btn-primary" id="adminCampaignDownloadId" }}" title="Download">
+                        <a class="btn btn-primary" id="adminCampaignDownloadId" title="Download">
                         <span class="fa fa-file-excel" style="font-size: small;">&nbsp; Download</span>
                         </a>
                     </div>

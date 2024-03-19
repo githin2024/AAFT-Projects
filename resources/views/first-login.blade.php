@@ -65,9 +65,10 @@
                   <form action="{{ url('change-password')}}" method="post" id="changePasswordForm">
                       @csrf
                       <div class="input-group input-group-outline my-3">                            
-                          <input type="text" id="loginEmail" name="loginEmail" placeholder="Email" class="form-control">                             
+                          <input type="text" id="login-Email" name="login-Email" readonly value="{{ session()->get('email') }}" placeholder="Email" class="form-control"> 
+                          <input type="hidden" id="loginEmail" name="loginEmail" readonly value="{{ session()->get('email') }}" class="form-control">                            
                       </div>
-                      <div class="input-group input-group-outline mb-3">                           
+                      <div class="input-group input-group-outline mb-3">                     
                           
                           <input type="password" id="newPassword" name="newPassword" placeholder="New Password" class="form-control">                            
                       </div>
@@ -76,7 +77,6 @@
                       </div> 
                       <div class="input-group input-group-outline mb-3" id="errorsDiv" >
                         <ul class="text-danger">
-                            <li id="errorEmailLi" style="display: none;"><span class="text-danger" id="error-email"></span></li>  
                           <li id="errorNewPasswordLi" style="display: none;"><span class="text-danger" id="error-new-password"></span></li>
                           <li id="errorChangePasswordLi" style="display: none;"><span class="text-danger" id="error-confirm-password"></span></li>
                         </ul>
@@ -116,13 +116,18 @@
 <script type="text/javascript">
 
       function cnfmPassword() {
-        
+        debugger;
         var pwd = $("#newPassword").val();
         var cnfmPwd = $("#confirmPassword").val();
         var email = $("#loginEmail").val();
+        let pattern = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[-+_!@#$%^&*.,?]).+$"); 
 
         if(pwd == "") {
           $("#error-new-password").text("Please enter new password.");
+          $("#errorNewPasswordLi").show();
+        }
+        else if(!pattern.test(pwd)) {
+          $("#error-new-password").text("Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.");
           $("#errorNewPasswordLi").show();
         }
         else {
@@ -130,17 +135,12 @@
           $("#errorNewPasswordLi").hide();
         }
 
-        if(email == "") {
-          $("#error-email").text("Please enter email.");
-          $("#errorEmailLi").show();
-        }
-        else {
-          $("#error-email").text("");
-          $("#errorEmailLi").hide();
-        }
-
         if(cnfmPwd == "") {
           $("#error-confirm-password").text("Please enter confirm password.");
+          $("#errorChangePasswordLi").show();
+        }
+        else if(pwd != cnfmPwd) {
+          $("#error-confirm-password").text("Password and confirm password does not match.");
           $("#errorChangePasswordLi").show();
         }
         else {

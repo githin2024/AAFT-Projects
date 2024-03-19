@@ -85,16 +85,6 @@
           <input type="hidden" id="hdnTargetSegmentId" name="hdnTargetSegmentId" />
           <div class="row form-group">
             <div class="col-md-5">
-              <label for="targetSegmentName">Target Segment</label>
-              <span class="text-danger">*</span>
-            </div>
-            <div class="col-md-7">
-              <input type="text" class="form-control" id="targetSegmentName" name="targetSegmentName"  />
-              <span id="target-segment-error" class="text-danger"></span>
-            </div>
-          </div>
-          <div class="row form-group mt-2">
-            <div class="col-md-5">
               <label for="targetSegmentCode">Target Segment Code</label>
               <span class="text-danger">*</span>
             </div>
@@ -103,6 +93,17 @@
               <span id="target-segment-code-error" class="text-danger"></span>
             </div>
           </div>
+          <div class="row form-group mt-2">
+            <div class="col-md-5">
+              <label for="targetSegmentName">Target Segment</label>
+              <span class="text-danger">*</span>
+            </div>
+            <div class="col-md-7">
+              <input type="text" class="form-control" id="targetSegmentName" name="targetSegmentName"  />
+              <span id="target-segment-error" class="text-danger"></span>
+            </div>
+          </div>
+          
           <hr />
           <div class="row form-group mt-2">
             <div class="col-md-5">
@@ -192,6 +193,9 @@
 
         if($("#targetSegmentCode").val() == ""){
             $("#target-segment-code-error").text("Please enter target segment code");
+        }
+        else if($("#target-segment-code-error").text() != "") {
+            $("#target-segment-code-error").text("Please provide unique target segment code.");
         }
         else {
             $("#target-segment-code-error").text("");

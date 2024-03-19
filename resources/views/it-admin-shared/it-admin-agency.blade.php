@@ -8,9 +8,6 @@
         {{ session()->get('message') }}
         <button type="button" onclick="campNotify();" class="btn-close" style="float: right;" aria-label="Close"></button>
       </div>
-      <div class="col-md-12">
-        <button class="btn btn-outline-primary" id="btnBackID" onclick="goBack()"><span class="fa fa-backward">&nbsp;Back</span></button>
-      </div>
     @endif
     <div class="col-md-12">
         <button class="btn btn-outline-primary" id="btnBackID" onclick="goBack()"><span class="fa fa-backward">&nbsp;Back</span></button>
@@ -89,16 +86,6 @@
           <input type="hidden" id="hdnAgencyId" name="hdnAgencyId" />
           <div class="row form-group">
             <div class="col-md-4">
-              <label for="agencyName">Agency Name</label>
-              <span class="text-danger">*</span>
-            </div>
-            <div class="col-md-7">
-              <input type="text" class="form-control" id="agencyName" name="agencyName"  />
-              <span id="agency-error" class="text-danger"></span>
-            </div>
-          </div>
-          <div class="row form-group mt-2">
-            <div class="col-md-4">
               <label for="agencyCode">Agency Code</label>
               <span class="text-danger">*</span>
             </div>
@@ -107,6 +94,17 @@
               <span id="agency-code-error" class="text-danger"></span>
             </div>
           </div>
+          <div class="row form-group mt-2">
+            <div class="col-md-4">
+              <label for="agencyName">Agency Name</label>
+              <span class="text-danger">*</span>
+            </div>
+            <div class="col-md-7">
+              <input type="text" class="form-control" id="agencyName" name="agencyName"  />
+              <span id="agency-error" class="text-danger"></span>
+            </div>
+          </div>
+          
           <hr />
           <div class="row form-group mt-2">
             <div class="col-md-5">
@@ -197,6 +195,9 @@
 
         if($("#agencyCode").val() == ""){
             $("#agency-code-error").text("Please enter an agency code");
+        }
+        else if($("#agency-code-error").text() != "") {
+            $("#agency-code-error").text("Please provide unique agency code.");
         }
         else {
             $("#agency-code-error").text("");

@@ -86,16 +86,6 @@
           <input type="hidden" id="hdnTargetLocationId" name="hdnTargetLocationId" />
           <div class="row form-group">
             <div class="col-md-5">
-              <label for="targetLocationName">Target Location</label>
-              <span class="text-danger">*</span>
-            </div>
-            <div class="col-md-7">
-              <input type="text" class="form-control" id="targetLocationName" name="targetLocationName"  />
-              <span id="target-location-error" class="text-danger"></span>
-            </div>
-          </div>
-          <div class="row form-group mt-2">
-            <div class="col-md-5">
               <label for="targetLocationCode">Target Location Code</label>
               <span class="text-danger">*</span>
             </div>
@@ -104,6 +94,17 @@
               <span id="target-location-code-error" class="text-danger"></span>
             </div>
           </div>
+          <div class="row form-group mt-2">
+            <div class="col-md-5">
+              <label for="targetLocationName">Target Location</label>
+              <span class="text-danger">*</span>
+            </div>
+            <div class="col-md-7">
+              <input type="text" class="form-control" id="targetLocationName" name="targetLocationName"  />
+              <span id="target-location-error" class="text-danger"></span>
+            </div>
+          </div>
+          
           <hr />
           <div class="row form-group mt-2">
             <div class="col-md-5">
@@ -194,6 +195,9 @@
 
         if($("#targetLocationCode").val() == ""){
             $("#target-location-code-error").text("Please enter target location code");
+        }
+        else if($("#target-location-code-error").text() !="") {
+            $("#target-location-code-error").text("Please provide unique target location code.");
         }
         else {
             $("#target-location-code-error").text("");

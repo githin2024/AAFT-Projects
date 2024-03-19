@@ -86,16 +86,6 @@
           <input type="hidden" id="hdnProgramTypeId" name="hdnProgramTypeId" />
           <div class="row form-group">
             <div class="col-md-4">
-              <label for="programTypeName">Program Type</label>
-              <span class="text-danger">*</span>
-            </div>
-            <div class="col-md-7">
-              <input type="text" class="form-control" id="programTypeName" name="programTypeName"  />
-              <span id="program-type-error" class="text-danger"></span>
-            </div>
-          </div>
-          <div class="row form-group mt-2">
-            <div class="col-md-4">
               <label for="programTypeCode">Program Type Code</label>
               <span class="text-danger">*</span>
             </div>
@@ -104,6 +94,16 @@
               <span id="program-type-code-error" class="text-danger"></span>
             </div>
           </div>
+          <div class="row form-group mt-2">
+            <div class="col-md-4">
+              <label for="programTypeName">Program Type</label>
+              <span class="text-danger">*</span>
+            </div>
+            <div class="col-md-7">
+              <input type="text" class="form-control" id="programTypeName" name="programTypeName"  />
+              <span id="program-type-error" class="text-danger"></span>
+            </div>
+          </div>          
           <hr />
           <div class="row form-group mt-2">
             <div class="col-md-5">
@@ -193,6 +193,9 @@
 
         if($("#programTypeCode").val() == ""){
             $("#program-type-code-error").text("Please enter program type code");
+        }
+        else if($("#program-type-code-error").text() != "") {
+            $("#program-type-code-error").text("Please provide unique program type code.");
         }
         else {
             $("#program-type-code-error").text("");

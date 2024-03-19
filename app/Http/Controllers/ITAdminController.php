@@ -15,14 +15,14 @@ class ITAdminController extends Controller
         if(session('username') != "")
         {
             $campaignList = DB::select("SELECT c.campaign_id, i.institution_name, pt.program_type_name, c.campaign_name, ls.leadsource_name, 
-                                        cs.course_name, cps.campaign_status_name 
-                                        FROM campaigns c
-                                        LEFT JOIN program_type pt ON c.fk_program_type_id = pt.program_type_id 
-                                        LEFT JOIN leadsource ls ON c.fk_lead_source_id = ls.leadsource_id
-                                        LEFT JOIN courses cs ON c.fk_course_id = cs.course_id
-                                        LEFT JOIN institution i ON i.institution_id = cs.fk_institution_id
-                                        LEFT JOIN campaign_status cps ON c.fk_campaign_status_id = cps.campaign_status_id
-                                        WHERE c.active = 1 AND i.institution_id = ? ORDER BY c.created_by DESC", [1]);
+                                                cs.course_name, cps.campaign_status_name 
+                                                FROM campaigns c
+                                                LEFT JOIN program_type pt ON c.fk_program_type_id = pt.program_type_id 
+                                                LEFT JOIN leadsource ls ON c.fk_lead_source_id = ls.leadsource_id
+                                                LEFT JOIN courses cs ON c.fk_course_id = cs.course_id
+                                                LEFT JOIN institution i ON i.institution_id = cs.fk_institution_id
+                                                LEFT JOIN campaign_status cps ON c.fk_campaign_status_id = cps.campaign_status_id
+                                                WHERE c.active = 1 AND cps.campaign_status_name='New' ORDER BY c.created_by DESC LIMIT 5");
 
             $campaignLeadCount = DB::select("SELECT l.leadsource_name as `Leadsource_Name`, COUNT(c.campaign_id) AS `Campaign_Count` FROM campaigns c
                                                 LEFT JOIN leadsource l ON c.fk_lead_source_id = l.leadsource_id
@@ -71,10 +71,11 @@ class ITAdminController extends Controller
 
     public function ITAdminCampaignLeadRequest(Request $req)
     {
+        $userId = DB::table('users')->where('username', '=', session('username'))->pluck('user_id');
                
         DB::table('campaign_lead_request')->insert([
             'fk_campaign_id' => $req->get('campaignId'),
-            'fk_user_id' => 3,
+            'fk_user_id' => $userId,
             'campaign_lead_request' => 1,
             'campagin_lead_request_date' => now(),
             'created_by' => session('username'),
@@ -154,8 +155,8 @@ class ITAdminController extends Controller
         {
             DB::table('role')->insert([
                 'role_name' => $req->input('roleName'),
-                'created_by' => "githin.thomas",
-                'updated_by' => "githin.thomas",
+                'created_by' => session('username'),
+                'updated_by' => session('username'),
                 'created_date' => now(),
                 'updated_date' => now(),
                 'active' => 1
@@ -166,7 +167,7 @@ class ITAdminController extends Controller
         {
             DB::table('role')->where('role_id', $roleId)->update([
                 'role_name' => $req->input('roleName'),
-                'updated_by' => "githin.thomas",
+                'updated_by' => session('username'),
                 'updated_date' => now()
             ]);
 
@@ -192,7 +193,7 @@ class ITAdminController extends Controller
 
         DB::table('role')->where('role_id', $roleId)->update([
             'active' => $active,
-            'updated_by' => "githin.thomas",
+            'updated_by' => session('username'),
             'updated_date' => now()
         ]);
 
@@ -231,8 +232,8 @@ class ITAdminController extends Controller
             DB::table('agency')->insert([
                 'agency_name' => $req->input('agencyName'),
                 'agency_code' => $req->input('agencyCode'),
-                'created_by' => "githin.thomas",
-                'updated_by' => "githin.thomas",
+                'created_by' => session('username'),
+                'updated_by' => session('username'),
                 'created_date' => now(),
                 'updated_date' => now(),
                 'active' => 1
@@ -244,7 +245,7 @@ class ITAdminController extends Controller
             DB::table('agency')->where('agency_id', $agencyId)->update([
                 'agency_name' => $req->input('agencyName'),
                 'agency_code' => $req->input('agencyCode'),
-                'updated_by' => "githin.thomas",
+                'updated_by' => session('username'),
                 'updated_date' => now()
             ]);
 
@@ -270,7 +271,7 @@ class ITAdminController extends Controller
 
         DB::table('agency')->where('agency_id', $agencyId)->update([
             'active' => $active,
-            'updated_by' => "githin.thomas",
+            'updated_by' => session('username'),
             'updated_date' => now()
         ]);
 
@@ -327,8 +328,8 @@ class ITAdminController extends Controller
         {
             DB::table('leadsource')->insert([
                 'leadsource_name' => $req->input('leadSourceName'),
-                'created_by' => "githin.thomas",
-                'updated_by' => "githin.thomas",
+                'created_by' => session('username'),
+                'updated_by' => session('username'),
                 'created_date' => now(),
                 'updated_date' => now(),
                 'active' => 1
@@ -339,7 +340,7 @@ class ITAdminController extends Controller
         {
             DB::table('leadsource')->where('leadsource_id', $leadSourceId)->update([
                 'leadsource_name' => $req->input('leadSourceName'),
-                'updated_by' => "githin.thomas",
+                'updated_by' => session('username'),
                 'updated_date' => now()
             ]);
 
@@ -365,7 +366,7 @@ class ITAdminController extends Controller
 
         DB::table('leadsource')->where('leadsource_id', $leadSourceId)->update([
             'active' => $active,
-            'updated_by' => "githin.thomas",
+            'updated_by' => session('username'),
             'updated_date' => now()
         ]);
 
@@ -405,8 +406,8 @@ class ITAdminController extends Controller
             DB::table('program_type')->insert([
                 'program_type_name' => $req->input('programTypeName'),
                 'program_code' => $req->input('programTypeCode'),
-                'created_by' => "githin.thomas",
-                'updated_by' => "githin.thomas",
+                'created_by' => session('username'),
+                'updated_by' => session('username'),
                 'created_date' => now(),
                 'updated_date' => now(),
                 'active' => 1
@@ -418,7 +419,7 @@ class ITAdminController extends Controller
             DB::table('program_type')->where('program_type_id', $programTypeId)->update([
                 'program_type_name' => $req->input('programTypeName'),
                 'program_code' => $req->input('programTypeCode'),
-                'updated_by' => "githin.thomas",
+                'updated_by' => session('username'),
                 'updated_date' => now()
             ]);
 
@@ -444,7 +445,7 @@ class ITAdminController extends Controller
 
         DB::table('program_type')->where('program_type_id', $programTypeId)->update([
             'active' => $active,
-            'updated_by' => "githin.thomas",
+            'updated_by' => session('username'),
             'updated_date' => now()
         ]);
 
@@ -503,8 +504,8 @@ class ITAdminController extends Controller
             DB::table('persona')->insert([
                 'persona_name' => $req->input('personaName'),
                 'persona_code' => $req->input('personaCode'),
-                'created_by' => "githin.thomas",
-                'updated_by' => "githin.thomas",
+                'created_by' => session('username'),
+                'updated_by' => session('username'),
                 'created_date' => now(),
                 'updated_date' => now(),
                 'active' => 1
@@ -516,7 +517,7 @@ class ITAdminController extends Controller
             DB::table('persona')->where('persona_id', $personaId)->update([
                 'persona_name' => $req->input('personaName'),
                 'persona_code' => $req->input('personaCode'),
-                'updated_by' => "githin.thomas",
+                'updated_by' => session('username'),
                 'updated_date' => now()
             ]);
 
@@ -542,7 +543,7 @@ class ITAdminController extends Controller
 
         DB::table('persona')->where('persona_id', $personaId)->update([
             'active' => $active,
-            'updated_by' => "githin.thomas",
+            'updated_by' => session('username'),
             'updated_date' => now()
         ]);
 
@@ -601,8 +602,8 @@ class ITAdminController extends Controller
             DB::table('campaign_price')->insert([
                 'campaign_price_name' => $req->input('campaignPriceName'),
                 'campaign_price_code' => $req->input('campaignPriceCode'),
-                'created_by' => "githin.thomas",
-                'updated_by' => "githin.thomas",
+                'created_by' => session('username'),
+                'updated_by' => session('username'),
                 'created_date' => now(),
                 'updated_date' => now(),
                 'active' => 1
@@ -614,7 +615,7 @@ class ITAdminController extends Controller
             DB::table('campaign_price')->where('campaign_price_id', $campaignPriceId)->update([
                 'campaign_price_name' => $req->input('campaignPriceName'),
                 'campaign_price_code' => $req->input('campaignPriceCode'),
-                'updated_by' => "githin.thomas",
+                'updated_by' => session('username'),
                 'updated_date' => now()
             ]);
 
@@ -640,7 +641,7 @@ class ITAdminController extends Controller
 
         DB::table('campaign_price')->where('campaign_price_id', $campaignPriceId)->update([
             'active' => $active,
-            'updated_by' => "githin.thomas",
+            'updated_by' => session('username'),
             'updated_date' => now()
         ]);
 
@@ -695,8 +696,8 @@ class ITAdminController extends Controller
             DB::table('headline')->insert([
                 'headline_name' => $req->input('headlineName'),
                 'headline_code' => $req->input('headlineCode'),
-                'created_by' => "githin.thomas",
-                'updated_by' => "githin.thomas",
+                'created_by' => session('username'),
+                'updated_by' => session('username'),
                 'created_date' => now(),
                 'updated_date' => now(),
                 'active' => 1
@@ -708,7 +709,7 @@ class ITAdminController extends Controller
             DB::table('headline')->where('headline_id', $headlineId)->update([
                 'headline_name' => $req->input('headlineName'),
                 'headline_code' => $req->input('headlineCode'),
-                'updated_by' => "githin.thomas",
+                'updated_by' => session('username'),
                 'updated_date' => now()
             ]);
 
@@ -734,7 +735,7 @@ class ITAdminController extends Controller
 
         DB::table('headline')->where('headline_id', $headlineId)->update([
             'active' => $active,
-            'updated_by' => "githin.thomas",
+            'updated_by' => session('username'),
             'updated_date' => now()
         ]);
 
@@ -793,8 +794,8 @@ class ITAdminController extends Controller
             DB::table('target_location')->insert([
                 'target_location_name' => $req->input('targetLocationName'),
                 'target_location_code' => $req->input('targetLocationCode'),
-                'created_by' => "githin.thomas",
-                'updated_by' => "githin.thomas",
+                'created_by' => session('username'),
+                'updated_by' => session('username'),
                 'created_date' => now(),
                 'updated_date' => now(),
                 'active' => 1
@@ -806,7 +807,7 @@ class ITAdminController extends Controller
             DB::table('target_location')->where('target_location_id', $targetLocationId)->update([
                 'target_location_name' => $req->input('targetLocationName'),
                 'target_location_code' => $req->input('targetLocationCode'),
-                'updated_by' => "githin.thomas",
+                'updated_by' => session('username'),
                 'updated_date' => now()
             ]);
 
@@ -832,7 +833,7 @@ class ITAdminController extends Controller
 
         DB::table('target_location')->where('target_location_id', $targetLocationId)->update([
             'active' => $active,
-            'updated_by' => "githin.thomas",
+            'updated_by' => session('username'),
             'updated_date' => now()
         ]);
 
@@ -884,8 +885,8 @@ class ITAdminController extends Controller
             DB::table('campaign_type')->insert([
                 'campaign_type_name' => $req->input('campaignTypeName'),
                 'campaign_type_code' => $req->input('campaignTypeCode'),
-                'created_by' => "githin.thomas",
-                'updated_by' => "githin.thomas",
+                'created_by' => session('username'),
+                'updated_by' => session('username'),
                 'created_date' => now(),
                 'updated_date' => now(),
                 'active' => 1
@@ -897,7 +898,7 @@ class ITAdminController extends Controller
             DB::table('campaign_type')->where('campaign_type_id', $campaignTypeId)->update([
                 'campaign_type_name' => $req->input('campaignTypeName'),
                 'campaign_type_code' => $req->input('campaignTypeCode'),
-                'updated_by' => "githin.thomas",
+                'updated_by' => session('username'),
                 'updated_date' => now()
             ]);
 
@@ -923,7 +924,7 @@ class ITAdminController extends Controller
 
         DB::table('campaign_type')->where('campaign_type_id', $campaignTypeId)->update([
             'active' => $active,
-            'updated_by' => "githin.thomas",
+            'updated_by' => session('username'),
             'updated_date' => now()
         ]);
 
@@ -982,8 +983,8 @@ class ITAdminController extends Controller
             DB::table('campaign_size')->insert([
                 'campaign_size_name' => $req->input('campaignSizeName'),
                 'campaign_size_code' => $req->input('campaignSizeCode'),
-                'created_by' => "githin.thomas",
-                'updated_by' => "githin.thomas",
+                'created_by' => session('username'),
+                'updated_by' => session('username'),
                 'created_date' => now(),
                 'updated_date' => now(),
                 'active' => 1
@@ -995,7 +996,7 @@ class ITAdminController extends Controller
             DB::table('campaign_size')->where('campaign_size_id', $campaignSizeId)->update([
                 'campaign_size_name' => $req->input('campaignSizeName'),
                 'campaign_size_code' => $req->input('campaignSizeCode'),
-                'updated_by' => "githin.thomas",
+                'updated_by' => session('username'),
                 'updated_date' => now()
             ]);
 
@@ -1021,7 +1022,7 @@ class ITAdminController extends Controller
 
         DB::table('campaign_size')->where('campaign_size_id', $campaignSizeId)->update([
             'active' => $active,
-            'updated_by' => "githin.thomas",
+            'updated_by' => session('username'),
             'updated_date' => now()
         ]);
 
@@ -1080,8 +1081,8 @@ class ITAdminController extends Controller
             DB::table('campaign_version')->insert([
                 'campaign_version_name' => $req->input('campaignVersionName'),
                 'campaign_version_code' => $req->input('campaignVersionCode'),
-                'created_by' => "githin.thomas",
-                'updated_by' => "githin.thomas",
+                'created_by' => session('username'),
+                'updated_by' => session('username'),
                 'created_date' => now(),
                 'updated_date' => now(),
                 'active' => 1
@@ -1093,7 +1094,7 @@ class ITAdminController extends Controller
             DB::table('campaign_version')->where('campaign_version_id', $campaignVersionId)->update([
                 'campaign_version_name' => $req->input('campaignVersionName'),
                 'campaign_version_code' => $req->input('campaignVersionCode'),
-                'updated_by' => "githin.thomas",
+                'updated_by' => session('username'),
                 'updated_date' => now()
             ]);
 
@@ -1119,7 +1120,7 @@ class ITAdminController extends Controller
 
         DB::table('campaign_version')->where('campaign_version_id', $campaignVersionId)->update([
             'active' => $active,
-            'updated_by' => "githin.thomas",
+            'updated_by' => session('username'),
             'updated_date' => now()
         ]);
 
@@ -1177,8 +1178,8 @@ class ITAdminController extends Controller
         {
             DB::table('campaign_status')->insert([
                 'campaign_status_name' => $req->input('campaignStatusName'),                
-                'created_by' => "githin.thomas",
-                'updated_by' => "githin.thomas",
+                'created_by' => session('username'),
+                'updated_by' => session('username'),
                 'created_date' => now(),
                 'updated_date' => now(),
                 'active' => 1
@@ -1189,7 +1190,7 @@ class ITAdminController extends Controller
         {
             DB::table('campaign_status')->where('campaign_status_id', $campaignStatusId)->update([
                 'campaign_status_name' => $req->input('campaignStatusName'),                
-                'updated_by' => "githin.thomas",
+                'updated_by' => session('username'),
                 'updated_date' => now()
             ]);
 
@@ -1215,7 +1216,7 @@ class ITAdminController extends Controller
 
         DB::table('campaign_status')->where('campaign_status_id', $campaignStatusId)->update([
             'active' => $active,
-            'updated_by' => "githin.thomas",
+            'updated_by' => session('username'),
             'updated_date' => now()
         ]);
 
@@ -1234,7 +1235,7 @@ class ITAdminController extends Controller
     //Target Segment Management
 
     public function ITAdminTargetSegment()
-    {
+    {        
         if(session('username') != "")
         {
             $targetSegmentList = DB::table('target_segment')->get();
@@ -1255,8 +1256,8 @@ class ITAdminController extends Controller
             DB::table('target_segment')->insert([
                 'target_segment_name' => $req->input('targetSegmentName'),
                 'target_segment_code' => $req->input('targetSegmentCode'),
-                'created_by' => "githin.thomas",
-                'updated_by' => "githin.thomas",
+                'created_by' => session('username'),
+                'updated_by' => session('username'),
                 'created_date' => now(),
                 'updated_date' => now(),
                 'active' => 1
@@ -1268,7 +1269,7 @@ class ITAdminController extends Controller
             DB::table('target_segment')->where('target_segment_id', $targetSegmentId)->update([
                 'target_segment_name' => $req->input('targetSegmentName'),
                 'target_segment_code' => $req->input('targetSegmentCode'),
-                'updated_by' => "githin.thomas",
+                'updated_by' => session('username'),
                 'updated_date' => now()
             ]);
 
@@ -1294,7 +1295,7 @@ class ITAdminController extends Controller
 
         DB::table('target_segment')->where('target_segment_id', $targetSegmentId)->update([
             'active' => $active,
-            'updated_by' => "githin.thomas",
+            'updated_by' => session('username'),
             'updated_date' => now()
         ]);
 
@@ -1361,8 +1362,8 @@ class ITAdminController extends Controller
                 'password' => $req->input('password'),
                 'first_login' => 1,
                 'fk_role_id' => $req->input('role'),
-                'created_by' => "githin.thomas",
-                'updated_by' => "githin.thomas",
+                'created_by' => session('username'),
+                'updated_by' => session('username'),
                 'created_date' => now(),
                 'updated_date' => now(),
                 'active' => 1
@@ -1377,7 +1378,7 @@ class ITAdminController extends Controller
                 'email' => $req->input('email'),
                 'username' => $req->input('username'),
                 'fk_role_id' => $req->input('role'),
-                'updated_by' => "githin.thomas",
+                'updated_by' => session('username'),
                 'updated_date' => now(),
                 'active' => 1
             ]);
@@ -1411,7 +1412,7 @@ class ITAdminController extends Controller
 
         DB::table('users')->where('user_id', $userId)->update([
             'active' => $active,
-            'updated_by' => "githin.thomas",
+            'updated_by' => session('username'),
             'updated_date' => now()
         ]);
 

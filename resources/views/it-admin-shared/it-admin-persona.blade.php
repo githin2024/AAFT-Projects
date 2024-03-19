@@ -86,16 +86,6 @@
           <input type="hidden" id="hdnPersonaId" name="hdnPersonaId" />
           <div class="row form-group">
             <div class="col-md-4">
-              <label for="personaName">Persona</label>
-              <span class="text-danger">*</span>
-            </div>
-            <div class="col-md-7">
-              <input type="text" class="form-control" id="personaName" name="personaName"  />
-              <span id="persona-error" class="text-danger"></span>
-            </div>
-          </div>
-          <div class="row form-group mt-2">
-            <div class="col-md-4">
               <label for="personaCode">Persona Code</label>
               <span class="text-danger">*</span>
             </div>
@@ -104,6 +94,17 @@
               <span id="persona-code-error" class="text-danger"></span>
             </div>
           </div>
+          <div class="row form-group mt-2">
+            <div class="col-md-4">
+              <label for="personaName">Persona</label>
+              <span class="text-danger">*</span>
+            </div>
+            <div class="col-md-7">
+              <input type="text" class="form-control" id="personaName" name="personaName"  />
+              <span id="persona-error" class="text-danger"></span>
+            </div>
+          </div>
+          
           <hr />
           <div class="row form-group mt-2">
             <div class="col-md-5">
@@ -182,7 +183,7 @@
     }
 
     function savePersona() {
-        debugger;
+        
         var personaId = $("#hdnPersonaId").val();
         var personaCode = $("#personaCode").val();
         if($("#personaName").val() == "") {
@@ -194,6 +195,9 @@
 
         if($("#personaCode").val() == ""){
             $("#persona-code-error").text("Please enter persona code");
+        }
+        else if($("#persona-code-error").text() != "") {
+            $("#persona-code-error").text("Please provide unique persona code.");
         }
         else {
             $("#persona-code-error").text("");

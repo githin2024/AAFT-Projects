@@ -119,9 +119,12 @@
 
 <script type="text/javascript">
     $(document).ready(function() {    
-        
-        if($("#successMesgID").text() !="") {
-          $.notify($("#successMesgID").text(), "success");          
+        debugger;
+        if($("#successMesgID").text().trim() =="Invalid username or password.") {
+          $.notify($("#successMesgID").text(), "warning");          
+        }
+        else if($("#successMesgID").text() != "") {
+          $.notify($("#successMesgID").text(), "success"); 
         }
     });
       function userLogin() {

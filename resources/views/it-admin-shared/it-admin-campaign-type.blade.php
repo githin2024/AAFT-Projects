@@ -86,16 +86,6 @@
           <input type="hidden" id="hdnCampaignTypeId" name="hdnCampaignTypeId" />
           <div class="row form-group">
             <div class="col-md-5">
-              <label for="campaignTypeName">Campaign Type</label>
-              <span class="text-danger">*</span>
-            </div>
-            <div class="col-md-7">
-              <input type="text" class="form-control" id="campaignTypeName" name="campaignTypeName"  />
-              <span id="campaign-type-error" class="text-danger"></span>
-            </div>
-          </div>
-          <div class="row form-group mt-2">
-            <div class="col-md-5">
               <label for="campaignTypeCode">Campaign Type Code</label>
               <span class="text-danger">*</span>
             </div>
@@ -104,6 +94,17 @@
               <span id="campaign-type-code-error" class="text-danger"></span>
             </div>
           </div>
+          <div class="row form-group mt-2">
+            <div class="col-md-5">
+              <label for="campaignTypeName">Campaign Type</label>
+              <span class="text-danger">*</span>
+            </div>
+            <div class="col-md-7">
+              <input type="text" class="form-control" id="campaignTypeName" name="campaignTypeName"  />
+              <span id="campaign-type-error" class="text-danger"></span>
+            </div>
+          </div>
+          
           <hr />
           <div class="row form-group mt-2">
             <div class="col-md-5">
@@ -193,6 +194,9 @@
 
         if($("#campaignTypeCode").val() == ""){
             $("#campaign-type-code-error").text("Please enter campaign type code");
+        }
+        else if($("#campaign-type-code-error").text() != ""){
+            $("#campaign-type-code-error").text("Please provide unique campaign type code.");
         }
         else {
             $("#campaign-type-code-error").text("");

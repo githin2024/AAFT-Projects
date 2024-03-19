@@ -86,16 +86,6 @@
           <input type="hidden" id="hdnCampaignSizeId" name="hdnCampaignSizeId" />
           <div class="row form-group">
             <div class="col-md-5">
-              <label for="campaignSizeName">Campaign Size</label>
-              <span class="text-danger">*</span>
-            </div>
-            <div class="col-md-7">
-              <input type="text" class="form-control" id="campaignSizeName" name="campaignSizeName"  />
-              <span id="campaign-size-error" class="text-danger"></span>
-            </div>
-          </div>
-          <div class="row form-group mt-2">
-            <div class="col-md-5">
               <label for="campaignSizeCode">Campaign Size Code</label>
               <span class="text-danger">*</span>
             </div>
@@ -104,6 +94,16 @@
               <span id="campaign-size-code-error" class="text-danger"></span>
             </div>
           </div>
+          <div class="row form-group mt-2">
+            <div class="col-md-5">
+              <label for="campaignSizeName">Campaign Size</label>
+              <span class="text-danger">*</span>
+            </div>
+            <div class="col-md-7">
+              <input type="text" class="form-control" id="campaignSizeName" name="campaignSizeName"  />
+              <span id="campaign-size-error" class="text-danger"></span>
+            </div>
+          </div>          
           <hr />
           <div class="row form-group mt-2">
             <div class="col-md-5">
@@ -193,6 +193,9 @@
 
         if($("#campaignSizeCode").val() == ""){
             $("#campaign-size-code-error").text("Please enter campaign size code");
+        }
+        else if($("#campaign-size-code-error").text() != ""){
+            $("#campaign-size-code-error").text("Please provide unique campaign size code.");
         }
         else {
             $("#campaign-size-code-error").text("");

@@ -22,7 +22,7 @@ Route::get('/login', function () {
     return view('user-login');
 });
 
-Route::get('first-login', function() {
+Route::get('first-login', function() {    
     return view('first-login');
 });
 
@@ -45,12 +45,16 @@ Route::post('update-campaign', [ExtHomeController::class, 'updateCampaign']);
 
 //Internal Marketing Dashboard
 Route::get('int-home', [IntHomeController::class, 'InternalIndex']);
-Route::get('int-landing-page', [IntHomeController::class, 'LandingPage']);
+Route::get('int-landing-page', [IntHomeController::class, 'InternalLandingPage']);
 Route::get('int-campaign', [IntHomeController::class, 'InternalCampaign']);
+Route::get('int-view-campaign', [IntHomeController::class, 'ViewCampaign']);
+Route::get('int-campaign-download', [IntHomeController::class, 'DownloadCampaign']);
+Route::get('create-landing-page', [IntHomeController::class, 'GetLandingPage']);
+Route::get('get-courses', [IntHomeController::class, 'GetLandingPageCourses']);
 
 //Admin Dashboard
 Route::get('admin-institution', [AdminController::class, 'AdminInstitution']);
-Route::get('admin-home/{institutionId}', [AdminController::class, 'AdminHomeInstitution']);
+Route::get('admin-home', [AdminController::class, 'AdminHomeInstitution']);
 Route::get('admin-campaign', [AdminController::class, 'AdminCampaignInstitution']);
 Route::get('admin-campaign-list', [AdminController::class, 'AdminCampaignListInstitution']);
 Route::get('admin-campaign-download', [AdminController::class, 'AdminCampaignDownload']);

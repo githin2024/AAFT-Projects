@@ -1,6 +1,6 @@
 @extends('int-marketing-shared.int-master')
 
-@section('content')
+@section('int-content')
 <div class="row mt-4">
     <div class="col-lg-12 col-md-6 mb-md-0 mb-4">
         <div class="card">
@@ -11,7 +11,7 @@
                     </div>
                     <div class="col-lg-6 col-6 my-auto text-end">
                     <div class="dropdown float-lg-end pe-4">
-                        <a class="btn btn-primary" id="createCampaignID" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="createCampaign();">
+                        <a class="btn btn-primary" id="createCampaignID" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="CreateLandingPage(0);">
                             <i class="fa fa-plus" style="font-size: small;">&nbsp; Create</i>                            
                         </a>                
                     </div>
@@ -24,251 +24,182 @@
                 <thead>
                 <tr>
                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">Institution</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">Program Type</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">Campaign</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">Lead Source</th>
-                    <!-- <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">Course</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">Campaign Status</th> -->
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">Course</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">Title</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">Description</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">Assigne</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">Assigner</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">Development Type</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">Issue</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">Priority</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">Status</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">Action</th> 
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <td>
-                    <div class="d-flex px-2 py-1">
-                        <div>
-                        <img src="../assets/img/small-logos/logo-xd.svg" class="avatar avatar-sm me-3" alt="xd">
-                        </div>
-                        <div class="d-flex flex-column justify-content-center">
-                        <h6 class="mb-0 text-sm">Material XD Version</h6>
-                        </div>
-                    </div>
-                    </td>
-                    <td>
-                    <div class="avatar-group mt-2">
-                        <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ryan Tompson">
-                        <img src="../assets/img/team-1.jpg" alt="team1">
-                        </a>
-                        <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Romina Hadid">
-                        <img src="../assets/img/team-2.jpg" alt="team2">
-                        </a>
-                        <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Alexander Smith">
-                        <img src="../assets/img/team-3.jpg" alt="team3">
-                        </a>
-                        <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Jessica Doe">
-                        <img src="../assets/img/team-4.jpg" alt="team4">
-                        </a>
-                    </div>
-                    </td>
-                    <td class="align-middle text-center text-sm">
-                    <span class="text-xs font-weight-bold"> $14,000 </span>
-                    </td>
-                    <td class="align-middle">
-                    <div class="progress-wrapper w-75 mx-auto">
-                        <div class="progress-info">
-                        <div class="progress-percentage">
-                            <span class="text-xs font-weight-bold">60%</span>
-                        </div>
-                        </div>
-                        <div class="progress">
-                        <div class="progress-bar bg-gradient-info w-60" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                    </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                    <div class="d-flex px-2 py-1">
-                        <div>
-                        <img src="../assets/img/small-logos/logo-atlassian.svg" class="avatar avatar-sm me-3" alt="atlassian">
-                        </div>
-                        <div class="d-flex flex-column justify-content-center">
-                        <h6 class="mb-0 text-sm">Add Progress Track</h6>
-                        </div>
-                    </div>
-                    </td>
-                    <td>
-                    <div class="avatar-group mt-2">
-                        <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Romina Hadid">
-                        <img src="../assets/img/team-2.jpg" alt="team5">
-                        </a>
-                        <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Jessica Doe">
-                        <img src="../assets/img/team-4.jpg" alt="team6">
-                        </a>
-                    </div>
-                    </td>
-                    <td class="align-middle text-center text-sm">
-                    <span class="text-xs font-weight-bold"> $3,000 </span>
-                    </td>
-                    <td class="align-middle">
-                    <div class="progress-wrapper w-75 mx-auto">
-                        <div class="progress-info">
-                        <div class="progress-percentage">
-                            <span class="text-xs font-weight-bold">10%</span>
-                        </div>
-                        </div>
-                        <div class="progress">
-                        <div class="progress-bar bg-gradient-info w-10" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                    </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                    <div class="d-flex px-2 py-1">
-                        <div>
-                        <img src="../assets/img/small-logos/logo-slack.svg" class="avatar avatar-sm me-3" alt="team7">
-                        </div>
-                        <div class="d-flex flex-column justify-content-center">
-                        <h6 class="mb-0 text-sm">Fix Platform Errors</h6>
-                        </div>
-                    </div>
-                    </td>
-                    <td>
-                    <div class="avatar-group mt-2">
-                        <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Romina Hadid">
-                        <img src="../assets/img/team-3.jpg" alt="team8">
-                        </a>
-                        <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Jessica Doe">
-                        <img src="../assets/img/team-1.jpg" alt="team9">
-                        </a>
-                    </div>
-                    </td>
-                    <td class="align-middle text-center text-sm">
-                    <span class="text-xs font-weight-bold"> Not set </span>
-                    </td>
-                    <td class="align-middle">
-                    <div class="progress-wrapper w-75 mx-auto">
-                        <div class="progress-info">
-                        <div class="progress-percentage">
-                            <span class="text-xs font-weight-bold">100%</span>
-                        </div>
-                        </div>
-                        <div class="progress">
-                        <div class="progress-bar bg-gradient-success w-100" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                    </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                    <div class="d-flex px-2 py-1">
-                        <div>
-                        <img src="../assets/img/small-logos/logo-spotify.svg" class="avatar avatar-sm me-3" alt="spotify">
-                        </div>
-                        <div class="d-flex flex-column justify-content-center">
-                        <h6 class="mb-0 text-sm">Launch our Mobile App</h6>
-                        </div>
-                    </div>
-                    </td>
-                    <td>
-                    <div class="avatar-group mt-2">
-                        <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ryan Tompson">
-                        <img src="../assets/img/team-4.jpg" alt="user1">
-                        </a>
-                        <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Romina Hadid">
-                        <img src="../assets/img/team-3.jpg" alt="user2">
-                        </a>
-                        <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Alexander Smith">
-                        <img src="../assets/img/team-4.jpg" alt="user3">
-                        </a>
-                        <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Jessica Doe">
-                        <img src="../assets/img/team-1.jpg" alt="user4">
-                        </a>
-                    </div>
-                    </td>
-                    <td class="align-middle text-center text-sm">
-                    <span class="text-xs font-weight-bold"> $20,500 </span>
-                    </td>
-                    <td class="align-middle">
-                    <div class="progress-wrapper w-75 mx-auto">
-                        <div class="progress-info">
-                        <div class="progress-percentage">
-                            <span class="text-xs font-weight-bold">100%</span>
-                        </div>
-                        </div>
-                        <div class="progress">
-                        <div class="progress-bar bg-gradient-success w-100" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                    </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                    <div class="d-flex px-2 py-1">
-                        <div>
-                        <img src="../assets/img/small-logos/logo-jira.svg" class="avatar avatar-sm me-3" alt="jira">
-                        </div>
-                        <div class="d-flex flex-column justify-content-center">
-                        <h6 class="mb-0 text-sm">Add the New Pricing Page</h6>
-                        </div>
-                    </div>
-                    </td>
-                    <td>
-                    <div class="avatar-group mt-2">
-                        <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ryan Tompson">
-                        <img src="../assets/img/team-4.jpg" alt="user5">
-                        </a>
-                    </div>
-                    </td>
-                    <td class="align-middle text-center text-sm">
-                    <span class="text-xs font-weight-bold"> $500 </span>
-                    </td>
-                    <td class="align-middle">
-                    <div class="progress-wrapper w-75 mx-auto">
-                        <div class="progress-info">
-                        <div class="progress-percentage">
-                            <span class="text-xs font-weight-bold">25%</span>
-                        </div>
-                        </div>
-                        <div class="progress">
-                        <div class="progress-bar bg-gradient-info w-25" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="25"></div>
-                        </div>
-                    </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                    <div class="d-flex px-2 py-1">
-                        <div>
-                        <img src="../assets/img/small-logos/logo-invision.svg" class="avatar avatar-sm me-3" alt="invision">
-                        </div>
-                        <div class="d-flex flex-column justify-content-center">
-                        <h6 class="mb-0 text-sm">Redesign New Online Shop</h6>
-                        </div>
-                    </div>
-                    </td>
-                    <td>
-                    <div class="avatar-group mt-2">
-                        <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ryan Tompson">
-                        <img src="../assets/img/team-1.jpg" alt="user6">
-                        </a>
-                        <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Jessica Doe">
-                        <img src="../assets/img/team-4.jpg" alt="user7">
-                        </a>
-                    </div>
-                    </td>
-                    <td class="align-middle text-center text-sm">
-                    <span class="text-xs font-weight-bold"> $2,000 </span>
-                    </td>
-                    <td class="align-middle">
-                    <div class="progress-wrapper w-75 mx-auto">
-                        <div class="progress-info">
-                        <div class="progress-percentage">
-                            <span class="text-xs font-weight-bold">40%</span>
-                        </div>
-                        </div>
-                        <div class="progress">
-                        <div class="progress-bar bg-gradient-info w-40" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="40"></div>
-                        </div>
-                    </div>
-                    </td>
-                </tr>
+                  @foreach($landingPageList as $landingPage)
+                    <tr>
+                        <td>$landingPage->institution_name</td>
+                        <td>$landingPage->course_name</td>
+                        <td>$landingPage->title</td>
+                        <td>$landingPage->description</td>
+                        <td>$landingPage->assignee</td>
+                        <td>$landingPage->assigner</td>
+                        <td>$landingPage->development_type_name</td>
+                        <td>$landingPage->issue_name</td>
+                        <td>$landingPage->priority_name</td>
+                        <td>$landingPage->lp_status</td>
+                        <td><button class="btn btn-primary" id="btnEditId" onclick="editLandingPage({{ $landingPage->lp_id }});">Edit</button></td>
+                    </tr>
+                  @endforeach
                 </tbody>
             </table>
             </div>
         </div>
         </div>
     </div>        
+</div>
+<!-- Crete Landing Page Modal -->
+<div class="modal fade" id="createLandingPageModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel"></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form name="add-landing-page" id="add-landing-page" method="post" action="{{ url('store-landing-page') }}">
+          @csrf
+          <input type="hidden" name="landing-page-id" id="landing-page-id" />
+          <div class="row form-group">
+            <div class="col-md-3">
+              <label class="form-label" for="landing-page-institution">Institution</label>
+              <span class="text-danger">*</span>
+            </div>
+            <div class="col-md-7">
+              <select name="landing-page-institution" class="form-control" id="landing-page-institution" onchange="getLandingPageCourses();">                  
+              </select>                
+              <span id="institution-error" class="text-danger"></span>
+            </div>
+          </div>
+          <div class="row form-group mt-2">
+            <div class="col-md-3">
+              <label class="form-label" for="course">Course</label>
+              <span class="text-danger">*</span>
+            </div>
+            <div class="col-md-7">
+              <select name="landing-page-course" class="form-control" id="landing-page-course">
+                <option value="">--Select--</option>                  
+              </select>                
+              <span id="course-error" class="text-danger"></span>
+            </div>
+          </div>
+          <div class="row form-group mt-2">
+            <div class="col-md-3">
+              <label class="form-label" for="landing-page-title">Title</label>
+              <span class="text-danger">*</span>
+            </div>
+            <div class="col-md-7">
+              <input type="text" id="landing-page-title" name="landing-page-title" class="form-control" />                
+              <span id="title-error" class="text-danger"></span>
+            </div>
+          </div>
+          <div class="row form-group mt-2">
+            <div class="col-md-3">
+              <label class="form-label" for="description">Description</label>              
+            </div>
+            <div class="col-md-7">
+              <textarea name="description" class="form-control" id="description" cols="30" rows="4"></textarea>             
+              
+            </div>
+          </div>
+          <div class="row form-group mt-2">
+            <div class="col-md-3">
+              <label class="form-label" for="assignee">Assignee</label>
+              <span class="text-danger">*</span>
+            </div>
+            <div class="col-md-7">
+              <select name="assignee" class="form-control" id="assignee">                  
+              </select>                
+              <span id="assignee-error" class="text-danger"></span>
+            </div>
+          </div>
+          <div class="row form-group mt-2">
+            <div class="col-md-3">
+              <label class="form-label" for="assigner">Assigner</label>
+              <span class="text-danger">*</span>
+            </div>
+            <div class="col-md-7">
+              <select name="assigner" class="form-control" id="assigner">                  
+              </select>                
+              <span id="assigner-error" class="text-danger"></span>
+            </div>
+          </div>
+          <div class="row form-group mt-2">
+            <div class="col-md-3">
+              <label class="form-label" for="developmentType">Development Type</label>
+              <span class="text-danger">*</span>
+            </div>
+            <div class="col-md-7">
+              <select name="developmentType" class="form-control" id="developmentType">                  
+              </select>                
+              <span id="developmentType-error" class="text-danger"></span>
+            </div>
+          </div>
+          <div class="row form-group mt-2">
+            <div class="col-md-3">
+              <label class="form-label" for="issue">Issue</label>
+              <span class="text-danger">*</span>
+            </div>
+            <div class="col-md-7">
+              <select name="issue" class="form-control" id="issue">
+                
+              </select>                
+              <span id="issue-error" class="text-danger"></span>
+            </div>
+          </div>
+          <div class="row form-group mt-2">
+            <div class="col-md-3">
+              <label class="form-label" for="priority">Priority</label>
+              <span class="text-danger">*</span>
+            </div>
+            <div class="col-md-7">
+                <select name="priority" class="form-control" id="priority">
+                    
+                </select>                
+                <span id="priority-error" class="text-danger"></span>
+            </div>
+          </div>
+          <div class="row form-group mt-2">
+            <div class="col-md-3">
+              <label class="form-label" for="status">Status</label>
+              <span class="text-danger">*</span>
+            </div>
+            <div class="col-md-7">
+              <select name="status" class="form-control" id="status">                  
+              </select>                
+              <span id="status-error" class="text-danger"></span>
+            </div>
+          </div>
+          <div class="row form-group mt-2">
+            <div class="col-md-3">
+              <label class="form-label" for="attach">Attach</label>              
+            </div>
+            <div class="col-md-7">
+              <input type="file" id="attach" name="attach" multiple="multiple">               
+            </div>
+          </div>
+          <hr />
+          <div class="row form-group mt-2">
+            <div class="col-md-5">
+              <button class="btn btn-primary" id="create" title="Create" onclick="CreateLandingPage();">Create</button>
+              <button data-bs-dismiss="modal" class="btn btn-danger" title="Cancel">Cancel</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>  
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.js"></script>
@@ -279,7 +210,161 @@
     $(document).ready(function() {        
         $("#intCampaignHomeID").removeClass( "active bg-gradient-primary" );
         $("#intLandingPageID").addClass( "active bg-gradient-primary" );
-        $("#intCampaignID").removeclass( "active bg-gradient-primary" );          
+        $("#intCampaignID").removeClass( "active bg-gradient-primary" );          
     });
+
+    function getLandingPageCourses(){
+      
+        var institutionId = $("#landing-page-institution").val();
+        $.ajax({
+            type:'get',
+            url: "/get-courses",
+            data: {'institutionId' : institutionId},
+            success:function(data) {
+              if(data) {
+                var courses = $("#landing-page-course").empty();
+                courses.append("<option value=''>--Select--</option>");
+                for(var i=0; i<data.courseList.length; i++){
+                  var course_item_el = '<option value="'+ data.courseList[i]['course_id']+'">'+ data.courseList[i]['course_name'] +'</option>';
+                  courses.append(course_item_el);
+                }
+              }    
+            }
+        });
+    }
+
+    function CreateLandingPage(lpId) {
+      $("#createLandingPageModal").modal('show');
+      $.ajax({
+            type:'get',
+            url: "/create-landing-page",
+            data: {'lpId' : lpId},
+            success:function(data)
+            {                                                
+                if(lpId == 0)
+                {
+                  $("#landing-page-id").val(lpId);
+                  $("#institution-error").html(''); 
+                  $("#course-error").html(''); 
+                  $("#title-error").html('');
+                  $("#description-error").html('');
+                  $("#assignee-error").html('');
+                  $("#assigner-error").html('');
+                  $("#developmentType-error").html('');
+                  $("#issue-error").html('');
+                  $("#priority-error").html(''); 
+                  $("#status-error").html('');
+                  $("#landing-page-title").val('');
+                  $("#description").val('');
+                  $("#attach").val('');
+                  if(lpId == 0){
+                    $("#exampleModalLabel").html("Create New Landing Page");                                       
+                  }
+                  else {
+                    $("#exampleModalLabel").html("Edit Landing Page");
+                    $("#landing-page-title").val(data.landingPageList[0]['title']);
+                    $("#description").val(data.landingPageList[0]['description']);
+                    //$("#attach").val(data.landingPageList[0]['file_name']);
+                  }
+                  var landingPageInstitution = $("#landing-page-institution").empty();
+                  landingPageInstitution.append("<option value=''>--Select--</option>");
+                  for(var i=0; i<data.institutionList.length; i++){
+                    
+                    if(lpId == 0) {
+                      var institution_item_el = '<option value="'+data.institutionList[i]['institution_id']+'">'+data.institutionList[i]['institution_name']+'</option>';
+                    }
+                    else if(data.landingPageList[0]['institution_id'] == data.institutionList[i]['institution_id'] ){
+                      var institution_item_el = '<option selected value="'+data.institutionList[i]['institution_id']+'">'+data.institutionList[i]['institution_name']+'</option>';
+                    }
+                    
+                    landingPageInstitution.append(institution_item_el);
+                  }
+
+                  var assignee = $("#assignee").empty();
+                  assignee.append("<option value=''>--Select--</option>");
+                  for(var i=0; i<data.assigneeList.length; i++){
+                    
+                    if(lpId == 0) {
+                      var assignee_item_el = '<option value="'+ data.assigneeList[i]['user_id']+'">'+ data.assigneeList[i]['assignee'] +'</option>';
+                    }
+                    else if(data.landingPageList[i]['assignee'] == data.assigneeList[0]['user_id']){
+                      var assignee_item_el = '<option selected value="'+ data.assigneeList[i]['user_id']+'">'+ data.assigneeList[i]['assignee'] +'</option>';  
+                    }
+                    
+                    assignee.append(assignee_item_el);
+                  }
+
+                  var assigner = $("#assigner").empty();
+                  assigner.append("<option value=''>--Select--</option>");
+                  for(var i=0; i<data.assigneeList.length; i++){
+                    
+                    if(lpId == 0){
+                      var assigner_item_el = '<option value="'+ data.assigneeList[i]['user_id']+'">'+ data.assigneeList[i]['assignee'] +'</option>';
+                    }
+                    else if(data.landingPageList[i]['assigner'] == data.assingerList[0]['user_id']) {
+                      var assigner_item_el = '<option selected value="'+ data.assigneeList[i]['user_id']+'">'+ data.assigneeList[i]['assignee'] +'</option>';
+                    }
+                    
+                    assigner.append(assigner_item_el);
+                  }
+                  
+                  var developmentType = $("#developmentType").empty();
+                  developmentType.append("<option value=''>--Select--</option>");
+                  for(var i=0; i<data.developmentTypeList.length; i++){
+                    
+                    if(lpId == 0){
+                      var developmentType_item_el = '<option value="'+ data.developmentTypeList[i]['development_type_id']+'">'+ data.developmentTypeList[i]['development_type_name'] +'</option>';
+                    }
+                    else if(data.landingPageList[i]['fk_development_id'] == data.developmentTypeList[0]['development_type_id'] ){
+                      var developmentType_item_el = '<option selected value="'+ data.developmentTypeList[i]['development_type_id']+'">'+ data.developmentTypeList[i]['development_type_name'] +'</option>';
+                    }
+                    
+                    developmentType.append(developmentType_item_el);
+                  }
+
+                  var lpissue = $("#issue").empty();
+                  lpissue.append("<option value=''>--Select--</option>");
+                  for(var i=0; i<data.issueList.length; i++){                    
+                    if(lpId == 0){
+                      var issue_item_el = '<option value="'+ data.issueList[i]['issue_id']+'">'+ data.issueList[i]['issue_name'] +'</option>';
+                    }
+                    else if(data.landingPageList[i]['fk_issue_id'] == data.issueList[0]['issue_id'] ){
+                      var issue_item_el = '<option selected value="'+ data.issueList[i]['issue_id']+'">'+ data.issueList[i]['issue_name'] +'</option>';
+                    }
+                    
+                    lpissue.append(issue_item_el);
+                  }
+
+                  var lppriority = $("#priority").empty();
+                  lppriority.append("<option value=''>--Select--</option>");
+                  for(var i=0; i<data.priorityList.length; i++){                    
+                    if(lpId == 0){
+                      var priority_item_el = '<option value="'+ data.priorityList[i]['priority_id']+'">'+ data.priorityList[i]['priority_name'] +'</option>';
+                    }
+                    else if(data.landingPageList[i]['fk_priority_id'] == data.priorityList[0]['priority_id'] ){
+                      var priority_item_el = '<option selected value="'+ data.priorityList[i]['priority_id']+'">'+ data.priorityList[i]['priority_name'] +'</option>';
+                    }
+                    
+                    lppriority.append(priority_item_el);
+                  }
+                  
+                  var lpstatus = $("#status").empty();
+                  lpstatus.append("<option value=''>--Select--</option>");
+                  for(var i=0; i<data.statusList.length; i++){
+                    
+                    if(lpId == 0){
+                      var status_item_el = '<option value="'+ data.statusList[i]['lp_status_id']+'">'+ data.statusList[i]['lp_status'] +'</option>';
+                    }
+                    else if(data.landingPageList[i]['fk_lp_status_id'] == data.statusList[0]['lp_status_id'] ){
+                      var status_item_el = '<option selected value="'+ data.statusList[i]['lp_status_id']+'">'+ data.statusList[i]['lp_status'] +'</option>';
+                    } 
+                    lpstatus.append(status_item_el);
+                  }
+
+                }
+            }      
+      });
+      
+    }
 </script>
 @endsection

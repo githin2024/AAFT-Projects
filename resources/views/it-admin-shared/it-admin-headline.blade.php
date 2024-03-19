@@ -86,16 +86,6 @@
           <input type="hidden" id="hdnHeadlineId" name="hdnHeadlineId" />
           <div class="row form-group">
             <div class="col-md-5">
-              <label for="headlineName">Headline</label>
-              <span class="text-danger">*</span>
-            </div>
-            <div class="col-md-7">
-              <input type="text" class="form-control" id="headlineName" name="headlineName"  />
-              <span id="headline-error" class="text-danger"></span>
-            </div>
-          </div>
-          <div class="row form-group mt-2">
-            <div class="col-md-5">
               <label for="headlineCode">Headline Code</label>
               <span class="text-danger">*</span>
             </div>
@@ -104,6 +94,17 @@
               <span id="headline-code-error" class="text-danger"></span>
             </div>
           </div>
+          <div class="row form-group mt-2">
+            <div class="col-md-5">
+              <label for="headlineName">Headline</label>
+              <span class="text-danger">*</span>
+            </div>
+            <div class="col-md-7">
+              <input type="text" class="form-control" id="headlineName" name="headlineName"  />
+              <span id="headline-error" class="text-danger"></span>
+            </div>
+          </div>
+          
           <hr />
           <div class="row form-group mt-2">
             <div class="col-md-5">
@@ -194,6 +195,9 @@
 
         if($("#headlineCode").val() == ""){
             $("#headline-code-error").text("Please enter headline code");
+        }
+        else if($("#headline-code-error").text() != "") {
+            $("#headline-code-error").text("Please provide unique headline code.");
         }
         else {
             $("#headline-code-error").text("");

@@ -95,7 +95,7 @@
       </nav>
       <!-- End Navbar -->
       <div class="container-fluid py-4">
-        @yield('content')
+        @yield('int-content')
         <footer class="footer py-4  ">
           <div class="container-fluid">
             <div class="row align-items-center justify-content-lg-between">

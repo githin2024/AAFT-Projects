@@ -199,7 +199,7 @@ class ExtHomeController extends Controller
         $campaignAdName = $campaignAdsetName . '_' . $priceCode . '_' . $campaignTypeCode . '_' . $targetSegmentCode . '_' . $campaignVersionCode;
         $campaignCreative = $campaignName . '_' . $priceCode . '_' . $personaCode . '_' . $headlineCode . '_' . $campaignSizeCode . '_' . $campaignVersionCode;
         $leadSourceName = $institutionCode .''. $programTypeCode . '_' . $agencyCode . '_' . $courseCode . '_' . $leadName;
-
+        $userId = DB::table('users')->select('user_id')->where('username', '=', session('username'))->first(); 
         DB::table('campaigns')->insert([
             'campaign_name' => $campaignName,
             'fk_course_id' => $courseId,
@@ -215,7 +215,7 @@ class ExtHomeController extends Controller
             'fk_campaign_size_id' => $campaignSizeId,
             'fk_campaign_version_id' => $campaignVersionId,
             'fk_campaign_type_id' => $campaignTypeId,
-            'fk_user_id' => 3,
+            'fk_user_id' => $userId->user_id,
             'fk_campaign_status_id' => 2,
             'adset_name' => $campaignAdsetName,
             'adname' => $campaignAdName,
@@ -224,8 +224,8 @@ class ExtHomeController extends Controller
             'created_date' => now(),
             'updated_date' => now(),
             'active' => 1,
-            'created_by' => "githin.thomas",
-            'updated_by' => "githin.thomas"
+            'created_by' => session('username'),
+            'updated_by' => session('username')
         ]);
 
         return redirect()->back()->with('message', 'Campaign created successfully.');
@@ -237,16 +237,17 @@ class ExtHomeController extends Controller
 
     public function parameterCampaign(Request $req) {
         if($req->input('published') == "true" && $req->input('course-campaign') == "true"){
+            $userId = DB::table('users')->select('user_id')->where('username', '=', session('username'))->first();
             DB::table('campaign_parameters_check')->insert([
                 'fk_campaign_id' => $req->input('campaignId'),
                 'is_published' => 1,
                 'is_course_parameter' => 1,
-                'fk_user_id' => 3,
+                'fk_user_id' => $userId -> user_id,
                 'created_date' => now(),
                 'updated_date' => now(),
                 'active' => 1,
-                'created_by' => "githin.thomas",
-                'updated_by' => "githin.thomas"
+                'created_by' => session('username'),
+                'updated_by' => session('username')
             ]);
 
             return redirect()->back()->with('message', ' Campaign set successfully.');
@@ -259,7 +260,7 @@ class ExtHomeController extends Controller
             ->where('fk_campaign_id', $campaignId)
             ->update(['campaign_lead_accept' => 1, 
                       'campaign_lead_accept-date' => now(),
-                      'updated_by' => "githin.thomas",
+                      'updated_by' => session('username'),
                       'updated_date' => now()]);
         $campaignStatusList = DB::select("select campaign_status_id from campaign_status where campaign_status_name = 'Active'");
         foreach($campaignStatusList as $status) {
@@ -269,7 +270,7 @@ class ExtHomeController extends Controller
         DB::table('campaigns')
             ->where('campaign_id', $campaignId)
             ->update(['fk_campaign_status_id' => $campaignStatusId,
-                      'updated_by' => "githin.thomas",
+                      'updated_by' => session('username'),
                       'updated_date' => now()]);
 
         return response()->json(["Lead request accepted successfully."]);
@@ -278,18 +279,31 @@ class ExtHomeController extends Controller
     public function editCampaignRequest(Request $req)
     {
         $campaignId = $req->get('campaignId');
+        $userId = DB::table('users')->select('user_id')->where('username', '=', session('username'))->first();
+        $campaignEditId = DB::table('campaign_edit_request')->select('camp_edit_request_id')->where('fk_campaign_id', '=', $campaignId)->first();
+        if($campaignEditId->camp_edit_request_id > 0)
+        {
+            DB::table('campaign_edit_request')
+                ->where('fk_campaign_id', '=', $campaignId)
+                ->update(['camp_edit_request_date' => now(),
+                          'camp_edit_request' => 1,
+                          'updated_date' => now(),
+                          'updated_by' => session('username')]);
+        }
+        else {
         DB::table('campaign_edit_request')
             ->insert([
                 'fk_campaign_id' => $campaignId,
-                'fk_user_id' => 3,
+                'fk_user_id' => $userId->user_id,
                 'camp_edit_request' => 1,
                 'camp_edit_request_date' => now(),
                 'created_date' => now(),
                 'updated_date' => now(),
                 'active' => 1,
-                'created_by' => "githin.thomas",
-                'updated_by' => "githin.thomas"
+                'created_by' => session('username'),
+                'updated_by' => session('username')
             ]);
+        }
         
         return response()->json(["Edit request sent successfully."]);
     }
@@ -322,7 +336,7 @@ class ExtHomeController extends Controller
             ->update([
                 'fk_campaign_status_id' => $campaignStatusId,
                 'updated_date' => now(),
-                'updated_by' => "githin.thomas"
+                'updated_by' => session('username')
             ]);
 
         DB::table('campaign_edit_request')
@@ -332,7 +346,7 @@ class ExtHomeController extends Controller
                 'camp_edit_accept' => 0,
                 'camp_edit_request_date' => null,
                 'camp_edit_accept_date' => null,
-                'updated_by' => "githin.thomas",
+                'updated_by' => session('username'),
                 'updated_date' => now()
             ]);
 
