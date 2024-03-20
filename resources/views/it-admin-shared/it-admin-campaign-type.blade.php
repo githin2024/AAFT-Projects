@@ -84,6 +84,16 @@
         <form action="{{ url('it-admin-campaign-type-create')}}" method="post" id="campaignTypeForm">
           @csrf
           <input type="hidden" id="hdnCampaignTypeId" name="hdnCampaignTypeId" />
+          <div class="row form-group mt-2">
+            <div class="col-md-5">
+              <label for="campaignTypeCode">Campaign Type Code</label>
+              <span class="text-danger">*</span>
+            </div>
+            <div class="col-md-7">
+              <input type="text" class="form-control" id="campaignTypeCode" name="campaignTypeCode" onchange="checkCampaignTypeCode();" maxlength="5" />
+              <span id="campaign-type-code-error" class="text-danger"></span>
+            </div>
+          </div>  
           <div class="row form-group">
             <div class="col-md-5">
               <label for="campaignTypeCode">Campaign Type Code</label>

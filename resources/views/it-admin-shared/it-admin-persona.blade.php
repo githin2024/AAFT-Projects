@@ -84,6 +84,16 @@
         <form action="{{ url('it-admin-persona-create')}}" method="post" id="personaForm">
           @csrf
           <input type="hidden" id="hdnPersonaId" name="hdnPersonaId" />
+          <div class="row form-group mt-2">
+            <div class="col-md-4">
+              <label for="personaCode">Persona Code</label>
+              <span class="text-danger">*</span>
+            </div>
+            <div class="col-md-7">
+              <input type="text" class="form-control" id="personaCode" name="personaCode" onchange="checkPersonaCode();" maxlength="5" />
+              <span id="persona-code-error" class="text-danger"></span>
+            </div>
+          </div>  
           <div class="row form-group">
             <div class="col-md-4">
               <label for="personaCode">Persona Code</label>

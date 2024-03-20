@@ -84,7 +84,7 @@
         <form action="{{ url('it-admin-agency-create')}}" method="post" id="agencyForm">
           @csrf
           <input type="hidden" id="hdnAgencyId" name="hdnAgencyId" />
-          <div class="row form-group">
+          <div class="row form-group mt-2">
             <div class="col-md-4">
               <label for="agencyCode">Agency Code</label>
               <span class="text-danger">*</span>
@@ -93,8 +93,8 @@
               <input type="text" class="form-control" id="agencyCode" name="agencyCode" onchange="checkAgencyCode();" maxlength="5" />
               <span id="agency-code-error" class="text-danger"></span>
             </div>
-          </div>
-          <div class="row form-group mt-2">
+          </div>  
+          <div class="row form-group">
             <div class="col-md-4">
               <label for="agencyName">Agency Name</label>
               <span class="text-danger">*</span>
