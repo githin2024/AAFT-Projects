@@ -10,12 +10,12 @@
                         <h5>Landing Page</h5>                
                     </div>
                     <div class="col-lg-6 col-6 my-auto text-end">
-                    <div class="dropdown float-lg-end pe-4">
-                        <a class="btn btn-primary" id="createCampaignID" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="CreateLandingPage(0);">
-                            <i class="fa fa-plus" style="font-size: small;">&nbsp; Create</i>                            
-                        </a>                
-                    </div>
-                </div>                  
+                      <div class="dropdown float-lg-end pe-4">
+                          <a class="btn btn-primary" id="createCampaignID" href="{{ url('int-create-landing-page') }}">
+                              <i class="fa fa-plus" style="font-size: small;">&nbsp; Create</i>                            
+                          </a>                
+                      </div>
+                    </div>                  
             </div>            
         </div>
         <div class="card-body px-1 pb-2">
@@ -55,151 +55,9 @@
                 </tbody>
             </table>
             </div>
-        </div>
+          </div>
         </div>
     </div>        
-</div>
-<!-- Crete Landing Page Modal -->
-<div class="modal fade" id="createLandingPageModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel"></h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form name="add-landing-page" id="add-landing-page" method="post" action="{{ url('store-landing-page') }}">
-          @csrf
-          <input type="hidden" name="landing-page-id" id="landing-page-id" />
-          <div class="row form-group">
-            <div class="col-md-3">
-              <label class="form-label" for="landing-page-institution">Institution</label>
-              <span class="text-danger">*</span>
-            </div>
-            <div class="col-md-7">
-              <select name="landing-page-institution" class="form-control" id="landing-page-institution" onchange="getLandingPageCourses();">                  
-              </select>                
-              <span id="institution-error" class="text-danger"></span>
-            </div>
-          </div>
-          <div class="row form-group mt-2">
-            <div class="col-md-3">
-              <label class="form-label" for="course">Course</label>
-              <span class="text-danger">*</span>
-            </div>
-            <div class="col-md-7">
-              <select name="landing-page-course" class="form-control" id="landing-page-course">
-                <option value="">--Select--</option>                  
-              </select>                
-              <span id="course-error" class="text-danger"></span>
-            </div>
-          </div>
-          <div class="row form-group mt-2">
-            <div class="col-md-3">
-              <label class="form-label" for="landing-page-title">Title</label>
-              <span class="text-danger">*</span>
-            </div>
-            <div class="col-md-7">
-              <input type="text" id="landing-page-title" name="landing-page-title" class="form-control" />                
-              <span id="title-error" class="text-danger"></span>
-            </div>
-          </div>
-          <div class="row form-group mt-2">
-            <div class="col-md-3">
-              <label class="form-label" for="description">Description</label>              
-            </div>
-            <div class="col-md-7">
-              <textarea name="description" class="form-control" id="description" cols="30" rows="4"></textarea>             
-              
-            </div>
-          </div>
-          <div class="row form-group mt-2">
-            <div class="col-md-3">
-              <label class="form-label" for="assignee">Assignee</label>
-              <span class="text-danger">*</span>
-            </div>
-            <div class="col-md-7">
-              <select name="assignee" class="form-control" id="assignee">                  
-              </select>                
-              <span id="assignee-error" class="text-danger"></span>
-            </div>
-          </div>
-          <div class="row form-group mt-2">
-            <div class="col-md-3">
-              <label class="form-label" for="assigner">Assigner</label>
-              <span class="text-danger">*</span>
-            </div>
-            <div class="col-md-7">
-              <select name="assigner" class="form-control" id="assigner">                  
-              </select>                
-              <span id="assigner-error" class="text-danger"></span>
-            </div>
-          </div>
-          <div class="row form-group mt-2">
-            <div class="col-md-3">
-              <label class="form-label" for="developmentType">Development Type</label>
-              <span class="text-danger">*</span>
-            </div>
-            <div class="col-md-7">
-              <select name="developmentType" class="form-control" id="developmentType">                  
-              </select>                
-              <span id="developmentType-error" class="text-danger"></span>
-            </div>
-          </div>
-          <div class="row form-group mt-2">
-            <div class="col-md-3">
-              <label class="form-label" for="issue">Issue</label>
-              <span class="text-danger">*</span>
-            </div>
-            <div class="col-md-7">
-              <select name="issue" class="form-control" id="issue">
-                
-              </select>                
-              <span id="issue-error" class="text-danger"></span>
-            </div>
-          </div>
-          <div class="row form-group mt-2">
-            <div class="col-md-3">
-              <label class="form-label" for="priority">Priority</label>
-              <span class="text-danger">*</span>
-            </div>
-            <div class="col-md-7">
-                <select name="priority" class="form-control" id="priority">
-                    
-                </select>                
-                <span id="priority-error" class="text-danger"></span>
-            </div>
-          </div>
-          <div class="row form-group mt-2">
-            <div class="col-md-3">
-              <label class="form-label" for="status">Status</label>
-              <span class="text-danger">*</span>
-            </div>
-            <div class="col-md-7">
-              <select name="status" class="form-control" id="status">                  
-              </select>                
-              <span id="status-error" class="text-danger"></span>
-            </div>
-          </div>
-          <div class="row form-group mt-2">
-            <div class="col-md-3">
-              <label class="form-label" for="attach">Attach</label>              
-            </div>
-            <div class="col-md-7">
-              <input type="file" id="attach" name="attach" multiple="multiple">               
-            </div>
-          </div>
-          <hr />
-          <div class="row form-group mt-2">
-            <div class="col-md-5">
-              <button class="btn btn-primary" id="create" title="Create" onclick="CreateLandingPage();">Create</button>
-              <button data-bs-dismiss="modal" class="btn btn-danger" title="Cancel">Cancel</button>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>  
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.js"></script>

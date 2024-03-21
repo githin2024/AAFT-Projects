@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Exports\ExportCampaign;
+use App\Campaigns;
 use Maatwebsite\Excel\Facades\Excel;
 class IntHomeController extends Controller
 {
@@ -44,13 +45,13 @@ class IntHomeController extends Controller
     public function InternalCampaign() 
     {
         $campaignList = DB::select("SELECT c.campaign_id, i.institution_name, pt.program_type_name, cs.course_name, c.campaign_name, c.adset_name, c.adname, c.creative, l.leadsource_name, DATE_FORMAT(c.campaign_date, '%d %M %Y') campaign_date, cps.campaign_status_name FROM campaigns c
-                                                LEFT JOIN program_type pt ON c.fk_program_type_id = pt.program_type_id
-                                                LEFT JOIN courses cs ON cs.course_id = c.fk_course_id
-                                                LEFT JOIN institution i ON cs.fk_institution_id = i.institution_id
-                                                LEFT JOIN leadsource l ON c.fk_lead_source_id = l.leadsource_id
-                                                LEFT JOIN campaign_status cps ON c.fk_campaign_status_id = cps.campaign_status_id
-                                                WHERE c.active = 1");
-        
+                                    LEFT JOIN program_type pt ON c.fk_program_type_id = pt.program_type_id
+                                    LEFT JOIN courses cs ON cs.course_id = c.fk_course_id
+                                    LEFT JOIN institution i ON cs.fk_institution_id = i.institution_id
+                                    LEFT JOIN leadsource l ON c.fk_lead_source_id = l.leadsource_id
+                                    LEFT JOIN campaign_status cps ON c.fk_campaign_status_id = cps.campaign_status_id
+                                    WHERE c.active = 1");     
+
         return view('int-marketing-shared.int-campaign', compact(['campaignList']));
     }
 
@@ -103,8 +104,8 @@ class IntHomeController extends Controller
         $issueList = DB::select("SELECT issue_id, issue_name FROM issue WHERE active = 1");
         $priorityList = DB::select("SELECT priority_id, priority_name FROM priority WHERE active = 1");
         $statusList = DB::select("SELECT lp_status_id, lp_status FROM landing_page_status WHERE active = 1");
-        return response()->json(["institutionList" => $institutionList, "landingPageList" => $landingPageList, "assigneeList" => $assigneeList,
-                                 "developmentTypeList" => $developmentTypeList, "issueList" => $issueList, "priorityList" => $priorityList, "statusList" => $statusList]);
+        return view('int-marketing-shared.int-create-landing-page', compact(["institutionList", "landingPageList", "assigneeList",
+                                 "developmentTypeList", "issueList", "priorityList", "statusList", "landingPageId"]));
     }
 
     public function GetLandingPageCourses(Request $req)
@@ -112,6 +113,39 @@ class IntHomeController extends Controller
         $institutionId = $req->institutionId;
         $courseList = DB::select("SELECT course_id, course_name FROM courses WHERE fk_institution_id = ? AND active = 1", [$institutionId]);
         return response()->json(["courseList" => $courseList]);
+    }
+
+    public function StoreLandingPage(Request $req)
+    {
+       $institutionId = $req->landing-page-institution;
+       $courseId = $req->landing-page-course;
+       $title = $req->landing-page-title;
+       $description = $req->description;
+       $assignee = $req->assignee;
+       $assigner = $req->assigner;
+       $developmentType = $req->developmentType;
+       $issue = $req->issue;
+       $priority = $req->priority;
+       $status = $req->status;
+       $comments = $req->comments;
+       $landingPageId = $req->landing-page-id; 
+       
+       if($landingPageId == 0)
+       {
+            $issue = $issue == "" ? DB::table('issue')->where('issue_name', '=', "Task")->pluck('issue_id') : $issue;
+            $priority = $priority == "" ? DB::table('priority')->where('priority_name', '=', "Medium")->pluck('priority_id') : $priority;
+            $status = $status == "" ? DB::table('lp_status')->where('lp_status', '=', "To Do")->pluck('lp_status_id') : $status;
+            DB::table('landing_page')->insert(['fk_course_id' => $courseId, 'title' => $title, 'description' => $description, 'assignee' => $assignee,
+                       'fk_development_id' => $developmentType, 'fk_issue_id' => $issue, 'fk_priority_id' => priority, 
+                       'fk_lp_status_id' => $status, 'assigner' => $assigner, 'created_by' => session('username'), 
+                       'updated_by' => session('username'), 'created_date' => now(), 'updated_date' => now(), 'active' => 1]);
+            
+            $lpId = DB::getPdo()->lastInsertId();
+            DB::table('landing_page_comments')->insert(['lp_comment' => $comments, 'fk_landing_page_id' => $lpId, 'created_by' => session("username"),
+                                                      'updated_by' => session('username'), 'created_date' => now(), 'updated_date' => now(), 'active' => 1]);
+
+
+       }
     }
     
 }
