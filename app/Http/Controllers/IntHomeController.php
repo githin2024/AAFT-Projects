@@ -95,6 +95,9 @@ class IntHomeController extends Controller
                                         LEFT JOIN courses c ON c.course_id = lp.fk_course_id
 										LEFT JOIN institution i ON i.institution_id = c.fk_institution_id
                                         WHERE landing_page_id = ?", [$landingPageId]);
+
+        $landingPageCommentList = DB::select("SELECT lp_comment_id, lp_comment FROM landing_page_comments WHERE fk_landing_page_id = ?", [$landingPageId]);
+        $landingFileList = DB::select("SELECT lp_file_id, file_name, file_path FROM landing_page_file WHERE fk_lp_id = ?", [$landingPageId]);
         
         $institutionList = DB::select("SELECT institution_id, institution_name FROM institution WHERE active = 1");
         $assigneeList = DB::select("SELECT u.user_id, CONCAT(u.first_name, ' ', u.last_name) AS assignee FROM users u
@@ -105,7 +108,7 @@ class IntHomeController extends Controller
         $priorityList = DB::select("SELECT priority_id, priority_name FROM priority WHERE active = 1");
         $statusList = DB::select("SELECT lp_status_id, lp_status FROM landing_page_status WHERE active = 1");
         return view('int-marketing-shared.int-create-landing-page', compact(["institutionList", "landingPageList", "assigneeList",
-                                 "developmentTypeList", "issueList", "priorityList", "statusList", "landingPageId"]));
+                                 "developmentTypeList", "issueList", "priorityList", "statusList", "landingPageId", "landingPageCommentList", "landingFileList"]));
     }
 
     public function GetLandingPageCourses(Request $req)
@@ -117,35 +120,76 @@ class IntHomeController extends Controller
 
     public function StoreLandingPage(Request $req)
     {
-       $institutionId = $req->landing-page-institution;
-       $courseId = $req->landing-page-course;
-       $title = $req->landing-page-title;
+       $institutionId = $req->landing_page_institution;
+       $courseId = $req->landing_page_course;
+       $title = $req->landing_page_title;
        $description = $req->description;
        $assignee = $req->assignee;
        $assigner = $req->assigner;
        $developmentType = $req->developmentType;
-       $issue = $req->issue;
-       $priority = $req->priority;
-       $status = $req->status;
        $comments = $req->comments;
-       $landingPageId = $req->landing-page-id; 
+       $landingPageId = $req->landing_page_id;
+       $issue = $req->issue == "" ? DB::table('issue')->where('issue_name', '=', "Task")->pluck('issue_id') : $req->issue;
+       $priorityId = $req->priorityId == "" ? DB::table('priority')->where('priority_name', '=', 'Medium')->pluck('priority_id') : $req->priorityId;
+       $status = $req->status == "" ? DB::table('landing_page_status')->where('lp_status', '=', "To Do")->pluck('lp_status_id') : $req->status;
+       $fileName = "";
        
-       if($landingPageId == 0)
-       {
-            $issue = $issue == "" ? DB::table('issue')->where('issue_name', '=', "Task")->pluck('issue_id') : $issue;
-            $priority = $priority == "" ? DB::table('priority')->where('priority_name', '=', "Medium")->pluck('priority_id') : $priority;
-            $status = $status == "" ? DB::table('lp_status')->where('lp_status', '=', "To Do")->pluck('lp_status_id') : $status;
-            DB::table('landing_page')->insert(['fk_course_id' => $courseId, 'title' => $title, 'description' => $description, 'assignee' => $assignee,
-                       'fk_development_id' => $developmentType, 'fk_issue_id' => $issue, 'fk_priority_id' => priority, 
-                       'fk_lp_status_id' => $status, 'assigner' => $assigner, 'created_by' => session('username'), 
-                       'updated_by' => session('username'), 'created_date' => now(), 'updated_date' => now(), 'active' => 1]);
-            
-            $lpId = DB::getPdo()->lastInsertId();
-            DB::table('landing_page_comments')->insert(['lp_comment' => $comments, 'fk_landing_page_id' => $lpId, 'created_by' => session("username"),
-                                                      'updated_by' => session('username'), 'created_date' => now(), 'updated_date' => now(), 'active' => 1]);
+       try
+        {
+            if($landingPageId == 0 || $landingPageId == "")
+            {         
+                // DB::table('landing_page')->insert(['fk_course_id' => $courseId, 'title' => $title, 'description' => $description, 'assignee' => $assignee,
+                //         'fk_development_id' => $developmentType, 'fk_issue_id' => $issue[0], 'fk_priority_id' => $priorityId[0], 'fk_lp_status_id' => $status[0], 'assigner' => $assigner, 'created_by' => session('username'), 
+                //         'updated_by' => session('username'), 'created_date' => now(), 'updated_date' => now(), 'active' => 1]);
+                
+                // $lpId = DB::getPdo()->lastInsertId();
+                // if($comments != ""){
+                //     DB::table('landing_page_comments')->insert(['lp_comment' => $comments, 'fk_landing_page_id' => $lpId, 'created_by' => session("username"),
+                //                                         'updated_by' => session('username'), 'created_date' => now(), 'updated_date' => now(), 'active' => 1]);
+                // }
 
+                // if($req->hasFile('files')) {
+                //     $files = $req->file('files');
 
-       }
-    }
-    
+                //     foreach($files as $key => $file) {
+                //         if($file->isValid()){
+                //             $filePath = $file->store('public/uploads');
+                //             $fileName = basename($filePath);
+                //             $extension = $file->getClientOriginalExtension();
+                //             $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                //             $fileName = $originalName . '.' . $extension;
+                //             DB::table('landing_page_file')->insert(['file_name' => $fileName, 'file_path' => $filePath, 'fk_lp_id' => $landingPageId, 'fk_user_id' => $assignee, 
+                //                                                     'created_by' => session('username'), 'updated_by' => session('username'), 'created_date' => now(), 
+                //                                                     'updated_date' => now(), 'active' => 1]);
+                //         }
+                //     }
+                // }
+
+                if ($req->file('attach')) {
+                    foreach ($req->file('attach') as $media) {
+                        if (!empty($media)) {
+                            $destinationPath = 'public/uploads';
+                            $filename = $media->getClientOriginalName();
+                            $media->move($destinationPath, $filename);
+                            // DB::table('landing_page_file')->insert(['file_name' => $fileName, 'file_path' => $filePath, 'fk_lp_id' => $landingPageId, 'fk_user_id' => $assignee,
+                            //                                         'created_by' => session('username'), 'updated_by' => session('username'), 'created_date' => now(), 
+                            //                                         'updated_date' => now(), 'active' => 1]);
+                        }
+                    }
+                }
+
+                return $req->all();
+
+                //return response()->json(["message" => "Landing page created successfully."]);            
+            }
+            else 
+            {
+                return response()->json(["message" => "Landing page updated successfully."]);
+            }
+        }
+        catch(Exception $e)
+        {
+            return response()->json(["message" => "Error in creating a task"]);
+        }
+    }    
 }

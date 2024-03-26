@@ -51,7 +51,7 @@ Route::get('int-view-campaign', [IntHomeController::class, 'ViewCampaign']);
 Route::get('int-campaign-download', [IntHomeController::class, 'DownloadCampaign']);
 Route::get('int-create-landing-page', [IntHomeController::class, 'GetLandingPage']);
 Route::get('get-courses', [IntHomeController::class, 'GetLandingPageCourses']);
-Route::get('store-landing-page', [IntHomeController::class, 'StoreLandingPage']);
+Route::post('store-landing-page', [IntHomeController::class, 'StoreLandingPage']);
 
 //Admin Dashboard
 Route::get('admin-institution', [AdminController::class, 'AdminInstitution']);

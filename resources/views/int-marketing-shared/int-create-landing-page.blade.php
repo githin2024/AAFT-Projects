@@ -14,16 +14,16 @@
             </div>
           <div class="card-body px-1 pb-2">
               <div class="table-responsive">
-                <form name="add-landing-page" id="add-landing-page" method="post" action="{{ url('store-landing-page') }}">
+                <form name="add-landing-page" id="add-landing-page" method="post" action="{{ url('store-landing-page') }}" enctype="multipart/form-data" >
                       @csrf
-                      <input type="hidden" name="landing-page-id" id="landing-page-id" value="{{ $landingPageId }}" />
+                      <input type="hidden" name="landing_page_id" id="landing_page_id" value="{{ $landingPageId }}" />
                       <div class="row form-group">
                           <div class="col-md-3">
-                          <label class="form-label" for="landing-page-institution">Institution</label>
+                          <label class="form-label" for="landing_page_institution">Institution</label>
                           <span class="text-danger">*</span>
                           </div>
                           <div class="col-md-4">
-                          <select name="landing-page-institution" class="form-control" id="landing-page-institution" onchange="getLandingPageCourses();">
+                          <select name="landing_page_institution" class="form-control" id="landing_page_institution" onchange="getLandingPageCourses();">
                               <option value="">--Select--</option>
                               @foreach($institutionList as $institution)
                                 @if($landingPageId != 0 && $landingPageList[0]->institution_id == $institution->institution_id)
@@ -38,11 +38,11 @@
                       </div>
                       <div class="row form-group mt-2">
                           <div class="col-md-3">
-                          <label class="form-label" for="course">Course</label>
+                          <label class="form-label" for="landing_page_course">Course</label>
                           <span class="text-danger">*</span>
                           </div>
                           <div class="col-md-4">
-                          <select name="landing-page-course" class="form-control" id="landing-page-course">
+                          <select name="landing_page_course" class="form-control" id="landing_page_course">
                               <option value="">--Select--</option>                  
                           </select>                
                           <span id="course-error" class="text-danger"></span>
@@ -50,14 +50,14 @@
                       </div>
                       <div class="row form-group mt-2">
                           <div class="col-md-3">
-                          <label class="form-label" for="landing-page-title">Title</label>
+                          <label class="form-label" for="landing_page_title">Title</label>
                           <span class="text-danger">*</span>
                           </div>
                           <div class="col-md-4">
                             @if($landingPageId != 0)
-                                <input type="text" id="landing-page-title" name="landing-page-title" class="form-control" value="{{ $landingPageList[0]->title }}" />
+                                <input type="text" id="landing_page_title" name="landing_page_title" class="form-control" value="{{ $landingPageList[0]->title }}" />
                             @else
-                                <input type="text" id="landing-page-title" name="landing-page-title" class="form-control" />
+                                <input type="text" id="landing_page_title" name="landing_page_title" class="form-control" />
                             @endif                
                           <span id="title-error" class="text-danger"></span>
                           </div>
@@ -77,7 +77,7 @@
                       </div>
                       <div class="row form-group mt-2">
                           <div class="col-md-3">
-                          <label class="form-label" for="attach">Attach</label>              
+                          <label class="form-label" for="files">Attach</label>              
                           </div>
                           <div class="col-md-4">
                             @if($landingPageId != 0)
@@ -85,7 +85,7 @@
                                   <li></li>
                                 </ul>
                             @else
-                                <input type="file" id="attach" name="attach" multiple="multiple">
+                            <input type="file" name="attach[]" id="inputFile" multiple class="form-control">
                             @endif               
                           </div>                                                    
                       </div>
@@ -166,10 +166,10 @@
                       </div>
                       <div class="row form-group mt-2">
                           <div class="col-md-3">
-                          <label class="form-label" for="priority">Priority</label>                          
+                          <label class="form-label" for="priorityId">Priority</label>                          
                           </div>
                           <div class="col-md-4">
-                              <select name="priority" class="form-control" id="priority">
+                              <select name="priorityId" class="form-control" id="priorityId">
                                   <option value="">--Select--</option>
                                   @foreach($priorityList as $priority)
                                       <option value="{{ $priority->priority_id }}">{{ $priority->priority_name }}</option>
@@ -228,14 +228,14 @@
     });
 
     function getLandingPageCourses(){      
-        var institutionId = $("#landing-page-institution").val();
+        var institutionId = $("#landing_page_institution").val();
         $.ajax({
             type:'get',
             url: "/get-courses",
             data: {'institutionId' : institutionId},
             success:function(data) {
               if(data) {
-                var courses = $("#landing-page-course").empty();
+                var courses = $("#landing_page_course").empty();
                 courses.append("<option value=''>--Select--</option>");
                 for(var i=0; i<data.courseList.length; i++){
                   var course_item_el = '<option value="'+ data.courseList[i]['course_id']+'">'+ data.courseList[i]['course_name'] +'</option>';
@@ -247,9 +247,9 @@
     }
 
     function CreateLandingPage(){
-      var institution = $("#landing-page-institution").val();
-      var course = $("#landing-page-course").val();
-      var title = $("#landing-page-title").val();
+      var institution = $("#landing_page_institution").val();
+      var course = $("#landing_page_course").val();
+      var title = $("#landing_page_title").val();
       var assigne = $("#assignee").val();
       var assigner = $("#assigner").val();
       var developmentType = $("#developmentType").val();
