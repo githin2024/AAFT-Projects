@@ -29,7 +29,7 @@
                             @foreach($campaignList as $campaign)
                                 <tr>   
                                     <td class="text-left">{{ $campaign->institution_name}}</td>                                 
-                                    <td class="text-left">{{ $campaign->program_type_name }}</td>
+                                    <td class="text-left text-primary">{{ $campaign->program_type_name }}</td>
                                     <td class="text-left">{{ $campaign->campaign_name }}</td>
                                     <td class="text-left">{{ $campaign->leadsource_name }}</td>
                                     <td class="text-left">{{ $campaign->course_name }}</td>
@@ -59,10 +59,10 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="text/javascript">
         $(document).ready(function() {        
-          $("#it-adminCampaignID").removeClass( "active bg-gradient-primary" );
-          $("#it-adminLandingPageID").removeClass( "active bg-gradient-primary" );
-          $("#it-adminHomeID").addClass( "active bg-gradient-primary" );
-          $("#it-adminSettingsID").removeClass( "active bg-gradient-primary" );
+          $("#it-adminCampaignID").removeClass( "active bg-primary bg-gradient" );
+          $("#it-adminLandingPageID").removeClass( "active bg-primary bg-gradient" );
+          $("#it-adminHomeID").addClass( "active bg-primary bg-gradient" );
+          $("#it-adminSettingsID").removeClass( "active bg-primary bg-gradient" );
 
         });
         var ctx = document.getElementById('itAdminCampaignChart').getContext('2d');

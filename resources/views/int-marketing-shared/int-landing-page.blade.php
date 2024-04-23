@@ -1,6 +1,12 @@
 @extends('int-marketing-shared.int-master')
 
 @section('int-content')
+@if(session()->has('message'))
+  <div class="alert alert-success" id="successMesgID" role="alert" aria-live="assertive" aria-atomic="true" class="toast" data-autohide="false" style="display: none">
+    {{ session()->get('message') }}
+    <button type="button" onclick="campNotify();" class="btn-close" style="float: right;" aria-label="Close"></button>
+  </div>
+@endif
 <div class="row mt-4">
     <div class="col-lg-12 col-md-6 mb-md-0 mb-4">
         <div class="card">
@@ -11,7 +17,7 @@
                     </div>
                     <div class="col-lg-6 col-6 my-auto text-end">
                       <div class="dropdown float-lg-end pe-4">
-                          <a class="btn btn-primary" id="createCampaignID" href="{{ url('int-create-landing-page') }}">
+                          <a class="btn btn-primary" id="createCampaignID" onclick="editLandingPage(0);" href="{{ url('int-create-landing-page/0') }}">
                               <i class="fa fa-plus" style="font-size: small;">&nbsp; Create</i>                            
                           </a>                
                       </div>
@@ -39,17 +45,17 @@
                 <tbody>
                   @foreach($landingPageList as $landingPage)
                     <tr>
-                        <td>$landingPage->institution_name</td>
-                        <td>$landingPage->course_name</td>
-                        <td>$landingPage->title</td>
-                        <td>$landingPage->description</td>
-                        <td>$landingPage->assignee</td>
-                        <td>$landingPage->assigner</td>
-                        <td>$landingPage->development_type_name</td>
-                        <td>$landingPage->issue_name</td>
-                        <td>$landingPage->priority_name</td>
-                        <td>$landingPage->lp_status</td>
-                        <td><button class="btn btn-primary" id="btnEditId" onclick="editLandingPage({{ $landingPage->lp_id }});">Edit</button></td>
+                        <td>{{ $landingPage->institution_name }}</td>
+                        <td>{{ $landingPage->course_name }}</td>
+                        <td>{{ $landingPage->title }}</td>
+                        <td>{{ $landingPage->description }}</td>
+                        <td>{{ $landingPage->assignee }}</td>
+                        <td>{{ $landingPage->assigner }}</td>
+                        <td>{{ $landingPage->development_type_name }}</td>
+                        <td>{{ $landingPage->issue_name }}</td>
+                        <td>{{ $landingPage->priority_name }}</td>
+                        <td>{{ $landingPage->lp_status }}</td>
+                        <td><a class="btn btn-primary" id="btnEditId" href="{{ url('int-create-landing-page/'. $landingPage->landing_page_id) }}"><i class="fa fa-pencil" style="font-size: small;">&nbsp;Edit</i></a></td>
                     </tr>
                   @endforeach
                 </tbody>
@@ -64,11 +70,15 @@
 <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.1/js/bootstrap.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.tutorialjinni.com/notify/0.4.2/notify.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function() {        
         $("#intCampaignHomeID").removeClass( "active bg-gradient-primary" );
         $("#intLandingPageID").addClass( "active bg-gradient-primary" );
-        $("#intCampaignID").removeClass( "active bg-gradient-primary" );          
+        $("#intCampaignID").removeClass( "active bg-gradient-primary" );   
+        if($("#successMesgID").text() !="") {
+          $.notify($("#successMesgID").text(), "success");           
+        }       
     });
 
     function getLandingPageCourses(){
@@ -89,6 +99,15 @@
               }    
             }
         });
+    }
+
+    function editLandingPage(lpId) {
+      
+      $.ajax({
+        type:'get',
+        url:"/int-create-landing-page",
+        data: {'lpId' : lpId}
+      });
     }
 
     function CreateLandingPage(lpId) {

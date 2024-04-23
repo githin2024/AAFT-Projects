@@ -6,40 +6,33 @@ use Illuminate\Http\Request;
 use App\Exports\ExportCampaign;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
-class ExtHomeController extends Controller
+use App\Http\Controllers\BaseController;
+class ExtHomeController extends BaseController
 {
-    public function index()
+    public function Index()
     {
         if(session('username') != "")
         {
-            $campaignList = DB::select("SELECT c.campaign_id, i.institution_name, pt.program_type_name, c.campaign_name, ls.leadsource_name, cs.course_name, cps.campaign_status_name
-                                        FROM campaigns c
-                                        INNER JOIN program_type pt ON c.fk_program_type_id = pt.program_type_id 
-                                        INNER JOIN leadsource ls ON c.fk_lead_source_id = ls.leadsource_id
-                                        INNER JOIN courses cs ON c.fk_course_id = cs.course_id
-                                        INNER JOIN institution i ON i.institution_id = cs.fk_institution_id
-                                        INNER JOIN campaign_status cps ON c.fk_campaign_status_id = cps.campaign_status_id");
-            $activeCount = DB::scalar("SELECT COUNT(c.campaign_id) FROM campaigns c
-                                        LEFT JOIN campaign_status cs ON c.fk_campaign_status_id = cs.campaign_status_id
-                                        WHERE cs.campaign_status_name = ?", ["Active"]);
-                
-            $newCount = DB::scalar("SELECT COUNT(c.campaign_id) FROM campaigns c
-                                    LEFT JOIN campaign_status cs ON c.fk_campaign_status_id = cs.campaign_status_id
-                                    WHERE cs.campaign_status_name = ?", ["New"]);
-            
-            $onHoldCount = DB::scalar("SELECT COUNT(c.campaign_id) FROM campaigns c
-                                    LEFT JOIN campaign_status cs ON c.fk_campaign_status_id = cs.campaign_status_id
-                                    WHERE cs.campaign_status_name = ?", ["On Hold"]);
+            $campaignList = $this->CampaignList("AAFT Online");
 
-            $deleteCount = DB::scalar("SELECT COUNT(c.campaign_id) FROM campaigns c
-                                    LEFT JOIN campaign_status cs ON c.fk_campaign_status_id = cs.campaign_status_id
-                                    WHERE cs.campaign_status_name = ?", ["Delete"]);
+            $activeCount = $this->CampaignCount("Active", "AAFT Online");
+                
+            $newCount = $this->CampaignCount("New", "AAFT Online");
+            
+            $onHoldCount = $this->CampaignCount("On Hold", "AAFT Online");
+
+            $deleteCount = $this->CampaignCount("Delete", "AAFT Online");
 
             $statusChart = DB::select("SELECT cs.campaign_status_name, COUNT(c.fk_campaign_status_id) AS `Campaign_Status_Count` FROM campaigns c
                                                 LEFT JOIN campaign_status cs ON c.fk_campaign_status_id = cs.campaign_status_id
-                                                GROUP BY c.fk_campaign_status_id, cs.campaign_status_name");      
+                                                LEFT JOIN campaign_form cf ON c.campaign_id = cf.fk_campaign_id
+                                                LEFT JOIN institution i ON c.fk_institution_id = i.institution_id
+                                                WHERE i.institution_name = 'AAFT Online'
+                                                GROUP BY c.fk_campaign_status_id, cs.campaign_status_name");
+                                                
+            $institutionId = 1;
             
-            return view('ext-marketing.ext-home', compact(['campaignList', 'activeCount', 'newCount', 'onHoldCount', 'deleteCount']));
+            return view('ext-marketing.ext-home', compact(['campaignList', 'activeCount', 'newCount', 'onHoldCount', 'deleteCount', 'institutionId']));
         }
         else
         {
@@ -47,26 +40,31 @@ class ExtHomeController extends Controller
         }
     }
 
-    public function campaign()
+    public function ChangeExtHomeInstitution(Request $req)
+    {
+        $institution = $req->institution;
+        $campaignList = $this->CampaignList($institution);
+        
+        $activeCount = $this->CampaignCount("Active", $institution);
+                
+        $newCount = $this->CampaignCount("New", $institution);
+        
+        $onHoldCount = $this->CampaignCount("On Hold", $institution);
+
+        $deleteCount = $this->CampaignCount("Delete", $institution);
+
+        return response()->json(['campaignList', 'activeCount', 'newCount', 'onHoldCount', 'deleteCount', 'institution']);
+        
+    }
+
+    public function CampaignForm()
     {
         if(session('username') != "")
         {
-            $campaignList = DB::select("SELECT c.campaign_id, i.institution_name, pt.program_type_name, c.campaign_name, ls.leadsource_name, 
-                                                cs.course_name, cps.campaign_status_name, cpc.camp_param_check_id, clr.lead_request_id, clr.campaign_lead_accept,
-                                                cer.camp_edit_request_id, cer.camp_edit_request, cer.camp_edit_accept, cdr.camp_delete_request_id, cer.active AS `Edit_Active`, clr.active AS `Lead_Active` 
-                                                FROM campaigns c
-                                                LEFT JOIN program_type pt ON c.fk_program_type_id = pt.program_type_id 
-                                                LEFT JOIN leadsource ls ON c.fk_lead_source_id = ls.leadsource_id
-                                                LEFT JOIN courses cs ON c.fk_course_id = cs.course_id
-                                                LEFT JOIN institution i ON i.institution_id = cs.fk_institution_id
-                                                LEFT JOIN campaign_status cps ON c.fk_campaign_status_id = cps.campaign_status_id
-                                                LEFT JOIN campaign_parameters_check cpc ON cpc.fk_campaign_id = c.campaign_id
-                                                LEFT JOIN campaign_lead_request clr ON clr.fk_campaign_id = c.campaign_id
-                                                LEFT JOIN campaign_edit_request cer ON cer.fk_campaign_id = c.campaign_id
-                                                LEFT JOIN campaign_delete_request cdr ON cdr.fk_campaign_id = c.campaign_id
-                                                WHERE c.active = 1");
+            $institutionName = "AAFT Online";
+            $campaignFormList = $this->CampaignFormDetails($institutionName);
             
-            return view('ext-marketing.ext-campaign', ['campaignList' => $campaignList]);
+            return view('ext-marketing.ext-campaignForm', ['campaignFormList' => $campaignFormList]);
         }
         else
         {
@@ -74,7 +72,7 @@ class ExtHomeController extends Controller
         }
     }
 
-    public function createCampaign(Request $req) {
+    public function CreateCampaignForm(Request $req) {
         $institution = DB::table('institution')->where('active', 1)->get();
         $programType = DB::table('program_type')->where('active', 1)->get();
         $marketingAgency = DB::table('agency')->where('active', 1)->get(); 
@@ -87,26 +85,20 @@ class ExtHomeController extends Controller
         $campaignSize = DB::table('campaign_size')->where('active', 1)->get();
         $leadSource = DB::table('leadsource')->where('active', 1)->get();
         $campaignVersion = DB::table('campaign_version')->where('active', 1)->get();
-        $campaign = DB::select("SELECT c.fk_course_id, c.campaign_date, c.fk_program_type_id, c.fk_agency_id, c.fk_lead_source_id, c.fk_persona_id, c.fk_campaign_price_id, c.fk_headline_id, c.fk_target_location_id, c.fk_target_segment_id,
-                                       c.fk_campaign_size_id, c.fk_campaign_version_id, c.fk_campaign_type_id, c.fk_campaign_status_id, i.institution_id 
-                                        FROM campaigns c
-                                        LEFT JOIN courses cs ON c.fk_course_id = cs.course_id
-                                        LEFT JOIN institution i ON cs.fk_institution_id = i.institution_id
-                                        WHERE c.campaign_id = ?", [$req->get('campaignId')]);
-        
+        $campaignList = DB::table('campaigns')->where('fk_institution_id', $req->institute)->get();
         return response()->json(['institution' => $institution, 'programType' => $programType, 'marketingAgency' => $marketingAgency, 'leadSource' => $leadSource,
             'targetLocation' => $targetLocation, 'persona' => $persona, 'price' => $price, 'headline' => $headline, 'targetSegment' => $targetSegment, 'campaignType' => $campaignType,
-             'campaignSize' => $campaignSize, 'campaignVersion' => $campaignVersion, 'campaign' => $campaign]);
+             'campaignSize' => $campaignSize, 'campaignVersion' => $campaignVersion, '$campaignList' => $campaignList]);
     }
 
-    public function getCourses(Request $req) {
+    public function GetCourses(Request $req) {
         $institutionCode = $req->get('institutionCode');
         $institutionId = DB::table('institution')->where('institution_code', $institutionCode)->value('institution_id');
         $courses = DB::table('courses')->where('fk_institution_id', $institutionId)->get();
         return response()->json(['courses' => $courses]);
     }
 
-    public function storeCampaign(Request $req) {
+    public function StoreCampaign(Request $req) {
         //Check Validation
         $reqValidatedData = $req->validate([
             'campaign-institution' => 'required',
@@ -200,15 +192,15 @@ class ExtHomeController extends Controller
         $campaignCreative = $campaignName . '_' . $priceCode . '_' . $personaCode . '_' . $headlineCode . '_' . $campaignSizeCode . '_' . $campaignVersionCode;
         $leadSourceName = $institutionCode .''. $programTypeCode . '_' . $agencyCode . '_' . $courseCode . '_' . $leadName;
         $userId = DB::table('users')->select('user_id')->where('username', '=', session('username'))->first(); 
-        DB::table('campaigns')->insert([
-            'campaign_name' => $campaignName,
+        DB::table('campaign_form')->insert([
+            'campaign_form_name' => $campaignName,
             'fk_course_id' => $courseId,
             'fk_program_type_id' => $programTypeId,
             'fk_agency_id' => $agencyId,
             'fk_lead_source_id' => $leadSourceId,
             'fk_persona_id' => $personaId,
             'fk_campaign_price_id' => $priceId,
-            'campaign_date' => $campDate,
+            'campaign_form_date' => $campDate,
             'fk_headline_id' => $headlineId,
             'fk_target_location_id' => $targetLocationId,
             'fk_target_segment_id' => $targetSegmentId,
@@ -231,7 +223,8 @@ class ExtHomeController extends Controller
         return redirect()->back()->with('message', 'Campaign created successfully.');
     }
 
-    public function excelCampaign() {        
+    public function excelCampaign($institution) {
+              
         return Excel::download(new ExportCampaign(), 'campaigns.xlsx');
     }
 
@@ -351,5 +344,43 @@ class ExtHomeController extends Controller
             ]);
 
         return redirect()->back()->with('message', 'Campaign updated successfully.');
+    }
+
+    // public function createCampaignForm()
+    // {        
+    //     $campaignList = DB::select("SELECT c.campaign_id, c.campaign_name FROM campaigns c
+    //                                 LEFT JOIN courses cs ON cs.course_id = c.fk_course_id
+    //                                 LEFT JOIN institution i ON i.institution_id = cs.fk_institution_id                                    
+    //                                 WHERE i.institution_id = 1");
+        
+    //     return response()->json(['campaignList' => $campaignList]);
+    // }
+
+    public function checkCampaignKey(Request $req)
+    {
+        $campaignKey = $req->get('keyName');
+        $campaignFormId = $req->get('campaignFormId');
+        $campaignFormCount = DB::select("SELECT COUNT(*) AS count FROM campaigns_form cf
+                                        WHERE cf.campaign_form_id <> ? AND cf.form_key = ?", [$campaignFormId, $campaignKey]); 
+        
+        return response()->json([$campaignFormCount]);
+    }
+
+    //Campaign
+
+    public function ExtCampaign()
+    {
+        $campaignList = $this->CampList("AAFT Online");
+        return view('ext-marketing.ext-camp', ['campaignList' => $campaignList]);
+    }
+
+    public function CreateCampaign()
+    {
+        $institution = DB::table('institution')->where('active', 1)->get();
+        $programType = DB::table('program_type')->where('active', 1)->get();
+        $marketingAgency = DB::table('agency')->where('active', 1)->get(); 
+        $leadSource = DB::table('leadsource')->where('active', 1)->get();
+        
+        return response()->json(['institution' => $institution, 'programType' => $programType, 'marketingAgency' => $marketingAgency, 'leadSource' => $leadSource]);
     }
 }

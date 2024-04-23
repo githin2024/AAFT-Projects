@@ -14,15 +14,13 @@ class ITAdminController extends Controller
     {
         if(session('username') != "")
         {
-            $campaignList = DB::select("SELECT c.campaign_id, i.institution_name, pt.program_type_name, c.campaign_name, ls.leadsource_name, 
-                                                cs.course_name, cps.campaign_status_name 
-                                                FROM campaigns c
-                                                LEFT JOIN program_type pt ON c.fk_program_type_id = pt.program_type_id 
-                                                LEFT JOIN leadsource ls ON c.fk_lead_source_id = ls.leadsource_id
-                                                LEFT JOIN courses cs ON c.fk_course_id = cs.course_id
-                                                LEFT JOIN institution i ON i.institution_id = cs.fk_institution_id
-                                                LEFT JOIN campaign_status cps ON c.fk_campaign_status_id = cps.campaign_status_id
-                                                WHERE c.active = 1 AND cps.campaign_status_name='New' ORDER BY c.created_by DESC LIMIT 5");
+            $campaignList = DB::select("SELECT c.campaign_id, i.institution_name, pt.program_type_name, cs.course_name, c.campaign_name, c.adset_name, c.adname, c.creative, l.leadsource_name, DATE_FORMAT(c.campaign_date, '%d %M %Y') campaign_date, cps.campaign_status_name FROM campaigns c
+                                        LEFT JOIN program_type pt ON c.fk_program_type_id = pt.program_type_id
+                                        LEFT JOIN courses cs ON cs.course_id = c.fk_course_id
+                                        LEFT JOIN institution i ON cs.fk_institution_id = i.institution_id
+                                        LEFT JOIN leadsource l ON c.fk_lead_source_id = l.leadsource_id
+                                        LEFT JOIN campaign_status cps ON c.fk_campaign_status_id = cps.campaign_status_id
+                                        WHERE c.active = 1"); 
 
             $campaignLeadCount = DB::select("SELECT l.leadsource_name as `Leadsource_Name`, COUNT(c.campaign_id) AS `Campaign_Count` FROM campaigns c
                                                 LEFT JOIN leadsource l ON c.fk_lead_source_id = l.leadsource_id
@@ -47,20 +45,20 @@ class ITAdminController extends Controller
     {
         if(session('username') != "")
         {
-            $campaignList = DB::select("SELECT c.campaign_id, i.institution_name, pt.program_type_name, c.campaign_name, ls.leadsource_name, 
-                                                cs.course_name, cps.campaign_status_name, cpc.camp_param_check_id, clr.lead_request_id, 
-                                                cer.camp_edit_request_id, cer.camp_edit_request, cer.camp_edit_accept, cdr.camp_delete_request_id, cer.active AS `Edit_Active`, clr.active AS `Lead_Active` 
-                                                FROM campaigns c
-                                                LEFT JOIN program_type pt ON c.fk_program_type_id = pt.program_type_id 
-                                                LEFT JOIN leadsource ls ON c.fk_lead_source_id = ls.leadsource_id
-                                                LEFT JOIN courses cs ON c.fk_course_id = cs.course_id
-                                                LEFT JOIN institution i ON i.institution_id = cs.fk_institution_id
-                                                LEFT JOIN campaign_status cps ON c.fk_campaign_status_id = cps.campaign_status_id
-                                                LEFT JOIN campaign_parameters_check cpc ON cpc.fk_campaign_id = c.campaign_id
-                                                LEFT JOIN campaign_lead_request clr ON clr.fk_campaign_id = c.campaign_id
-                                                LEFT JOIN campaign_edit_request cer ON cer.fk_campaign_id = c.campaign_id
-                                                LEFT JOIN campaign_delete_request cdr ON cdr.fk_campaign_id = c.campaign_id
-                                                WHERE c.active = 1");
+            $campaignList = DB::select("SELECT c.campaign_id, i.institution_name, pt.program_type_name, c.campaign_name, c.adset_name, c.adname, c.creative, ls.leadsource_name, DATE_FORMAT(c.campaign_date, '%d %M %Y') campaign_date, 
+                                        cs.course_name, cps.campaign_status_name, cpc.camp_param_check_id, clr.lead_request_id, clr.campaign_lead_accept, clr.lead_comments, car.camp_approval_id, car.comments, car.camp_approve,
+                                        cer.camp_edit_request_id, cer.camp_edit_request, cer.camp_edit_accept, cer.edit_comments, cer.active AS `Edit_Active`, clr.active AS `Lead_Active` 
+                                        FROM campaigns c
+                                        LEFT JOIN program_type pt ON c.fk_program_type_id = pt.program_type_id 
+                                        LEFT JOIN leadsource ls ON c.fk_lead_source_id = ls.leadsource_id
+                                        LEFT JOIN courses cs ON c.fk_course_id = cs.course_id
+                                        LEFT JOIN institution i ON i.institution_id = cs.fk_institution_id
+                                        LEFT JOIN campaign_status cps ON c.fk_campaign_status_id = cps.campaign_status_id
+                                        LEFT JOIN campaign_parameters_check cpc ON cpc.fk_campaign_id = c.campaign_id
+                                        LEFT JOIN campaign_lead_request clr ON clr.fk_campaign_id = c.campaign_id
+                                        LEFT JOIN campaign_edit_request cer ON cer.fk_campaign_id = c.campaign_id                                                
+                                        LEFT JOIN campaign_approval_request	car ON car.fk_campaign_id = c.campaign_id
+                                        WHERE c.active = 1");
             
             return view('it-admin-shared.it-admin-campaign', ['campaignList' => $campaignList]);
         }
@@ -75,7 +73,7 @@ class ITAdminController extends Controller
                
         DB::table('campaign_lead_request')->insert([
             'fk_campaign_id' => $req->get('campaignId'),
-            'fk_user_id' => $userId,
+            'fk_user_id' => $userId[0],
             'campaign_lead_request' => 1,
             'campagin_lead_request_date' => now(),
             'created_by' => session('username'),

@@ -149,10 +149,10 @@
 </  div>
 <script type="text/javascript">
     $(document).ready(function() {        
-        $("#it-adminCampaignID").removeClass( "active bg-gradient-primary" );
-        $("#it-adminLandingPageID").removeClass( "active bg-gradient-primary" );
-        $("#it-adminHomeID").removeClass( "active bg-gradient-primary" );
-        $("#it-adminSettingsID").addClass( "active bg-gradient-primary" );
+        $("#it-adminCampaignID").removeClass( "active bg-primary bg-gradient" );
+        $("#it-adminLandingPageID").removeClass( "active bg-primary bg-gradient" );
+        $("#it-adminHomeID").removeClass( "active bg-primary bg-gradient" );
+        $("#it-adminSettingsID").addClass( "active bg-primary bg-gradient" );
         $("#it-program-typeTable").dataTable();
         if($("#successMesgID").text() !="") {
           $.notify($("#successMesgID").text(), "success");          

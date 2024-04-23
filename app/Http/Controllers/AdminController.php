@@ -144,7 +144,7 @@ class AdminController extends Controller
                 }
                 else if($user->role_name == "External Marketing")
                 {
-                    return redirect()->action([ExtHomeController::class, 'index']);
+                    return redirect()->action([ExtHomeController::class, 'Index']);
                 }
                 else if($user->role_name == "Internal Marketing")
                 {

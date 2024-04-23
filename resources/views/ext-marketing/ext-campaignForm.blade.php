@@ -8,59 +8,129 @@
         <button type="button" onclick="campNotify();" class="btn-close" style="float: right;" aria-label="Close"></button>
       </div>
     @endif
-    <div class="col-lg-12 col-md-6 mb-md-0 mb-4">
-        <div class="card">
-            <div class="card-header pb-0 card-backgroundcolor">
+    <div class="col-lg-12 mb-4">
+      <div class="nav-wrapper position-relative">
+        <ul class="nav nav-pills nav-tabs p-1" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link mb-0 px-0 py-2 mx-1 active" data-bs-toggle="tab" onclick="changeCampFormInstitution('AAFT ONLINE')" role="tab" aria-selected="true">              
+              <span class="ms-1"> AAFT Online</span>
+            </a>
+          </li>
+          <div class="vertical mt-1"></div>
+          <li class="nav-item mx-1">
+            <a class="nav-link mb-0 px-0 py-2" data-bs-toggle="tab" onclick="changeCampFormInstitution('AAFT RAIPUR')" role="tab" aria-selected="false">              
+              <span class="ms-1">AAFT Raipur</span>
+            </a>
+          </li>
+          <div class="vertical mt-1"></div>
+          <li class="nav-item mx-1">
+            <a class="nav-link mb-0 px-0 py-2" data-bs-toggle="tab" onclick="changeCampFormInstitution('AAFT NOIDA')" role="tab" aria-selected="false">              
+              <span class="ms-1">AAFT Noida</span>
+            </a>
+          </li>
+          <div class="vertical mt-1"></div>
+          <li class="nav-item mx-1">
+            <a class="nav-link mb-0 px-0 py-2" data-bs-toggle="tab" onclick="changeCampFormInstitution('ABS')" role="tab" aria-selected="false">              
+              <span class="ms-1">ABS</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-lg-12 col-md-6 mb-md-0 mb-4 ">
+        <div class="card card-backgroundcolor">
+            <div class="card-header pb-0 ">
                 <div class="row">
                     <div class="col-lg-6 col-6">
-                        <h5>Campaigns</h5>                
+                        <h5>Campaign Form</h5> 
+                        <input type="hidden" id="hdnInstitutionId" />               
                     </div>
                     <div class="col-lg-6 col-6 my-auto text-end">
-                    <div class="dropdown float-lg-end pe-4">
-                        <a class="btn btn-primary" id="createCampaignID" onclick="createCampaign();" title="Create">
-                            <i class="fa fa-plus" style="font-size: small;"> &nbsp;Create</i>
-                        </a>                
-                    </div>
+                      <div class="dropdown float-lg-end pe-4">
+                          <a class="btn btn-primary" id="createCampaignFormID" onclick="createCampaignForm();" title="Create">
+                              <i class="fa fa-plus" style="font-size: small;"> &nbsp;Create</i>
+                          </a>                
+                      </div>
                 </div>                  
             </div>            
         </div>
         <div class="card-body px-1 pb-2">
             <div class="table-responsive">
-            <table class="table align-items-center mb-1" id="campaignTable">
+            <table class="table align-items-center mb-1" id="campaignFormTable">
                 <thead>
                 <tr>
-                    <th class="text-uppercase text-secondary text-s font-weight-bolder opacity-10">Institution</th>
-                    <th class="text-uppercase text-secondary text-s font-weight-bolder opacity-10">Program Type</th>
-                    <th class="text-uppercase text-secondary text-s font-weight-bolder opacity-10">Campaign</th>
-                    <th class="text-uppercase text-secondary text-s font-weight-bolder opacity-10">Lead Source</th>
-                    <th class="text-uppercase text-secondary text-s font-weight-bolder opacity-10">Course</th>
-                    <th class="text-uppercase text-secondary text-s font-weight-bolder opacity-10">Status</th>
-                    <th class="text-uppercase text-secondary text-s font-weight-bolder opacity-10">Action</th>
+                    <th class="opacity-10">INSTITUTION</th>
+                    <th class="opacity-10">PROGRAM TYPE</th>
+                    <th class="opacity-10">COURSE</th>
+                    <th class="opacity-10">LEADSOURCE</th>
+                    <th class="opacity-10">AGENCY</th>
+                    <th class="opacity-10">CAMPAIGN FORM NAME</th>
+                    <th class="opacity-10">CAMPAIGN FORM DATE</th>                   
+                    <th class="opacity-10">STATUS</th>
+                    <th class="opacity-10">APPROVAL STATUS</th>
+                    <th class="opacity-10">APPROVAL COMMENTS</th>
+                    <th class="opacity-10">EDIT STATUS</th>                    
+                    <th class="opacity-10">EDIT COMMENTS</th>                 
+                    <th class="opacity-10">ACTION</th>
                 </tr>
                 </thead>
                 <tbody>
-                  @foreach($campaignList as $campaign)
+                  @foreach($campaignFormList as $campaign)
                     <tr>
                       <td style="padding-left: 20px;">{{ $campaign->institution_name }}</td>
-                      <td style="padding-left: 15px;">{{ $campaign->program_type_name }}</td>
-                      <td style="padding-left: 15px;">{{ $campaign->campaign_name }}</td>
-                      <td style="padding-left: 15px;">{{ $campaign->leadsource_name }}</td>
+                      <td style="padding-left: 15px;"><p class="text-primary">{{ $campaign->program_type_name }}</p></td>
                       <td style="padding-left: 15px;">{{ $campaign->course_name }}</td>
-                      <td style="padding-left: 15px;">{{ $campaign->campaign_status_name }}</td>
+                      <td style="padding-left: 15px;">{{ $campaign->leadsource_name }}</td>
+                      <td style="padding-left: 15px;">{{ $campaign->agency_name }}</td>
+                      <td style="padding-left: 15px;">{{ $campaign->campaign_form_name }}</td>
+                      <td style="padding-left: 15px;">{{ $campaign->campaign_form_date }}</td>                      
                       <td style="padding-left: 15px;">
-                        @if(is_null($campaign->camp_param_check_id))
+                        @if($campaign->campaign_status_name == "Active")
+                          <button type="button" style="background-color: #1AD5984D; color: #1AD598;">{{ $campaign->campaign_status_name }}</button>
+                        @elseif($campaign->campaign_status_name == "On Hold")
+                          <button type="button" style="background-color: #FFC1074D; color: #FFC107;">{{ $campaign->campaign_status_name }}</button>  
+                        @elseif($campaign->campaign_status_name == "New")
+                          <button type="button" style="background-color: #217EFD4D; color: #217EFD;">{{ $campaign->campaign_status_name }}</button>
+                        @endif
+                      </td>                      
+                      <td style="padding-left: 15px;">
+                          @if($campaign->camp_form_accept_id && $campaign->camp_form_accept == 1)
+                              Yes 
+                          @elseif($campaign->camp_form_accept_id && $campaign->camp_form_accept == 0)
+                              No
+                          @elseif(!$campaign->camp_form_accept_id) 
+                              Approval Pending 
+                          @endif
+                      </td>
+                      <td style="padding-left: 15px;">                        
+                          {{ $campaign->camp_form_comments }}                         
+                      </td> 
+                      <td style="padding-left: 15px;">                        
+                          @if($campaign->camp_form_edit_id && $campaign->camp_form_edit_accept == 1)
+                            Yes
+                          @elseif($campaign->camp_form_edit_id && $campaign->camp_form_edit_accept == 0)
+                            No 
+                          @elseif($campaign->camp_form_edit_id && $campaign->camp_form_edit_request == 1) 
+                            Edit Approval Pending
+                          @endif                     
+                      </td>
+                      <td style="padding-left: 15px;"> 
+                        {{ $campaign->camp_form_edit_comment }}
+                      </td>                     
+                      <td style="padding-left: 15px;">
+                        @if(is_null($campaign->camp_form_param_check_id))
                           <button type="button" class="btn btn-info" title="Parameter Check" onclick="parameterCheckCampaign({{ $campaign->campaign_id }})"><span style="font-size:12px;">Parameter Check</span></button>
-                        @elseif(!is_null($campaign->lead_request_id) && $campaign->campaign_lead_accept == 0)
+                        @elseif(!is_null($campaign->lead_request_id) && $campaign->camp_lead_accept == 0)
                           <button type="button" class="btn btn-info" title="Lead Accept" onclick="leadAcceptCampaign({{ $campaign->campaign_id }})"><span style="font-size:12px;">Lead Accept</span></button>                        
                         @elseif(is_null($campaign->lead_request_id))
-                          <p>Campaign approval pending</p>                        
-                        @elseif(is_null($campaign->camp_edit_request_id) || $campaign->camp_edit_request == 0 && $campaign->Lead_Active == 1)
+                          <p>Campaign integration pending</p>                        
+                        @elseif(is_null($campaign->camp_form_edit_id) || $campaign->camp_form_edit_request == 0 && $campaign->Lead_Active == 1)
                           <button type="button" class="btn btn-warning" title="Edit Request" onclick="editRequestCampaign({{ $campaign->campaign_id }})"><span style="font-size:12px;">Edit Request</span></button>
-                        @elseif($campaign->camp_edit_accept == 0 && $campaign->camp_edit_request == 1)
+                        @elseif($campaign->camp_form_edit_accept == 0 && $campaign->camp_form_edit_request == 1)
                           <p>Edit approval pending</p>
-                        @elseif(!is_null($campaign->camp_edit_request_id) && $campaign->Edit_Active == 1 && $campaign->Lead_Active == 1)
+                        @elseif(!is_null($campaign->camp_form_edit_id) && $campaign->Edit_Active == 1 && $campaign->Lead_Active == 1)
                           <button type="button" class="btn btn-primary" title="Edit Campaign" onclick="editCampaign({{ $campaign->campaign_id }})"><span style="font-size:12px;">Edit</span></button>
-                        @endif
+                        @endif                        
                       </td>
                     </tr>
                   @endforeach
@@ -71,8 +141,8 @@
         </div>
     </div>        
 </div>
-<!-- Crete Campaign Modal -->
-<div class="modal fade" id="createCampaignModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+<!-- Create Campaign Form Modal -->
+<div class="modal fade" id="createCampaignFormModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
@@ -113,6 +183,17 @@
               <select name="marketingAgency" class="form-control" id="marketingAgency">                  
               </select>                
               <span id="marketingAgency-error" class="text-danger"></span>
+            </div>
+          </div>
+          <div class="row form-group mt-2">
+            <div class="col-md-3">
+              <label class="form-label" for="campaignsId">Campaigns</label>
+              <span class="text-danger">*</span>
+            </div>
+            <div class="col-md-7">
+              <select name="campaignsId" class="form-control" id="campaignsId">                  
+              </select>                
+              <span id="campaignsId-error" class="text-danger"></span>
             </div>
           </div>
           <div class="row form-group mt-2">
@@ -249,7 +330,7 @@
   </div>
 </div>
 <!-- Parameter Check Modal -->
-<div class="modal fade" id="parameterCheckModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+<div class="modal fade" id="parameterCheckFormModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true">
   <div class="modal-dialog modal-md">
     <div class="modal-content">
       <div class="modal-header">
@@ -294,8 +375,9 @@
     </div>
   </div>
 </div>
+
 <!-- Lead Acceptance Modal -->
-<div class="modal fade" id="confirmLeadModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+<div class="modal fade" id="confirmLeadFormModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true">
   <div class="modal-dialog modal-md">
     <div class="modal-content">
       <div class="modal-header">
@@ -315,7 +397,7 @@
 </div>
 
 <!-- Request Modal -->
-<div class="modal fade" id="requestModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+<div class="modal fade" id="requestFormModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true">
   <div class="modal-dialog modal-md">
     <div class="modal-content">
       <div class="modal-header">
@@ -335,7 +417,7 @@
 </div>
 
 <!-- Edit Campaign Modal -->
-<div class="modal fade" id="editCampaignModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+<div class="modal fade" id="editCampaignFormModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true">
   <div class="modal-dialog modal-md">
     <div class="modal-content">
       <div class="modal-header">
@@ -361,26 +443,28 @@
   </div>
 </div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>  
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.js"></script>
 <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.1/js/bootstrap.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap5.min.js"></script>
 <script src="https://cdn.tutorialjinni.com/notify/0.4.2/notify.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.slim.min.js"></script>
 <script type="text/javascript">
 
     $(document).ready(function() {        
-        $("#extCampaignID").addClass( "active bg-gradient-primary" );
-        $("#extCampaignHomeID").removeClass( "active bg-gradient-primary" );
-        $('#campaignTable').dataTable();
+        $("#extCampaignID").removeClass("active bg-primary bg-gradient");
+        $("#extCampaignHomeID").removeClass("active bg-primary bg-gradient");
+        $("#extCampaignFormID").addClass("active bg-primary bg-gradient");
+        $('#campaignFormTable').dataTable();
         if($("#successMesgID").text() !="") {
           $.notify($("#successMesgID").text(), "success");          
         }
     });
 
-    function createCampaign() {
-      $("#exampleModalLabel").html("Create New Campaign");
-        $("#createCampaignModal").modal('show');
+    function createCampaignForm() {      
+      $("#exampleModalLabel").html("Create New Campaign Form");
+        $("#createCampaignFormModal").modal('show');
         $("#institution-error").html(''); 
         $("#programType-error").html(''); 
         $("#campaignVersion-error").html('');
@@ -395,12 +479,15 @@
         $("#targetLocation-error").html('');
         $("#persona-error").html('');
         $("#price-error").html('');
+        $("#campaignsId-error").html('');
         $("#campaignDate").val('');
         $.ajax({
             type:'get',
-            url: "/create-campaign",            
+            url: "/create-campaignForm", 
+            data: {'institute' : $("#hdnInstitutionId").val()},            
             success:function(data){
-                if(data){                    
+                if(data){    
+                              
                   var institutionId = $("#campaign-institution").empty();
                     institutionId.append('<option selected="selected" value="">--Select--</option>');
                     for(var i = 0; i < Object.keys(data['institution']).length;i++){
@@ -483,6 +570,13 @@
                     for(var i = 0; i < data.campaignVersion.length;i++){
                         var campaignVersion_item_el = '<option value="'+ data.campaignVersion[i]['campaign_version_code'] +'">'+ data.campaignVersion[i]['campaign_version_name']+'</option>';
                         campaignVersionId.append(campaignVersion_item_el);
+                    }
+
+                    var campaignId = $("#campaignsId").empty();
+                    campaignId.append('<option selected="selected" value="">--Select--</option>');
+                    for(var i=0; i < data.campaignList.length;i++){
+                        var campaign_item_el = '<option value="'+ data.campaignList[i]['campaign_id'] +'">'+ data.campaignList[i]['campaign_name']+'</option>';
+                        campaignId.append(campaign_item_el);  
                     }
                 }
             }
@@ -754,6 +848,56 @@
       }); 
 
 
+    }
+
+    function changeCampFormInstitution(institution) {
+      $.ajax({
+        type:'get',
+        url: "/ext-camp-form-change-institution",
+        data: {'institution' : institute},          
+        success:function(data){
+          if(data.campaignList != "" && data.campaignList != undefined){
+            $("#hdnInstitutionId").val(data.institution);
+            
+            var campBody = $("#campaignFormTable").empty();
+            for(var i = 0; i < data.campaignFormList.length;i++){
+              // var campBodyItem = "<tr><td style='padding-left: 20px;'>"+ data.campaignFormList[i]['institution_name'] +"</td>" +
+              //                     "<td style='padding-left: 20px;'>"+ data.campaignFormList[i]['program_type_name'] +"</td>" +
+              //                     "<td style='padding-left: 20px;'>"+ data.campaignFormList[i]['course_name'] +"</td>" +
+              //                     "<td style='padding-left: 20px;'>"+ data.campaignFormList[i]['leadsource_name'] +"</td>" +
+              //                     "<td style='padding-left: 20px;'>"+ data.campaignFormList[i]['agency'] +"</td>" +
+              //                     "<td style='padding-left: 20px;'>"+ data.campaignFormList[i]['campaign_form_name'] +"</td>" +
+              //                     "<td style='padding-left: 20px;'>"+ data.campaignFormList[i]['campaign_form_date'] +"</td>" +
+              //                     "<td style='padding-left: 20px;'>"+ 
+              //                       if(data.campaignFormList[i]['campaign_status_name'] == 'Active') { 
+              //                         + " <button type='button' style='background-color: #1AD5984D; color: #1AD598;'> " + data.campaignFormList[i]['campaign_status_name'] + "</button>" +  } 
+              //                       else if (data.campaignFormList[i]['campaign_status_name'] == 'On Hold') {
+              //                         + "<button type='button' style='background-color: #FFC1074D; color: #FFC107;'>" + data.campaignFormList[i]['campaign_status_name'] + "</button>" +  }
+              //                       else if (data.campaignFormList[i]['campaign_status_name'] == 'New') {
+              //                         + "<button type="button" style='background-color: #217EFD4D; color: #217EFD;'>" + data.campaignFormList[i]['campaign_status_name'] + "</button>" +  }
+              //                     + "</td>" +
+              //                     + "<td style='padding-left: 20px;'>"+ if(data.campaignFormList[i]["camp_form_edit_id"] && data.campaignFormList[i]["camp_form_accept"] == 1) { + " Yes " + } elseif(data.campaignFormList[i]["camp_form_edit_id"] && data.campaignFormList[i]["camp_form_edit_accept"] == 0) { + "No" + } elseif(data.campaignFormList[i]["camp_form_edit_id"] && data.campaignFormList[i]["camp_form_edit_request"] == 1) { + "Approval Pending" } + "</td>" +
+              //                     + "<td style='padding-left: 20px;'>"+ data.campaignFormList[i]['camp_form_comments'] +"</td>" +
+              //                     "<td style='padding-left: 20px;'>"+ 
+              //                       if(is_null(data.campaignFormList[i]['camp_form_param_check_id'])) {
+              //                         "<button type='button' class='btn btn-info' title='Parameter Check' onclick='parameterCheckCampaign({{ " + data.campaignFormList[i]['campaign_form_id'] + "}})'><span style='font-size:12px;'>Parameter Check</span></button>" + }
+              //                       else if(!is_null(data.campaignFormList[i]["lead_request_id"]) && data.campaignFormList[i]["camp_lead_accept"] == 0)
+              //                         "<button type='button' class='btn btn-info' title='Lead Accept' onclick='leadAcceptCampaign({{ " + data.campaignFormList[i]['campaign_form_id'] + " }})'><span style='font-size:12px;'>Lead Accept</span></button>" + }
+              //                       else if(is_null(data.campaignFormList[i]["lead_request_id"])) {
+              //                         "<p>Campaign integration pending</p>" + }
+              //                       else if(is_null(data.campaignFormList[i]["camp_form_edit_id"]) || data.campaignFormList[i]["camp_form_edit_request"] == 0 && data.campaignFormList[i]["Lead_Active"] == 1) {
+              //                         "<button type='button' class='btn btn-warning' title='Edit Request' onclick='editRequestCampaign({{ " + data.campaignFormList[i]['campaign_form_id'] + " }})'><span style='font-size:12px;'>Edit Request</span></button>" + }
+              //                       else if(data.campaignFormList[i]["camp_form_edit_accept"] == 0 && data.campaignFormList[i]["camp_form_edit_request"] == 1) {
+              //                           "<p>Edit approval pending</p>" + }
+              //                       else if(!is_nulldata.campaignFormList[i]["camp_form_edit_id"]) && data.campaignFormList[i]["Edit_Active"] == 1 && data.campaignFormList[i]["Lead_Active"] == 1)
+              //                         "<button type='button' class='btn btn-primary' title='Edit Campaign' onclick='editCampaign({{ " + data.campaignFormList[i]['campaign_form_id'] + " }})'><span style='font-size:12px;'>Edit</span></button>" + }
+              //                       +"</td>" +
+              //                     "</tr>";
+              campBody.append(campBodyItem);
+            }
+          }
+        }
+      });
     }
 </script>
 @endsection

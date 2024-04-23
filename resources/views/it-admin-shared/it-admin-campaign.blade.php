@@ -125,10 +125,10 @@
 
 <script type="text/javascript">
     $(document).ready(function() {        
-        $("#it-adminCampaignID").addClass( "active bg-gradient-primary" );
-        $("#it-adminLandingPageID").removeClass( "active bg-gradient-primary" );
-        $("#it-adminHomeID").removeClass( "active bg-gradient-primary" );
-        $("#it-adminSettingsID").removeClass( "active bg-gradient-primary" );
+        $("#it-adminCampaignID").addClass( "active bg-primary bg-gradient");
+        $("#it-adminLandingPageID").removeClass( "active bg-primary bg-gradient");
+        $("#it-adminHomeID").removeClass( "active bg-primary bg-gradient");
+        $("#it-adminSettingsID").removeClass( "active bg-primary bg-gradient");
         $("#it-campaignTable").dataTable();
         if($("#successMesgID").text() !="") {
           $.notify($("#successMesgID").text(), "success");          

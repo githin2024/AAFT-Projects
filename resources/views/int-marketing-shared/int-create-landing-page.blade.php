@@ -1,6 +1,12 @@
 @extends('int-marketing-shared.int-master')
 
 @section('int-content')
+@if(session()->has('message'))
+  <div class="alert alert-success" id="successMesgID" role="alert" aria-live="assertive" aria-atomic="true" class="toast" data-autohide="false" style="display: none">
+    {{ session()->get('message') }}
+    <button type="button" onclick="campNotify();" class="btn-close" style="float: right;" aria-label="Close"></button>
+  </div>
+@endif
 <div class="row mt-4">
     <div class="col-lg-12 col-md-6 mb-md-0 mb-4">
         <div class="card">
@@ -17,6 +23,9 @@
                 <form name="add-landing-page" id="add-landing-page" method="post" action="{{ url('store-landing-page') }}" enctype="multipart/form-data" >
                       @csrf
                       <input type="hidden" name="landing_page_id" id="landing_page_id" value="{{ $landingPageId }}" />
+                      @if(count($landingPageList) > 0)
+                        <input type="hidden" name="hdnCourseId" id="hdnCourseId" value="{{ $landingPageList[0]->fk_course_id }}" />
+                      @endif  
                       <div class="row form-group">
                           <div class="col-md-3">
                           <label class="form-label" for="landing_page_institution">Institution</label>
@@ -81,11 +90,14 @@
                           </div>
                           <div class="col-md-4">
                             @if($landingPageId != 0)
+                                <input type="file" name="attach[]" id="inputFile" multiple class="form-control">
                                 <ul>
-                                  <li></li>
+                                  @foreach($landingFileList as $landingFile)
+                                    <li>{{ $landingFile->file_name }}</li>
+                                  @endforeach
                                 </ul>
                             @else
-                            <input type="file" name="attach[]" id="inputFile" multiple class="form-control">
+                              <input type="file" name="attach[]" id="inputFile" multiple class="form-control">
                             @endif               
                           </div>                                                    
                       </div>
@@ -158,7 +170,11 @@
                           <select name="issue" class="form-control" id="issue">
                               <option value="">--Select--</option>
                               @foreach($issueList as $issue)
-                                  <option value="{{ $issue->issue_id }}">{{ $issue->issue_name }}</option>
+                                  @if($landingPageId != 0 && $landingPageList[0]->fk_issue_id == $issue->issue_id)
+                                      <option value="{{ $issue->issue_id }}" selected>{{ $issue->issue_name }}</option>
+                                  @else                                        
+                                      <option value="{{ $issue->issue_id }}">{{ $issue->issue_name }}</option>
+                                  @endif
                               @endforeach
                           </select>                
                           <span id="issue-error" class="text-danger"></span>
@@ -172,7 +188,11 @@
                               <select name="priorityId" class="form-control" id="priorityId">
                                   <option value="">--Select--</option>
                                   @foreach($priorityList as $priority)
-                                      <option value="{{ $priority->priority_id }}">{{ $priority->priority_name }}</option>
+                                      @if($landingPageId != 0 && $landingPageList[0]->fk_priority_id == $priority->priority_id)
+                                          <option value="{{ $priority->priority_id }}" selected>{{ $priority->priority_name }}</option>
+                                      @else
+                                          <option value="{{ $priority->priority_id }}">{{ $priority->priority_name }}</option>
+                                      @endif
                                   @endforeach
                               </select>                
                               <span id="priority-error" class="text-danger"></span>
@@ -186,26 +206,38 @@
                           <select name="status" class="form-control" id="status">
                               <option value="">--Select--</option>
                               @foreach($statusList as $status)
-                                  <option value="{{ $status->lp_status_id }}">{{ $status->lp_status }}</option>
+                                  @if($landingPageId != 0 && $landingPageList[0]->fk_lp_status_id == $status->lp_status_id)
+                                      <option value="{{ $status->lp_status_id }}" selected>{{ $status->lp_status }}</option>
+                                  @else  
+                                      <option value="{{ $status->lp_status_id }}">{{ $status->lp_status }}</option>
+                                  @endif
                               @endforeach                  
                           </select>                
                           <span id="status-error" class="text-danger"></span>
                           </div>
                       </div>
-                      <div class="row form-group mt-2">
-                          <div class="col-md-3">
-                          <label class="form-label" for="comments">Comments</label>                          
+                      @if($landingPageId != 0)
+                          <div class="row form-group mt-2">
+                              <div class="col-md-3">
+                              <label class="form-label" for="comments">Comments</label>                          
+                              </div>
+                              <div class="col-md-4">
+                              <textarea class="form-control" name="comments" id="comments" cols="30" rows="4"></textarea>       
+                              <span id="comments-error" class="text-danger"></span>
+                              </div>
                           </div>
-                          <div class="col-md-4">
-                          <textarea class="form-control" name="comments" id="comments" cols="30" rows="4"></textarea>       
-                          <span id="comments-error" class="text-danger"></span>
+
+                          <div class="row form-group">
+                              @foreach($landingPageCommentList as $comment)
+                                <p>{{ $comment -> lp_comment }}</p>
+                              @endforeach
                           </div>
-                      </div>
+                      @endif
                       <hr />
                       <div class="row form-group mt-2">
                           <div class="col-md-5">
                           <button class="btn btn-primary" id="create" title="Create" onclick="CreateLandingPage();">Create</button>
-                          <button data-bs-dismiss="modal" class="btn btn-danger" title="Cancel">Cancel</button>
+                          <a data-bs-dismiss="modal" class="btn btn-danger" title="Cancel" href="{{ url('int-landing-page') }}">Cancel</a>
                           </div>
                       </div>
                   </form>
@@ -215,16 +247,32 @@
     </div>        
 </div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>  
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.js"></script>
 <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.1/js/bootstrap.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.tutorialjinni.com/notify/0.4.2/notify.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function() {        
         $("#intCampaignHomeID").removeClass( "active bg-gradient-primary" );
         $("#intLandingPageID").addClass( "active bg-gradient-primary" );
-        $("#intCampaignID").removeClass( "active bg-gradient-primary" );          
+        $("#intCampaignID").removeClass( "active bg-gradient-primary" );
+        
+        if($("#successMesgID").text() !="") {
+          $.notify($("#successMesgID").text(), "success");
+          window.location.href="{{'int-landing-page'}}";           
+        }
+        else if($("#successMesgID").text() == "Error in creating a task") {
+          $.notify($("#successMesgID").text(), "error");
+        }
+        
+        if($("#landing_page_id").val() != 0)
+        {
+          getLandingPageCourses();
+          $("#create").empty().text("Update");
+          $("#create").prop("title", "Update");  
+        }
     });
 
     function getLandingPageCourses(){      
@@ -236,9 +284,18 @@
             success:function(data) {
               if(data) {
                 var courses = $("#landing_page_course").empty();
+                var courseId = $("#hdnCourseId").val();
                 courses.append("<option value=''>--Select--</option>");
+                var course_item_el = "";
                 for(var i=0; i<data.courseList.length; i++){
-                  var course_item_el = '<option value="'+ data.courseList[i]['course_id']+'">'+ data.courseList[i]['course_name'] +'</option>';
+                  if(courseId == data.courseList[i]['course_id'])  
+                  {
+                    course_item_el = '<option selected value="'+ data.courseList[i]['course_id']+'">'+ data.courseList[i]['course_name'] +'</option>';
+                  }
+                  else
+                  {
+                    course_item_el = '<option value="'+ data.courseList[i]['course_id']+'">'+ data.courseList[i]['course_name'] +'</option>';
+                  }
                   courses.append(course_item_el);
                 }
               }    

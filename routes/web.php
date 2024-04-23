@@ -31,27 +31,35 @@ Route::get('logout', [AdminController::class, 'LogoutUser']);
 Route::post('change-password', [AdminController::class, 'ChangePassword']);
 
 //External Marketing Dashboard
-Route::get('home', [ExtHomeController::class, 'index']);
-Route::get("campaign", [ExtHomeController::class, 'campaign']);
-Route::get('create-campaign', [ExtHomeController::class, 'createCampaign']);
-Route::get('courses', [ExtHomeController::class, 'getCourses']);
-Route::get('excel-campaign', [ExtHomeController::class, 'excelCampaign']);
-Route::post('store-campaign', [ExtHomeController::class, 'storeCampaign']);
+Route::get('home', [ExtHomeController::class, 'Index']);
+Route::get("campaignForm/{institutionName?}", [ExtHomeController::class, 'CampaignForm']);
+Route::get('create-campaignForm', [ExtHomeController::class, 'CreateCampaignForm']);
+Route::get('ext-camp-form-change-institution', [ExtHomeController::class, 'ChangeExtCampFormInstitution']);
+Route::get('courses', [ExtHomeController::class, 'GetCourses']);
+Route::get('excel-campaign/{institution}', [ExtHomeController::class, 'excelCampaign']);
+Route::post('store-campaign', [ExtHomeController::class, 'StoreCampaign']);
 Route::post('parameter-campaign', [ExtHomeController::class, 'parameterCampaign']);
 Route::get('confirm-lead', [ExtHomeController::class, 'confirmLead']);
 Route::get('ext-edit-campaign-request', [ExtHomeController::class, 'editCampaignRequest']);
 Route::get('ext-get-campaign', [ExtHomeController::class, 'getCampaign']);
 Route::post('update-campaign', [ExtHomeController::class, 'updateCampaign']);
-
+// Route::get('ext-create-campaign-form', [ExtHomeController::class, 'createCampaignForm']);
+Route::get('ext-check-campaign-key', [ExtHomeController::class, 'checkCampaignKey']);
+Route::get('ext-home-change-institution', [ExtHomeController::class, 'changeExtHomeInstitution']);
+//Route::get('ext-campaign-form', [ExtHomeController::class, 'campaignForm']);
+Route::get('ext-camp', [ExtHomeController::class, 'ExtCampaign']);
+Route::get('create-campaign', [ExtHomeController::class, 'CreateCampaign']);
 //Internal Marketing Dashboard
 Route::get('int-home', [IntHomeController::class, 'InternalIndex']);
-Route::get('int-landing-page', [IntHomeController::class, 'InternalLandingPage']);
+Route::get('int-landing-page', [IntHomeController::class, 'InternalLandingPage'])->name('intLandingPage');
 Route::get('int-campaign', [IntHomeController::class, 'InternalCampaign']);
 Route::get('int-view-campaign', [IntHomeController::class, 'ViewCampaign']);
 Route::get('int-campaign-download', [IntHomeController::class, 'DownloadCampaign']);
-Route::get('int-create-landing-page', [IntHomeController::class, 'GetLandingPage']);
+Route::get('int-create-landing-page/{lpId}', [IntHomeController::class, 'GetLandingPage']);
 Route::get('get-courses', [IntHomeController::class, 'GetLandingPageCourses']);
 Route::post('store-landing-page', [IntHomeController::class, 'StoreLandingPage']);
+Route::get('accept-campaign', [IntHomeController::class, 'AcceptCampaign']);
+Route::get('reject-campaign', [IntHomeController::class, 'RejectCampaign']);
 
 //Admin Dashboard
 Route::get('admin-institution', [AdminController::class, 'AdminInstitution']);
@@ -159,7 +167,7 @@ Route::post('it-admin-target-segment-create', [ITAdminController::class, 'ITAdmi
 Route::get('it-admin-target-segment-delete', [ITAdminController::class, 'ITAdminDeleteTargetSegment']);
 Route::get('it-admin-target-segment-check', [ITAdminController::class, 'ITAdminTargetSegmentCheck']);
 
-//Settings Target Segment
+//Settings Users
 Route::get('it-admin-users', [ITAdminController::class, 'ITAdminUsers']);
 Route::get('it-admin-users-edit', [ITAdminController::class, 'ITAdminGetUsers']);
 Route::post('it-admin-users-create', [ITAdminController::class, 'ITAdminCreateUsers']);
