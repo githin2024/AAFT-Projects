@@ -1,6 +1,11 @@
 @extends('ext-marketing.ext-master')
 
 @section('content')
+<style>
+  table.dataTable {
+    font-size:14px;
+  }
+</style>
 <div class="row mt-4">
     @if(session()->has('message'))
       <div class="alert alert-success" id="successMesgID" role="alert" aria-live="assertive" aria-atomic="true" class="toast" data-autohide="false" style="display: none">
@@ -65,7 +70,7 @@
                     <th class="opacity-10">LEADSOURCE</th>
                     <th class="opacity-10">AGENCY</th>
                     <th class="opacity-10">CAMPAIGN FORM NAME</th>
-                    <th class="opacity-10">CAMPAIGN FORM DATE</th>                   
+                                   
                     <th class="opacity-10">STATUS</th>
                     <th class="opacity-10">APPROVAL STATUS</th>
                     <th class="opacity-10">APPROVAL COMMENTS</th>
@@ -83,7 +88,7 @@
                       <td style="padding-left: 15px;">{{ $campaign->leadsource_name }}</td>
                       <td style="padding-left: 15px;">{{ $campaign->agency_name }}</td>
                       <td style="padding-left: 15px;">{{ $campaign->campaign_form_name }}</td>
-                      <td style="padding-left: 15px;">{{ $campaign->campaign_form_date }}</td>                      
+                                            
                       <td style="padding-left: 15px;">
                         @if($campaign->campaign_status_name == "Active")
                           <button type="button" style="background-color: #1AD5984D; color: #1AD598;">{{ $campaign->campaign_status_name }}</button>
@@ -582,6 +587,56 @@
             }
         });
     }
+    
+    function createCampaign() {      
+      $("#exampleModalLabel").html("Create New Campaign");
+        $("#createCampaignModal").modal('show');
+        $("#institution-error").html(''); 
+        $("#programType-error").html('');        
+        $("#campaignDate-error").html('');
+        $("#courses-error").html(''); 
+        $("#marketingAgency-error").html('');
+        $("#leadSource-error").html('');
+        $("#campaignDate").val('');
+        $.ajax({
+            type:'get',
+            url: "/create-campaign", 
+            data: {'institute' : $("#hdnInstituteId").val()},            
+            success:function(data){
+                if(data){   
+                              
+                  var institutionId = $("#campaign-institution").empty();
+                    institutionId.append('<option selected="selected" value="">--Select--</option>');
+                    for(var i = 0; i < Object.keys(data['institution']).length;i++){
+                        var institution_item_el = '<option value="'+data.institution[i]['institution_code']+'">'+data.institution[i]['institution_name']+'</option>';
+                        institutionId.append(institution_item_el);
+                    }
+                    
+                    var programTypeId = $("#programType").empty();
+                    programTypeId.append('<option selected="selected" value="">--Select--</option>');
+                    for(var i = 0; i < data.programType.length;i++){
+                        var programType_item_el = '<option value="'+ data.programType[i]['program_code'] +'">'+data.programType[i]['program_type_name']+'</option>';
+                        programTypeId.append(programType_item_el);
+                    }
+
+                    var marketingAgencyId = $("#marketingAgency").empty();
+                    marketingAgencyId.append('<option selected="selected" value="">--Select--</option>');
+                    for(var i = 0; i < data.marketingAgency.length;i++){
+                        var marketingAgency_item_el = '<option value="'+ data.marketingAgency[i]['agency_code'] +'">'+data.marketingAgency[i]['agency_name']+'</option>';
+                        marketingAgencyId.append(marketingAgency_item_el);
+                    }
+
+                    var leadSourceId = $("#leadSource").empty();
+                    leadSourceId.append('<option selected="selected" value="">--Select--</option>');
+                    for(var i = 0; i < data.leadSource.length;i++){
+                        var leadSource_item_el = '<option value="'+ data.leadSource[i]['leadsource_id'] +'">'+ data.leadSource[i]['leadsource_name']+'</option>';
+                        leadSourceId.append(leadSource_item_el);
+                    }
+                    
+                }
+            }
+        });
+    }
 
     function VerifyCampaign() {      
       
@@ -696,6 +751,79 @@
         || $("#campaignType-error").text() != "" || $("#targetSegment-error").text() != "" || $("#headline-error").text() != "" || $("#campaignDate-error").text() != ""
         || $("#courses-error").text() != "" || $("#marketingAgency-error").text() != "" || $("#leadSource-error").text() != "" || $("#targetLocation-error").text() != ""
         || $("#persona-error").text() != "" || $("#price-error").text() != "" || $("#campaignStatus-error").text() != ""){
+          e.preventDefault();
+          return false;
+        }
+      }); 
+          
+    }
+
+    function VerifyCamp() {      
+      
+      var institution = $("#campaign-institution").val();
+      var programType = $("#programType").val();
+      var marketingAgency = $("#marketingAgency").val();
+      var leadSource = $("#leadSource").val();
+      var keyName = $("#keyName").val();
+      var courses = $("#courses").val();
+      var campDate = $("#campaignDate").val();
+      
+      if(institution == "" || institution == "undefined"){
+        $("#institution-error").html("Please select an Institution");         
+      }
+      else {
+        $("#institution-error").html(""); 
+      }
+      if(programType == "" || programType == "undefined"){
+        $("#programType-error").html("Please select a Program Type");        
+      }
+      else {
+        $("#programType-error").html("");
+      }
+      if(marketingAgency == "" || marketingAgency == "undefined"){
+        $("#marketingAgency-error").html("Please select a Marketing Agency");        
+      }
+      else {
+        $("#marketingAgency-error").html("");
+      }
+      if(leadSource == "" || leadSource == "undefined"){
+        $("#leadSource-error").html("Please select a Lead Source");        
+      }
+      else {
+        $("#leadSource-error").html("");
+      }
+      
+      if(courses == "" && institution == ""){
+        $("#courses-error").html("Please select an institution first");        
+      }
+      else {
+        $("#courses-error").html("");
+      }
+      
+      if(courses == "" || courses == "undefined"){
+        $("#courses-error").html("Please select a Course");        
+      }
+      else {
+        $("#courses-error").html("");
+      }
+      
+      if(campDate == "" || campDate == "undefined"){
+        $("#campaignDate-error").html("Please select a Date");        
+      }
+      else {
+        $("#campaignDate-error").html("");
+      }      
+      
+      if(keyName == "" || keyName == "undefined"){
+        $("#keyName-error").html("Please enter a Key");
+      }
+      else {
+        $("#keyName-error").html("");
+      }
+      
+      $("#add-camp").submit(function (e) {
+        if($("#institution-error").text() != "" || $("#programType-error").text() != "" || $("#campaignDate-error").text() != ""
+        || $("#courses-error").text() != "" || $("#marketingAgency-error").text() != "" || $("#leadSource-error").text() != ""){
           e.preventDefault();
           return false;
         }

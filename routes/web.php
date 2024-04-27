@@ -37,7 +37,7 @@ Route::get('create-campaignForm', [ExtHomeController::class, 'CreateCampaignForm
 Route::get('ext-camp-form-change-institution', [ExtHomeController::class, 'ChangeExtCampFormInstitution']);
 Route::get('courses', [ExtHomeController::class, 'GetCourses']);
 Route::get('excel-campaign/{institution}', [ExtHomeController::class, 'excelCampaign']);
-Route::post('store-campaign', [ExtHomeController::class, 'StoreCampaign']);
+Route::post('store-campaignForm', [ExtHomeController::class, 'StoreCampaignForm']);
 Route::post('parameter-campaign', [ExtHomeController::class, 'parameterCampaign']);
 Route::get('confirm-lead', [ExtHomeController::class, 'confirmLead']);
 Route::get('ext-edit-campaign-request', [ExtHomeController::class, 'editCampaignRequest']);
@@ -49,6 +49,7 @@ Route::get('ext-home-change-institution', [ExtHomeController::class, 'changeExtH
 //Route::get('ext-campaign-form', [ExtHomeController::class, 'campaignForm']);
 Route::get('ext-camp', [ExtHomeController::class, 'ExtCampaign']);
 Route::get('create-campaign', [ExtHomeController::class, 'CreateCampaign']);
+Route::post('store-campaign', [ExtHomeController::class, 'StoreCampaign']);
 //Internal Marketing Dashboard
 Route::get('int-home', [IntHomeController::class, 'InternalIndex']);
 Route::get('int-landing-page', [IntHomeController::class, 'InternalLandingPage'])->name('intLandingPage');

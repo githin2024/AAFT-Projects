@@ -43,8 +43,8 @@ class BaseController extends Controller
     public function CampaignDetails($institutionName)
     {
         return DB::select("SELECT c.campaign_id, i.institution_name, pt.program_type_name, cs.course_name, l.leadsource_name, a.agency_name, c.campaign_name, 
-                                    c.campaign_date, cps.campaign_status_name, ca.camp_accept_id, ca.camp_accept, ca.comments, ce.camp_edit_accept,ce.camp_edit_id, 
-                                    ce.camp_edit_reject, ce.edit_comments 
+                                    c.campaign_date, cps.campaign_status_name, ca.camp_accept_id, ca.camp_accept, ca.comments, ca.active as `camp_accept_active`, ce.camp_edit_accept, ce.camp_edit_id, 
+                                    ce.camp_edit_request, ce.edit_comments  
                             FROM campaigns c
                             LEFT JOIN program_type pt ON c.fk_program_type_id = pt.program_type_id
                             LEFT JOIN courses cs ON cs.course_id = c.fk_course_id

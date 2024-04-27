@@ -97,132 +97,7 @@ class ExtHomeController extends BaseController
         $courses = DB::table('courses')->where('fk_institution_id', $institutionId)->get();
         return response()->json(['courses' => $courses]);
     }
-
-    public function StoreCampaign(Request $req) {
-        //Check Validation
-        $reqValidatedData = $req->validate([
-            'campaign-institution' => 'required',
-            'programType' => 'required',
-            'marketingAgency' => 'required',
-            'leadSource' => 'required',
-            'targetLocation' => 'required',
-            'persona' => 'required',
-            'price' => 'required',
-            'courses' => 'required',
-            'campaignDate' => 'required',
-            'headline' => 'required',
-            'targetSegment' => 'required',
-            'campaignType' => 'required',
-            'campaignSize' => 'required',
-            'campaignVersion' => 'required'
-        ]);
-
-        $institution = DB::select('select institution_id, institution_name, institution_code from institution where institution_code = ?', [$reqValidatedData['campaign-institution']]);
-        $programType = DB::select("select program_type_id, program_type_name, program_code from program_type where program_code = ?", [$reqValidatedData['programType']]);
-        $agency = DB::select("select agency_id, agency_name, agency_code from agency where agency_code = ?", [$reqValidatedData['marketingAgency']]);
-        $leadSource = DB::select("select leadsource_id, leadsource_name from leadsource where leadsource_id = ?", [$reqValidatedData['leadSource']]);
-        $targetLocation = DB::select("select target_location_id, target_location_name, target_location_code from target_location where target_location_code = ?", [$reqValidatedData['targetLocation']]);
-        $persona = DB::select("select persona_id, persona_name, persona_code from persona where persona_code = ?", [$reqValidatedData['persona']]);
-        $price = DB::select("select campaign_price_id, campaign_price_name, campaign_price_code from campaign_price where campaign_price_code = ?", [$reqValidatedData['price']]);
-        $courses = DB::select("select course_id, course_name, course_code from courses where course_code = ?", [$reqValidatedData['courses']]);
-        $campDate= $req->input('campaignDate');
-        $campaignMonth = Carbon::parse($campDate)->month;
-        $campaignYear = Carbon::parse($campDate)->year;
-        $headline = DB::select("select headline_id, headline_name, headline_code from headline where headline_code = ?", [$reqValidatedData['headline']]);
-        $targetSegment = DB::select("select target_segment_id, target_segment_name, target_segment_code from target_segment where target_segment_code = ?", [$reqValidatedData['targetSegment']]);
-        $campType = DB::select("select campaign_type_id, campaign_type_name, campaign_type_code from campaign_type where campaign_type_code = ?", [$reqValidatedData['campaignType']]);
-        $campSize = DB::select("select campaign_size_id, campaign_size_name, campaign_size_code from campaign_size where campaign_size_code = ?", [$reqValidatedData['campaignSize']]);
-        $campVersion = DB::select("select campaign_version_id, campaign_version_name, campaign_version_code from campaign_version where campaign_version_code = ?", [$reqValidatedData['campaignVersion']]);
-        foreach($institution as $inst){
-            $institutionCode = $inst->institution_code;
-            $institutionId = $inst->institution_id;
-        }
-        foreach($programType as $prog){
-            $programTypeCode = $prog->program_code;
-            $programTypeId = $prog->program_type_id;
-        }
-        foreach($agency as $ag){
-            $agencyCode = $ag->agency_code;
-            $agencyId = $ag->agency_id;
-        }
-        foreach($leadSource as $lead){
-            $leadName = $lead->leadsource_name;
-            $leadSourceId = $lead->leadsource_id;
-        }
-        foreach($targetLocation as $loc){
-            $targetLocationCode = $loc->target_location_code;
-            $targetLocationId = $loc->target_location_id;
-        }
-        foreach($persona as $per){
-            $personaCode = $per->persona_code;
-            $personaId = $per->persona_id;
-        }
-        foreach($price as $pr){
-            $priceCode = $pr->campaign_price_code;
-            $priceId = $pr->campaign_price_id;
-        }
-        foreach($courses as $cour){
-            $courseCode = $cour->course_code;
-            $courseId = $cour->course_id;
-        }
-        foreach($headline as $head){
-            $headlineCode = $head->headline_code;
-            $headlineId = $head->headline_id;
-        }
-        foreach($targetSegment as $seg){
-            $targetSegmentCode = $seg->target_segment_code;
-            $targetSegmentId = $seg->target_segment_id;
-        }
-        foreach($campType as $type){
-            $campaignTypeCode = $type->campaign_type_code;
-            $campaignTypeId = $type->campaign_type_id;
-        }
-        foreach($campSize as $camp)
-        {
-            $campaignSizeCode = $camp->campaign_size_code;
-            $campaignSizeId = $camp->campaign_size_id;            
-        }
-        foreach($campVersion as $ver) {
-            $campaignVersionCode = $ver->campaign_version_code;
-            $campaignVersionId = $ver->campaign_version_id;
-        }
-        $campaignName = $institutionCode.''. $programTypeCode . '_' . $agencyCode . '_' . $courseCode . '_' . $campaignMonth .''. $campaignYear;
-        $campaignAdsetName = $campaignName . '_' . $personaCode . '_' . $targetLocationCode;
-        $campaignAdName = $campaignAdsetName . '_' . $priceCode . '_' . $campaignTypeCode . '_' . $targetSegmentCode . '_' . $campaignVersionCode;
-        $campaignCreative = $campaignName . '_' . $priceCode . '_' . $personaCode . '_' . $headlineCode . '_' . $campaignSizeCode . '_' . $campaignVersionCode;
-        $leadSourceName = $institutionCode .''. $programTypeCode . '_' . $agencyCode . '_' . $courseCode . '_' . $leadName;
-        $userId = DB::table('users')->select('user_id')->where('username', '=', session('username'))->first(); 
-        DB::table('campaign_form')->insert([
-            'campaign_form_name' => $campaignName,
-            'fk_course_id' => $courseId,
-            'fk_program_type_id' => $programTypeId,
-            'fk_agency_id' => $agencyId,
-            'fk_lead_source_id' => $leadSourceId,
-            'fk_persona_id' => $personaId,
-            'fk_campaign_price_id' => $priceId,
-            'campaign_form_date' => $campDate,
-            'fk_headline_id' => $headlineId,
-            'fk_target_location_id' => $targetLocationId,
-            'fk_target_segment_id' => $targetSegmentId,
-            'fk_campaign_size_id' => $campaignSizeId,
-            'fk_campaign_version_id' => $campaignVersionId,
-            'fk_campaign_type_id' => $campaignTypeId,
-            'fk_user_id' => $userId->user_id,
-            'fk_campaign_status_id' => 2,
-            'adset_name' => $campaignAdsetName,
-            'adname' => $campaignAdName,
-            'creative' => $campaignCreative,
-            'leadsource_name' => $leadSourceName,
-            'created_date' => now(),
-            'updated_date' => now(),
-            'active' => 1,
-            'created_by' => session('username'),
-            'updated_by' => session('username')
-        ]);
-
-        return redirect()->back()->with('message', 'Campaign created successfully.');
-    }
-
+    
     public function excelCampaign($institution) {
               
         return Excel::download(new ExportCampaign(), 'campaigns.xlsx');
@@ -370,8 +245,9 @@ class ExtHomeController extends BaseController
 
     public function ExtCampaign()
     {
-        $campaignList = $this->CampList("AAFT Online");
-        return view('ext-marketing.ext-camp', ['campaignList' => $campaignList]);
+        $campaignList = $this->CampaignDetails("AAFT Online");
+        $instituteId = DB::table('institution')->select('institution_id')->where('institution_name', '=', "AAFT Online")->pluck('institution_id');
+        return view('ext-marketing.ext-camp', ['campaignList' => $campaignList, 'instituteId' => $instituteId]);
     }
 
     public function CreateCampaign()
@@ -379,8 +255,147 @@ class ExtHomeController extends BaseController
         $institution = DB::table('institution')->where('active', 1)->get();
         $programType = DB::table('program_type')->where('active', 1)->get();
         $marketingAgency = DB::table('agency')->where('active', 1)->get(); 
+        $targetLocation = DB::table('target_location')->where('active', 1)->get();
+        $persona = DB::table('persona')->where('active', 1)->get();
+        $price = DB::table('campaign_price')->where('active', 1)->get();
+        $headline = DB::table('headline')->where('active', 1)->get();
+        $targetSegment = DB::table('target_segment')->where('active', 1)->get();
+        $campaignType = DB::table('campaign_type')->where('active', 1)->get();
+        $campaignSize = DB::table('campaign_size')->where('active', 1)->get();
         $leadSource = DB::table('leadsource')->where('active', 1)->get();
+        $campaignVersion = DB::table('campaign_version')->where('active', 1)->get();
         
-        return response()->json(['institution' => $institution, 'programType' => $programType, 'marketingAgency' => $marketingAgency, 'leadSource' => $leadSource]);
+        return response()->json(['institution' => $institution, 'programType' => $programType, 'marketingAgency' => $marketingAgency, 'leadSource' => $leadSource,
+             'targetLocation' => $targetLocation, 'persona' => $persona, 'price' => $price, 'headline' => $headline, 'targetSegment' => $targetSegment, 'campaignType' => $campaignType,
+             'campaignSize' => $campaignSize, 'campaignVersion' => $campaignVersion]);
+    }
+
+    public function StoreCampaign(Request $req) {
+        //Check Validation
+        $reqValidatedData = $req->validate([
+            'campaign-institution' => 'required',
+            'programType' => 'required',
+            'marketingAgency' => 'required',
+            'leadSource' => 'required',
+            'targetLocation' => 'required',
+            'persona' => 'required',
+            'price' => 'required',
+            'courses' => 'required',
+            'campaignDate' => 'required',
+            'headline' => 'required',
+            'targetSegment' => 'required',
+            'campaignType' => 'required',
+            'campaignSize' => 'required',
+            'campaignVersion' => 'required'
+        ]);
+
+        $institution = DB::select('select institution_id, institution_name, institution_code from institution where institution_code = ?', [$reqValidatedData['campaign-institution']]);
+        $programType = DB::select("select program_type_id, program_type_name, program_code from program_type where program_code = ?", [$reqValidatedData['programType']]);
+        $agency = DB::select("select agency_id, agency_name, agency_code from agency where agency_code = ?", [$reqValidatedData['marketingAgency']]);
+        $leadSource = DB::select("select leadsource_id, leadsource_name from leadsource where leadsource_id = ?", [$reqValidatedData['leadSource']]);
+        $targetLocation = DB::select("select target_location_id, target_location_name, target_location_code from target_location where target_location_code = ?", [$reqValidatedData['targetLocation']]);
+        $persona = DB::select("select persona_id, persona_name, persona_code from persona where persona_code = ?", [$reqValidatedData['persona']]);
+        $price = DB::select("select campaign_price_id, campaign_price_name, campaign_price_code from campaign_price where campaign_price_code = ?", [$reqValidatedData['price']]);
+        $courses = DB::select("select course_id, course_name, course_code from courses where course_code = ?", [$reqValidatedData['courses']]);
+        $campDate= $req->input('campaignDate');
+        $campaignMonth = Carbon::parse($campDate)->month;
+        $campaignYear = Carbon::parse($campDate)->year;
+        $campDay = Carbon::parse($campDate)->day;
+        $headline = DB::select("select headline_id, headline_name, headline_code from headline where headline_code = ?", [$reqValidatedData['headline']]);
+        $targetSegment = DB::select("select target_segment_id, target_segment_name, target_segment_code from target_segment where target_segment_code = ?", [$reqValidatedData['targetSegment']]);
+        $campType = DB::select("select campaign_type_id, campaign_type_name, campaign_type_code from campaign_type where campaign_type_code = ?", [$reqValidatedData['campaignType']]);
+        $campSize = DB::select("select campaign_size_id, campaign_size_name, campaign_size_code from campaign_size where campaign_size_code = ?", [$reqValidatedData['campaignSize']]);
+        $campVersion = DB::select("select campaign_version_id, campaign_version_name, campaign_version_code from campaign_version where campaign_version_code = ?", [$reqValidatedData['campaignVersion']]);
+        $campStatusId = DB::table('campaign_status')->where('campaign_status_name', '=', 'New')->pluck('campaign_status_id');
+
+        foreach($institution as $inst){
+            $institutionCode = $inst->institution_code;
+            $institutionId = $inst->institution_id;
+        }
+        foreach($programType as $prog){
+            $programTypeCode = $prog->program_code;
+            $programTypeId = $prog->program_type_id;
+        }
+        foreach($agency as $ag){
+            $agencyCode = $ag->agency_code;
+            $agencyId = $ag->agency_id;
+        }
+        foreach($leadSource as $lead){
+            $leadName = $lead->leadsource_name;
+            $leadSourceId = $lead->leadsource_id;
+        }
+        foreach($targetLocation as $loc){
+            $targetLocationCode = $loc->target_location_code;
+            $targetLocationId = $loc->target_location_id;
+        }
+        foreach($persona as $per){
+            $personaCode = $per->persona_code;
+            $personaId = $per->persona_id;
+        }
+        foreach($price as $pr){
+            $priceCode = $pr->campaign_price_code;
+            $priceId = $pr->campaign_price_id;
+        }
+        foreach($courses as $cour){
+            $courseCode = $cour->course_code;
+            $courseId = $cour->course_id;
+        }
+        foreach($headline as $head){
+            $headlineCode = $head->headline_code;
+            $headlineId = $head->headline_id;
+        }
+        foreach($targetSegment as $seg){
+            $targetSegmentCode = $seg->target_segment_code;
+            $targetSegmentId = $seg->target_segment_id;
+        }
+        foreach($campType as $type){
+            $campaignTypeCode = $type->campaign_type_code;
+            $campaignTypeId = $type->campaign_type_id;
+        }
+        foreach($campSize as $camp)
+        {
+            $campaignSizeCode = $camp->campaign_size_code;
+            $campaignSizeId = $camp->campaign_size_id;            
+        }
+        foreach($campVersion as $ver) {
+            $campaignVersionCode = $ver->campaign_version_code;
+            $campaignVersionId = $ver->campaign_version_id;
+        }
+        $campaignName = $institutionCode.''. $programTypeCode . '_' . $agencyCode . '_' . $courseCode . '_' . $campDay . '_' . $campaignMonth .'_'. $campaignYear;
+        $campaignAdsetName = $campaignName . '_' . $personaCode . '_' . $targetLocationCode;
+        $campaignAdName = $campaignAdsetName . '_' . $priceCode . '_' . $campaignTypeCode . '_' . $targetSegmentCode . '_' . $campaignVersionCode;
+        $campaignCreative = $campaignName . '_' . $priceCode . '_' . $personaCode . '_' . $headlineCode . '_' . $campaignSizeCode . '_' . $campaignVersionCode;
+        $leadSourceName = $institutionCode .''. $programTypeCode . '_' . $agencyCode . '_' . $courseCode . '_' . $leadName;
+        $userId = DB::table('users')->select('user_id')->where('username', '=', session('username'))->first(); 
+        DB::table('campaigns')->insert([
+            'campaign_name' => $campaignName,
+            'fk_institution_id' => $institutionId,
+            'fk_course_id' => $courseId,
+            'fk_program_type_id' => $programTypeId,
+            'fk_agency_id' => $agencyId,
+            'fk_leadsource_id' => $leadSourceId,
+            'fk_persona_id' => $personaId,
+            'fk_campaign_price_id' => $priceId,
+            'campaign_date' => $campDate,
+            'fk_headline_id' => $headlineId,
+            'fk_target_location_id' => $targetLocationId,
+            'fk_target_segment_id' => $targetSegmentId,
+            'fk_campaign_size_id' => $campaignSizeId,
+            'fk_campaign_version_id' => $campaignVersionId,
+            'fk_campaign_type_id' => $campaignTypeId,
+            'fk_user_id' => $userId->user_id,
+            'fk_campaign_status_id' => $campStatusId[0],
+            'adset' => $campaignAdsetName,
+            'adname' => $campaignAdName,
+            'creative' => $campaignCreative,
+            'leadsource_name' => $leadSourceName,
+            'created_date' => now(),
+            'updated_date' => now(),
+            'active' => 1,
+            'created_by' => session('username'),
+            'updated_by' => session('username')
+        ]);
+
+        return redirect()->back()->with('message', 'Campaign created successfully.');
     }
 }

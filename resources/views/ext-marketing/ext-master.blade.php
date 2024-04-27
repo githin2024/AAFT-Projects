@@ -39,6 +39,10 @@
             border-left: 1px solid black;
             height: 30px;
         }
+              
+      table.dataTable {
+        font-size:14px;
+      }
     </style>
   </head>
   <body class="g-sidenav-show  bg-gray-200">  
