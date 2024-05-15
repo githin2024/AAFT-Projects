@@ -32,24 +32,33 @@ Route::post('change-password', [AdminController::class, 'ChangePassword']);
 
 //External Marketing Dashboard
 Route::get('home', [ExtHomeController::class, 'Index']);
+
 Route::get("campaignForm/{institutionName?}", [ExtHomeController::class, 'CampaignForm']);
-Route::get('create-campaignForm', [ExtHomeController::class, 'CreateCampaignForm']);
+Route::get('create-campaign-form', [ExtHomeController::class, 'CreateCampaignForm']);
 Route::get('ext-camp-form-change-institution', [ExtHomeController::class, 'ChangeExtCampFormInstitution']);
 Route::get('courses', [ExtHomeController::class, 'GetCourses']);
-Route::get('excel-campaign/{institution}', [ExtHomeController::class, 'excelCampaign']);
-Route::post('store-campaignForm', [ExtHomeController::class, 'StoreCampaignForm']);
-Route::post('parameter-campaign', [ExtHomeController::class, 'parameterCampaign']);
-Route::get('confirm-lead', [ExtHomeController::class, 'confirmLead']);
-Route::get('ext-edit-campaign-request', [ExtHomeController::class, 'editCampaignRequest']);
-Route::get('ext-get-campaign', [ExtHomeController::class, 'getCampaign']);
-Route::post('update-campaign', [ExtHomeController::class, 'updateCampaign']);
-// Route::get('ext-create-campaign-form', [ExtHomeController::class, 'createCampaignForm']);
-Route::get('ext-check-campaign-key', [ExtHomeController::class, 'checkCampaignKey']);
-Route::get('ext-home-change-institution', [ExtHomeController::class, 'changeExtHomeInstitution']);
-//Route::get('ext-campaign-form', [ExtHomeController::class, 'campaignForm']);
+Route::get('courses-campaign', [ExtHomeController::class, 'GetCoursesCampaign']);
+//Route::get('excel-campaign/{institution}', [ExtHomeController::class, 'excelCampaign']);
+Route::post('store-camp-form', [ExtHomeController::class, 'StoreCampaignForm']);
+Route::get('ext-view-campaign-form',[ExtHomeController::class, 'ExtViewCampaignForm']);
+Route::post('parameter-campaign-form', [ExtHomeController::class, 'ParameterCampaignForm']);
+Route::get('confirm-lead-camp-form', [ExtHomeController::class, 'ConfirmLeadCampForm']);
+Route::get('confirm-edit-campaign-form', [ExtHomeController::class, 'EditCampaignFormRequest']);
+Route::get('camp-form-check-keyname', [ExtHomeController::class, 'CheckCampaignFormKeyName']);
+Route::get('ext-home-change-institution', [ExtHomeController::class, 'ChangeExtHomeInstitution']);
+
 Route::get('ext-camp', [ExtHomeController::class, 'ExtCampaign']);
 Route::get('create-campaign', [ExtHomeController::class, 'CreateCampaign']);
 Route::post('store-campaign', [ExtHomeController::class, 'StoreCampaign']);
+Route::get('ext-view-campaign', [ExtHomeController::class, 'ExtViewCampaign']);
+Route::post('parameter-campaign', [ExtHomeController::class, 'ParameterCampaign']);
+Route::get('confirm-lead-campaign', [ExtHomeController::class, 'ConfirmLeadCampaign']);
+Route::get('confirm-edit-campaign', [ExtHomeController::class, 'ConfirmEditCampaign']);
+Route::get('ext-camp-change-institution', [ExtHomeController::class, 'ChangeExtCampInstitution']);
+
+Route::get('landingPageForm', [ExtHomeController::class, 'LandingPage']);
+Route::get('ext-lp-change-institution', [ExtHomeController::class, 'ChangeExtLpInstitution']);
+
 //Internal Marketing Dashboard
 Route::get('int-home', [IntHomeController::class, 'InternalIndex']);
 Route::get('int-landing-page', [IntHomeController::class, 'InternalLandingPage'])->name('intLandingPage');

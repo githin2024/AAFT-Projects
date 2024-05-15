@@ -2,32 +2,24 @@
 
 @section('content')
 
+
+
     <div class="col-lg-12 mb-4">
       <div class="nav-wrapper position-relative">
         <ul class="nav nav-pills nav-tabs p-1" role="tablist">
-          <li class="nav-item">
-            <a class="nav-link mb-0 px-0 py-2 mx-1 active" data-bs-toggle="tab" onclick="changeInstitution('AAFT ONLINE')" role="tab" aria-selected="true">              
-              <span class="ms-1"> AAFT Online</span>
-            </a>
-          </li>
-          <div class="vertical mt-1"></div>
-          <li class="nav-item mx-1">
-            <a class="nav-link mb-0 px-0 py-2" data-bs-toggle="tab" onclick="changeInstitution('AAFT RAIPUR')" role="tab" aria-selected="false">              
-              <span class="ms-1">AAFT Raipur</span>
-            </a>
-          </li>
-          <div class="vertical mt-1"></div>
-          <li class="nav-item mx-1">
-            <a class="nav-link mb-0 px-0 py-2" data-bs-toggle="tab" onclick="changeInstitution('AAFT NOIDA')" role="tab" aria-selected="false">              
-              <span class="ms-1">AAFT Noida</span>
-            </a>
-          </li>
-          <div class="vertical mt-1"></div>
-          <li class="nav-item mx-1">
-            <a class="nav-link mb-0 px-0 py-2" data-bs-toggle="tab" onclick="changeInstitution('ABS')" role="tab" aria-selected="false">              
-              <span class="ms-1">ABS</span>
-            </a>
-          </li>
+          @foreach($institutionList as $institute)
+            <li class="nav-item">
+              @if($institute->institution_name == "AAFT Online")
+                  <a class="nav-link mb-0 px-0 py-2 mx-1 active" data-bs-toggle="tab" onclick="changeInstitution('{{ $institute->institution_name }}')" role="tab">              
+                  <span class="ms-1 text-uppercase" style="padding: 5px;"> {{ $institute->institution_name }}</span>
+                  </a>
+              @else
+                  <a class="nav-link mb-0 px-0 py-2 mx-1" data-bs-toggle="tab" onclick="changeInstitution('{{ $institute->institution_name }}')" role="tab" >              
+                  <span class="ms-1 text-uppercase" style="padding: 5px;"> {{ $institute->institution_name }}</span>
+                  </a>
+              @endif
+            </li>
+          @endforeach          
         </ul>
       </div>
     </div>
@@ -125,17 +117,18 @@
                 <table class="table align-items-center mb-0" id="homeCampaignTable">
                   <thead>
                     <tr>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">Institution</th>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">Program Type</th>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">Course</th>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">Campaign Name</th>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">Campaign Form Name</th>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">Leadsource</th>                        
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">Status</th>                                            
+                        <th class="text-uppercase opacity-10">Institution</th>
+                        <th class="text-uppercase opacity-10">Program Type</th>
+                        <th class="text-uppercase opacity-10">Course</th>
+                        <th class="text-uppercase opacity-10">Campaign Name</th>
+                        <th class="text-uppercase opacity-10">Campaign Form Name</th>
+                        <th class="text-uppercase opacity-10">Leadsource</th>                        
+                        <th class="text-uppercase opacity-10">Status</th>                                            
                     </tr>
                   </thead>
                   <tbody id="homeCampaignBody">
                     @foreach($campaignList as $campaign)
+                      
                       <tr>
                         <td style="padding-left: 20px;">{{ $campaign->institution_name }}</td>
                         <td style="padding-left: 15px;">{{ $campaign->program_type_name }}</td>
@@ -145,6 +138,7 @@
                         <td style="padding-left: 15px;">{{ $campaign->leadsource_name }}</td>                        
                         <td style="padding-left: 15px;">{{ $campaign->campaign_status_name }}</td>                       
                       </tr>
+                      
                     @endforeach
                   </tbody>
                 </table>
@@ -165,34 +159,58 @@
           $("#extCampaignHomeID").addClass( "active bg-primary bg-gradient" );
           $("#extCampaignFormID").removeClass("active bg-primary bg-gradient");
           $('#homeCampaignTable').dataTable();          
-          document.getElementById('sidebar-text').style.color = "white !important";
+          // document.getElementById('sidebar-text-home').style.color = "white !important";
+          // document.getElementById('sidebar-text-campaign').style.color = "black !important";
+          // document.getElementById('sidebar-text-camp-form').style.color = "black !important";
+          // document.getElementById('sidebar-text-lp').style.color = "black !important";
+
         });
         
         function changeInstitution(institute) {
+          
           $.ajax({
             type:'get',
             url: "/ext-home-change-institution",
             data: {'institution' : institute},          
             success:function(data){
-              if(data.campaignList != "" && data.campaignList != undefined){
-                $("#hdnInstitutionId").val(data.institution);
+              
+              var campBody = $("#homeCampaignTable").empty();
+                //$("#hdnInstitutionId").val(data.institutionId);
                 $("#activeCount").empty().text(data.activeCount);
                 $("#onHoldCount").empty().text(data.onHoldCount);
                 $("#newCount").empty().text(data.newCount);
                 $("#deleteCount").empty().text(data.deleteCount);
-                var campBody = $("#homeCampaignBody").empty();
+              if(data.campaignList != "" && data.campaignList != undefined){
+                
+                var campTheadItem = "<thead>" +
+                "<tr>" +                    
+                    "<th class='opacity-10'>PROGRAM TYPE</th>" + 
+                    "<th class='opacity-10'>COURSE</th>" +
+                    "<th class='opacity-10'>LEADSOURCE</th>" +
+                    "<th class='opacity-10'>AGENCY</th>" +
+                    "<th class='opacity-10'>CAMPAIGN NAME</th>" +                                   
+                    "<th class='opacity-10'>STATUS</th>" +
+                    "<th class='opacity-10'>APPROVAL STATUS</th>" +
+                    "<th class='opacity-10'>APPROVAL COMMENTS</th>" +                                    
+                    "<th class='opacity-10'>ACTION</th>" +
+                "</tr>" +
+                "</thead><tbody>";
+                campBody.append(campTheadItem);
                 for(var i = 0; i < data.campaignList.length;i++){
                   var campBodyItem = "<tr><td style='padding-left: 20px;'>"+ data.campaignList[i]['institution_name'] +"</td>" +
-                                     "<tr><td style='padding-left: 20px;'>"+ data.campaignList[i]['program_type_name'] +"</td>" +
-                                     "<tr><td style='padding-left: 20px;'>"+ data.campaignList[i]['course_name'] +"</td>" +
-                                     "<tr><td style='padding-left: 20px;'>"+ data.campaignList[i]['campaign_name'] +"</td>" +
-                                     "<tr><td style='padding-left: 20px;'>"+ data.campaignList[i]['campaign_form_name'] +"</td>" +
-                                     "<tr><td style='padding-left: 20px;'>"+ data.campaignList[i]['leadsource_name'] +"</td>" +
-                                     "<tr><td style='padding-left: 20px;'>"+ data.campaignList[i]['campaign_status_name'] +"</td>" +
+                                     "<td style='padding-left: 20px;'>"+ data.campaignList[i]['program_type_name'] +"</td>" +
+                                     "<td style='padding-left: 20px;'>"+ data.campaignList[i]['course_name'] +"</td>" +
+                                     "<td style='padding-left: 20px;'>"+ data.campaignList[i]['campaign_name'] +"</td>" +
+                                     "<td style='padding-left: 20px;'>"+ data.campaignList[i]['campaign_form_name'] +"</td>" +
+                                     "<td style='padding-left: 20px;'>"+ data.campaignList[i]['leadsource_name'] +"</td>" +
+                                     "<td style='padding-left: 20px;'>"+ data.campaignList[i]['campaign_status_name'] +"</td>" +
                                      "</tr>";
                   campBody.append(campBodyItem);
                 }
+                campBody.append("</tbody>")
               }
+              $('#homeCampaignTable').DataTable().destroy();
+              $("#homeCampaignTable").dataTable();
             }
           });
         } 

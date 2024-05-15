@@ -79,6 +79,14 @@
               </div>
               <span id="sidebar-text" class="nav-link-text ms-1">Campaign Form</span>
             </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-black" id="extLandingID" href="{{ url('landingPageForm') }}">
+              <div class="text-black text-center me-2 d-flex align-items-center justify-content-center">
+                <i id="sidebar-text" class="material-symbols-outlined">web</i>
+              </div>
+              <span id="sidebar-text" class="nav-link-text ms-1">Landing Page</span>
+            </a>
           </li>        
         </ul>
       </div>    

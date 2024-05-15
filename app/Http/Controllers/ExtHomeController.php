@@ -13,6 +13,7 @@ class ExtHomeController extends BaseController
     {
         if(session('username') != "")
         {
+            $institutionList = DB::select("SELECT institution_id, institution_name FROM institution WHERE active = 1");
             $campaignList = $this->CampaignList("AAFT Online");
 
             $activeCount = $this->CampaignCount("Active", "AAFT Online");
@@ -23,16 +24,16 @@ class ExtHomeController extends BaseController
 
             $deleteCount = $this->CampaignCount("Delete", "AAFT Online");
 
-            $statusChart = DB::select("SELECT cs.campaign_status_name, COUNT(c.fk_campaign_status_id) AS `Campaign_Status_Count` FROM campaigns c
-                                                LEFT JOIN campaign_status cs ON c.fk_campaign_status_id = cs.campaign_status_id
-                                                LEFT JOIN campaign_form cf ON c.campaign_id = cf.fk_campaign_id
-                                                LEFT JOIN institution i ON c.fk_institution_id = i.institution_id
-                                                WHERE i.institution_name = 'AAFT Online'
-                                                GROUP BY c.fk_campaign_status_id, cs.campaign_status_name");
+            // $statusChart = DB::select("SELECT cs.campaign_status_name, COUNT(c.fk_campaign_status_id) AS `Campaign_Status_Count` FROM campaigns c
+            //                                     LEFT JOIN campaign_status cs ON c.fk_campaign_status_id = cs.campaign_status_id
+            //                                     LEFT JOIN campaign_form cf ON c.campaign_id = cf.fk_campaign_id
+            //                                     LEFT JOIN institution i ON c.fk_institution_id = i.institution_id
+            //                                     WHERE i.institution_name = 'AAFT Online'
+            //                                     GROUP BY c.fk_campaign_status_id, cs.campaign_status_name");
                                                 
             $institutionId = 1;
             
-            return view('ext-marketing.ext-home', compact(['campaignList', 'activeCount', 'newCount', 'onHoldCount', 'deleteCount', 'institutionId']));
+            return view('ext-marketing.ext-home', compact(['campaignList', 'activeCount', 'newCount', 'onHoldCount', 'deleteCount', 'institutionId', 'institutionList']));
         }
         else
         {
@@ -43,6 +44,7 @@ class ExtHomeController extends BaseController
     public function ChangeExtHomeInstitution(Request $req)
     {
         $institution = $req->institution;
+        //$institutionId = DB::table('institution')->where('institution_name', $institution)->value('institution_id');
         $campaignList = $this->CampaignList($institution);
         
         $activeCount = $this->CampaignCount("Active", $institution);
@@ -53,7 +55,7 @@ class ExtHomeController extends BaseController
 
         $deleteCount = $this->CampaignCount("Delete", $institution);
 
-        return response()->json(['campaignList', 'activeCount', 'newCount', 'onHoldCount', 'deleteCount', 'institution']);
+        return response()->json(['campaignList' => $campaignList, 'activeCount' => $activeCount, 'newCount' => $newCount, 'onHoldCount' => $onHoldCount, 'deleteCount' => $deleteCount]);
         
     }
 
@@ -62,9 +64,10 @@ class ExtHomeController extends BaseController
         if(session('username') != "")
         {
             $institutionName = "AAFT Online";
+            $institutionList = DB::select("SELECT institution_id, institution_name, institution_code FROM institution WHERE active = 1");
             $campaignFormList = $this->CampaignFormDetails($institutionName);
-            
-            return view('ext-marketing.ext-campaignForm', ['campaignFormList' => $campaignFormList]);
+            $instituteId = DB::table('institution')->select('institution_id')->where('institution_name', '=', $institutionName)->pluck('institution_id');
+            return view('ext-marketing.ext-campaignForm', ['campaignFormList' => $campaignFormList, 'instituteId' => $instituteId, 'institutionList' => $institutionList]);
         }
         else
         {
@@ -72,23 +75,34 @@ class ExtHomeController extends BaseController
         }
     }
 
+    public function ChangeExtCampFormInstitution(Request $req)
+    {
+        $institutionName = $req->institution;
+        $institutionId = DB::table('institution')->where('institution_name', $institutionName)->value('institution_id');
+        $campaignFormList = $this->CampaignFormDetails($institutionName);
+        return response()->json(['campaignFormList' => $campaignFormList, 'institutionId' => $institutionId]);
+    }
+
     public function CreateCampaignForm(Request $req) {
         $institution = DB::table('institution')->where('active', 1)->get();
+        $institutionCode = DB::table('institution')->where('institution_id', '=', $req->institute)->pluck('institution_code');
         $programType = DB::table('program_type')->where('active', 1)->get();
         $marketingAgency = DB::table('agency')->where('active', 1)->get(); 
-        $targetLocation = DB::table('target_location')->where('active', 1)->get();
-        $persona = DB::table('persona')->where('active', 1)->get();
-        $price = DB::table('campaign_price')->where('active', 1)->get();
-        $headline = DB::table('headline')->where('active', 1)->get();
-        $targetSegment = DB::table('target_segment')->where('active', 1)->get();
-        $campaignType = DB::table('campaign_type')->where('active', 1)->get();
-        $campaignSize = DB::table('campaign_size')->where('active', 1)->get();
+        $courseList = DB::table('courses')->where('fk_institution_id', '=', $req->institute)->get();
         $leadSource = DB::table('leadsource')->where('active', 1)->get();
-        $campaignVersion = DB::table('campaign_version')->where('active', 1)->get();
-        $campaignList = DB::table('campaigns')->where('fk_institution_id', $req->institute)->get();
+        $campaignList = DB::select("SELECT c.campaign_id, c.campaign_name FROM campaigns c
+                                    LEFT JOIN campaign_accept ca ON c.campaign_id = ca.fk_campaign_id
+                                    LEFT JOIN campaign_lead_request clr ON c.campaign_id = clr.fk_campaign_id
+                                    WHERE ca.camp_accept = 1 AND clr.camp_lead_accept = 1");
+        $campFormList = "";
+        $campaignStatus = "";
+        if($req->campFormId != 0)
+        {
+            $campFormList = DB::table('campaign_form')->where('campaign_form_id', '=', $req->campFormId)->get();
+            $campaignStatus = DB::table('campaign_status')->where('active', 1)->get();
+        }
         return response()->json(['institution' => $institution, 'programType' => $programType, 'marketingAgency' => $marketingAgency, 'leadSource' => $leadSource,
-            'targetLocation' => $targetLocation, 'persona' => $persona, 'price' => $price, 'headline' => $headline, 'targetSegment' => $targetSegment, 'campaignType' => $campaignType,
-             'campaignSize' => $campaignSize, 'campaignVersion' => $campaignVersion, '$campaignList' => $campaignList]);
+                                'courseList' => $courseList, 'institutionCode' => $institutionCode, 'campaignList' => $campaignList, 'campFormList' => $campFormList, 'campaignStatus'=>$campaignStatus]);
     }
 
     public function GetCourses(Request $req) {
@@ -97,145 +111,208 @@ class ExtHomeController extends BaseController
         $courses = DB::table('courses')->where('fk_institution_id', $institutionId)->get();
         return response()->json(['courses' => $courses]);
     }
+
+    public function GetCoursesCampaign(Request $req)
+    {
+        $institutionCode = $req->get('institutionCode');
+        $institutionId = DB::table('institution')->where('institution_code', $institutionCode)->value('institution_id');
+        $courses = DB::table('courses')->where('fk_institution_id', $institutionId)->get();
+        $campaignList = DB::select("SELECT c.campaign_id, c.campaign_name FROM campaigns c
+                                    LEFT JOIN campaign_accept ca ON c.campaign_id = ca.fk_campaign_id
+                                    LEFT JOIN campaign_lead_request clr ON c.campaign_id = clr.fk_campaign_id
+                                    WHERE ca.camp_accept = 1 AND clr.camp_lead_accept = 1");
+        return response()->json(['courses' => $courses, 'campaignList' => $campaignList]);
+    }
+
+    public function ExtViewCampaignForm(Request $req)
+    {
+        $campFormId = $req->campFormId;
+        $campFormList = $this->ViewCampaignFormDetails($campFormId);
+        
+        return response()->json(['campaignDetails' => $campFormList]);
+    }
     
     public function excelCampaign($institution) {
               
         return Excel::download(new ExportCampaign(), 'campaigns.xlsx');
     }
 
-    public function parameterCampaign(Request $req) {
-        if($req->input('published') == "true" && $req->input('course-campaign') == "true"){
-            $userId = DB::table('users')->select('user_id')->where('username', '=', session('username'))->first();
-            DB::table('campaign_parameters_check')->insert([
-                'fk_campaign_id' => $req->input('campaignId'),
-                'is_published' => 1,
-                'is_course_parameter' => 1,
-                'fk_user_id' => $userId -> user_id,
-                'created_date' => now(),
-                'updated_date' => now(),
-                'active' => 1,
-                'created_by' => session('username'),
-                'updated_by' => session('username')
-            ]);
-
-            return redirect()->back()->with('message', ' Campaign set successfully.');
-        }
-    }
-
-    public function confirmLead(Request $req) {
-        $campaignId = $req->get('campaignId');
-        DB::table('campaign_lead_request')
-            ->where('fk_campaign_id', $campaignId)
-            ->update(['campaign_lead_accept' => 1, 
-                      'campaign_lead_accept-date' => now(),
-                      'updated_by' => session('username'),
-                      'updated_date' => now()]);
-        $campaignStatusList = DB::select("select campaign_status_id from campaign_status where campaign_status_name = 'Active'");
-        foreach($campaignStatusList as $status) {
-            $campaignStatusId = $status->campaign_status_id;
-        }
-        
-        DB::table('campaigns')
-            ->where('campaign_id', $campaignId)
-            ->update(['fk_campaign_status_id' => $campaignStatusId,
-                      'updated_by' => session('username'),
-                      'updated_date' => now()]);
-
-        return response()->json(["Lead request accepted successfully."]);
-    }
-
-    public function editCampaignRequest(Request $req)
+    public function StoreCampaignForm(Request $req)
     {
-        $campaignId = $req->get('campaignId');
-        $userId = DB::table('users')->select('user_id')->where('username', '=', session('username'))->first();
-        $campaignEditId = DB::table('campaign_edit_request')->select('camp_edit_request_id')->where('fk_campaign_id', '=', $campaignId)->first();
-        if($campaignEditId->camp_edit_request_id > 0)
-        {
-            DB::table('campaign_edit_request')
-                ->where('fk_campaign_id', '=', $campaignId)
-                ->update(['camp_edit_request_date' => now(),
-                          'camp_edit_request' => 1,
-                          'updated_date' => now(),
-                          'updated_by' => session('username')]);
-        }
-        else {
-        DB::table('campaign_edit_request')
-            ->insert([
-                'fk_campaign_id' => $campaignId,
-                'fk_user_id' => $userId->user_id,
-                'camp_edit_request' => 1,
-                'camp_edit_request_date' => now(),
-                'created_date' => now(),
-                'updated_date' => now(),
-                'active' => 1,
-                'created_by' => session('username'),
-                'updated_by' => session('username')
-            ]);
-        }
-        
-        return response()->json(["Edit request sent successfully."]);
-    }
+        $reqValidatedData = $req->validate([
+            'campaign-institution' => 'required',
+            'programType' => 'required',
+            'marketingAgency' => 'required',
+            'leadSource' => 'required',            
+            'courses' => 'required',
+            'campaignDate' => 'required',
+            'campaign' => 'required',
+            'keyName' => 'required',
+            'campaignFormStatusId' => 'required'
+        ]);
 
-    public function getCampaign(Request $req)
-    {
-        $campaignList = DB::select("SELECT c.campaign_id, c.campaign_name, c.adset_name, 
-                                            c.adname, c.creative, c.leadsource_name,
-                                            i.institution_name, cs.course_name, 
-                                            c.fk_campaign_status_id,
-                                            l.leadsource_name AS `Lead_Source`
-                                    FROM campaigns c 
-                                    LEFT JOIN courses cs ON cs.course_id = c.fk_course_id
-                                    LEFT JOIN institution i ON cs.fk_institution_id = i.institution_id
-                                    LEFT JOIN leadsource l ON c.fk_lead_source_id = l.leadsource_id
-                                    WHERE c.campaign_id = ?", [$req->get('campaignId')]);
-        
-        $campaignStatusList = DB::select("SELECT campaign_status_id, campaign_status_name FROM campaign_status");
-        
-        return response()->json(['campaignList' => $campaignList, 'campaignStatusList' => $campaignStatusList]);
-    }
+        $institutionId = DB::table('institution')->where('institution_code', $reqValidatedData['campaign-institution'])->value('institution_id');
+        $programTypeCode = DB::table('program_type')->where('program_code', $reqValidatedData['programType'])->value('program_type_id');
+        $agencyCode = DB::table('agency')->where('agency_code', $reqValidatedData['marketingAgency'])->value('agency_id');
+        $courseCode = DB::table('courses')->where('course_code', $reqValidatedData['courses'])->value('course_id');
 
-    public function updateCampaign(Request $req)
-    {
-        $campaignStatusId = $req->input('campaignStatusId');
-        $campaignId = $req->input('campId');
-
-        DB::table('campaigns')
-            ->where('campaign_id', $campaignId)
-            ->update([
+        $campaignStatusId = DB::table('campaign_status')->where('campaign_status_id', '=', $req->campaignFormStatusId)->value('campaign_status_id');
+        $keyName = $reqValidatedData['keyName'];
+        $userId = DB::table('users')->where('username', '=', session('username'))->value('user_id');
+        $campaignFormName = $reqValidatedData['campaign-institution'].''. $reqValidatedData['programType'] . '_' . $reqValidatedData['marketingAgency'] . '_' . $reqValidatedData['courses'] . '_' . $keyName;
+        if($req->hdnCampFormId == 0) {
+            DB::table('campaign_form')->insert([
+                'campaign_form_name' => $campaignFormName,
+                'form_key' => $keyName,
+                'fk_course_id' => $courseCode,
+                'fk_institution_id' => $institutionId,
+                'fk_program_type_id' => $programTypeCode,
+                'fk_agency_id' =>$agencyCode,
+                'fk_lead_source_id' => $reqValidatedData['leadSource'],
+                'campaign_form_date' => $reqValidatedData['campaignDate'],
+                'fk_user_id' => $userId,
                 'fk_campaign_status_id' => $campaignStatusId,
+                'fk_campaign_id' => $reqValidatedData['campaign'],
+                'created_by' => session('username'),
+                'created_date' => now(),
+                'updated_by' => session('username'),
                 'updated_date' => now(),
+                'active' => 1
+            ]);
+
+            $campaignFormId = (int)DB::getPdo()->lastInsertId();
+            
+            DB::table('campaign_form_accept')->insert([            
+                'camp_form_request' => 1,
+                'fk_user_id' => $userId,
+                'fk_campaign_form_id' => $campaignFormId,            
+                'created_date' => now(),
+                'updated_date' => now(),
+                'active' => 1,
+                'created_by' => session('username'),
+                'updated_by' => session('username')
+            ]);
+            
+            $msg = "Campaign created successfully.";
+        }
+        else 
+        {
+            DB::table('campaign_form')->where('campaign_form_id', $req->hdnCampFormId)->update([
+                'campaign_form_name' => $campaignFormName,
+                'form_key' => $keyName,
+                'fk_course_id' => $courseCode,
+                'fk_institution_id' => $institutionId,
+                'fk_program_type_id' => $programTypeCode,
+                'fk_agency_id' => $agencyCode,
+                'fk_lead_source_id' => $reqValidatedData['leadSource'],
+                'campaign_form_date' => $reqValidatedData['campaignDate'],
+                'fk_campaign_id' => $reqValidatedData['campaign'],
+                'fk_user_id' => $userId,
+                'fk_campaign_status_id' => $campaignStatusId,                
+                'updated_date' => now(),                
                 'updated_by' => session('username')
             ]);
 
-        DB::table('campaign_edit_request')
-            ->where('fk_campaign_id', $campaignId)
-            ->update([
-                'camp_edit_request' => 0,
-                'camp_edit_accept' => 0,
-                'camp_edit_request_date' => null,
-                'camp_edit_accept_date' => null,
+            DB::table('campaign_form_edit')->where('fk_campaign_form_id', '=', $req->hdnCampFormId)->update([            
+                'camp_form_edit_accept' => 0,
+                'camp_form_edit_request' => 0,
+                'updated_date' => now(),
                 'updated_by' => session('username'),
-                'updated_date' => now()
+                'active' => 1    
             ]);
 
-        return redirect()->back()->with('message', 'Campaign updated successfully.');
+            DB::table('campaign_form_accept')->where('fk_campaign_form_id', $req->hdnCampFormId)->update([         
+                'camp_form_request' => 1,
+                'fk_user_id' => $userId,  
+                'fk_campaign_form_id' => $req->hdnCampFormId,                        
+                'updated_date' => now(),
+                'active' => 1,                
+                'updated_by' => session('username')
+            ]);
+
+            $msg = "Campaign updated successfully.";
+
+            
+        }
+
+        return redirect()->back()->with('message', $msg);
     }
 
-    // public function createCampaignForm()
-    // {        
-    //     $campaignList = DB::select("SELECT c.campaign_id, c.campaign_name FROM campaigns c
-    //                                 LEFT JOIN courses cs ON cs.course_id = c.fk_course_id
-    //                                 LEFT JOIN institution i ON i.institution_id = cs.fk_institution_id                                    
-    //                                 WHERE i.institution_id = 1");
-        
-    //     return response()->json(['campaignList' => $campaignList]);
-    // }
+    public function ParameterCampaignForm(Request $req)
+    {
+        $published = $req->input('published') == "true" ? 1 : 0;
+        $courseInterested = $req->input('course-campaign') == "true" ? 1 : 0;
+        $textParam = $req->input('text-param');
+        $paramComment = $req->input('parameterId');
+        $userId = DB::table('users')->select('user_id')->where('username', '=', session('username'))->first(); 
 
-    public function checkCampaignKey(Request $req)
+        DB::table('campaign_form_parameter_check')->insert([
+            'fk_camp_form_id' => $req->input('campaignId'),
+            'is_course' => $courseInterested,
+            'is_published' => $published,
+            'is_lead_field' => $textParam,
+            'lead_field' => $paramComment,
+            'fk_user_id' => $userId -> user_id,
+            'created_date' => now(),
+            'updated_date' => now(),
+            'active' => 1,
+            'created_by' => session('username'),
+            'updated_by' => session('username')
+        ]);
+
+        return redirect()->back()->with('message', ' Campaign parameter set successfully.');
+    }
+
+    public function ConfirmLeadCampForm(Request $req) {
+        $campaignId = $req->get('campaignFormId');
+        DB::table('campaign_form_lead_request')
+            ->where('fk_campaign_form_id', $campaignId)
+            ->update(['camp_lead_accept' => 1,                       
+                      'updated_by' => session('username'),
+                      'updated_date' => now()]);
+        
+        $campaignStatus = DB::table('campaign_status')->select('campaign_status_id')->where('campaign_status_name', '=', 'Active')->first();
+        $userId = DB::table('users')->select('user_id')->where('username', '=', session('username'))->first();
+
+        DB::table('campaign_form')
+            ->where('campaign_form_id', $campaignId)
+            ->update(['fk_campaign_status_id' => $campaignStatus->campaign_status_id,
+                      'updated_by' => session('username'),
+                      'updated_date' => now()]);
+
+        DB::table('campaign_form_edit')->insert([
+            'fk_campaign_form_id' => $campaignId,
+            'fk_user_id' => $userId->user_id,
+            'created_date' => now(),
+            'updated_date' => now(),
+            'active' => 1,
+            'created_by' => session('username'),
+            'updated_by' => session('username')
+        ]);
+
+        return response()->json(["Test lead generated successfully."]);
+    }
+    
+    public function EditCampaignFormRequest(Request $req)
+    {
+        $campaignId = $req->campaignFormId;
+        $userId = DB::table('users')->select('user_id')->where('username', '=', session('username'))->first();
+
+        DB::table('campaign_form_edit')->where('fk_campaign_form_id', '=', $campaignId)->update([
+            'camp_form_edit_request' => 1,            
+            'fk_user_id' => $userId->user_id,
+            'updated_date' => now(),
+            'updated_by' => session('username'),    
+        ]);
+
+        return response()->json(['Edit request sent successfully.']);
+    }
+
+    public function CheckCampaignFormKeyName(Request $req)
     {
         $campaignKey = $req->get('keyName');
         $campaignFormId = $req->get('campaignFormId');
-        $campaignFormCount = DB::select("SELECT COUNT(*) AS count FROM campaigns_form cf
+        $campaignFormCount = DB::select("SELECT COUNT(*) AS count FROM campaign_form cf
                                         WHERE cf.campaign_form_id <> ? AND cf.form_key = ?", [$campaignFormId, $campaignKey]); 
         
         return response()->json([$campaignFormCount]);
@@ -246,13 +323,16 @@ class ExtHomeController extends BaseController
     public function ExtCampaign()
     {
         $campaignList = $this->CampaignDetails("AAFT Online");
+        $institutionList = DB::select("SELECT institution_id, institution_name, institution_code FROM institution WHERE active = 1");
         $instituteId = DB::table('institution')->select('institution_id')->where('institution_name', '=', "AAFT Online")->pluck('institution_id');
-        return view('ext-marketing.ext-camp', ['campaignList' => $campaignList, 'instituteId' => $instituteId]);
+        return view('ext-marketing.ext-camp', ['campaignList' => $campaignList, 'instituteId' => $instituteId, 'institutionList' => $institutionList]);
     }
 
-    public function CreateCampaign()
+    public function CreateCampaign( Request $req )
     {
+        $campaignId= $req->campaignId;
         $institution = DB::table('institution')->where('active', 1)->get();
+        $institutionCode = DB::table('institution')->where('institution_id', '=', $req->institute)->pluck('institution_code');
         $programType = DB::table('program_type')->where('active', 1)->get();
         $marketingAgency = DB::table('agency')->where('active', 1)->get(); 
         $targetLocation = DB::table('target_location')->where('active', 1)->get();
@@ -264,10 +344,38 @@ class ExtHomeController extends BaseController
         $campaignSize = DB::table('campaign_size')->where('active', 1)->get();
         $leadSource = DB::table('leadsource')->where('active', 1)->get();
         $campaignVersion = DB::table('campaign_version')->where('active', 1)->get();
+        $courseList = ""; 
+        $campaignList = "";
+        $campaignStatusList = "";
+        if($campaignId != 0) 
+        {
+            $courseList = DB::table('courses')->where('active', 1)->get();
+            $campaignList = DB::select("SELECT c.campaign_id, pt.program_code, cs.course_code, c.fk_leadsource_id, a.agency_code, c.campaign_name, tl.target_location_code, p.persona_code, cp.campaign_price_code, h.headline_code, 
+                                                c.campaign_date, ts.target_segment_code, ct.campaign_type_code, cps.campaign_size_code, cpv.campaign_version_code, cpst.campaign_status_id, ce.camp_edit_id                                   
+                                        FROM campaigns c
+                                        LEFT JOIN program_type pt ON c.fk_program_type_id = pt.program_type_id
+                                        LEFT JOIN courses cs ON cs.course_id = c.fk_course_id
+                                        LEFT JOIN institution i ON cs.fk_institution_id = i.institution_id
+                                        LEFT JOIN campaign_accept ca ON ca.fk_campaign_id = c.campaign_id                            
+                                        LEFT JOIN agency a ON a.agency_id = c.fk_agency_id
+                                        LEFT JOIN target_location tl ON c.fk_target_location_id = tl.target_location_id
+                                        LEFT JOIN target_segment ts ON c.fk_target_segment_id = ts.target_segment_id
+                                        LEFT JOIN persona p ON c.fk_persona_id = p.persona_id
+                                        LEFT JOIN campaign_price cp ON cp.campaign_price_id = c.fk_campaign_price_id
+                                        LEFT JOIN headline h ON h.headline_id = c.fk_headline_id
+                                        LEFT JOIN campaign_type ct ON c.fk_campaign_type_id = ct.campaign_type_id
+                                        LEFT JOIN campaign_size cps ON c.fk_campaign_size_id = cps.campaign_size_id
+                                        LEFT JOIN campaign_version cpv ON c.fk_campaign_version_id = cpv.campaign_version_id
+                                        LEFT JOIN campaign_status cpst ON c.fk_campaign_status_id = cpst.campaign_status_id
+                                        LEFT JOIN campaign_edit ce ON c.campaign_id = ce.fk_campaign_id
+                                        WHERE c.campaign_id = ?", [$campaignId]);
+            
+            $campaignStatusList = DB::select("SELECT campaign_status_id, campaign_status_name FROM campaign_status");
+        }
         
         return response()->json(['institution' => $institution, 'programType' => $programType, 'marketingAgency' => $marketingAgency, 'leadSource' => $leadSource,
              'targetLocation' => $targetLocation, 'persona' => $persona, 'price' => $price, 'headline' => $headline, 'targetSegment' => $targetSegment, 'campaignType' => $campaignType,
-             'campaignSize' => $campaignSize, 'campaignVersion' => $campaignVersion]);
+             'campaignSize' => $campaignSize, 'campaignVersion' => $campaignVersion, 'instituteCode' => $institutionCode[0], 'campaignList' => $campaignList, 'courseList' => $courseList, 'campaignStatusList' => $campaignStatusList]);
     }
 
     public function StoreCampaign(Request $req) {
@@ -367,28 +475,122 @@ class ExtHomeController extends BaseController
         $campaignCreative = $campaignName . '_' . $priceCode . '_' . $personaCode . '_' . $headlineCode . '_' . $campaignSizeCode . '_' . $campaignVersionCode;
         $leadSourceName = $institutionCode .''. $programTypeCode . '_' . $agencyCode . '_' . $courseCode . '_' . $leadName;
         $userId = DB::table('users')->select('user_id')->where('username', '=', session('username'))->first(); 
-        DB::table('campaigns')->insert([
-            'campaign_name' => $campaignName,
-            'fk_institution_id' => $institutionId,
-            'fk_course_id' => $courseId,
-            'fk_program_type_id' => $programTypeId,
-            'fk_agency_id' => $agencyId,
-            'fk_leadsource_id' => $leadSourceId,
-            'fk_persona_id' => $personaId,
-            'fk_campaign_price_id' => $priceId,
-            'campaign_date' => $campDate,
-            'fk_headline_id' => $headlineId,
-            'fk_target_location_id' => $targetLocationId,
-            'fk_target_segment_id' => $targetSegmentId,
-            'fk_campaign_size_id' => $campaignSizeId,
-            'fk_campaign_version_id' => $campaignVersionId,
-            'fk_campaign_type_id' => $campaignTypeId,
-            'fk_user_id' => $userId->user_id,
-            'fk_campaign_status_id' => $campStatusId[0],
-            'adset' => $campaignAdsetName,
-            'adname' => $campaignAdName,
-            'creative' => $campaignCreative,
-            'leadsource_name' => $leadSourceName,
+
+        if($req->hdncampaignId == 0){
+            DB::table('campaigns')->insert([
+                'campaign_name' => $campaignName,
+                'fk_institution_id' => $institutionId,
+                'fk_course_id' => $courseId,
+                'fk_program_type_id' => $programTypeId,
+                'fk_agency_id' => $agencyId,
+                'fk_leadsource_id' => $leadSourceId,
+                'fk_persona_id' => $personaId,
+                'fk_campaign_price_id' => $priceId,
+                'campaign_date' => $campDate,
+                'fk_headline_id' => $headlineId,
+                'fk_target_location_id' => $targetLocationId,
+                'fk_target_segment_id' => $targetSegmentId,
+                'fk_campaign_size_id' => $campaignSizeId,
+                'fk_campaign_version_id' => $campaignVersionId,
+                'fk_campaign_type_id' => $campaignTypeId,
+                'fk_user_id' => $userId->user_id,
+                'fk_campaign_status_id' => $campStatusId[0],
+                'adset' => $campaignAdsetName,
+                'adname' => $campaignAdName,
+                'creative' => $campaignCreative,
+                'leadsource_name' => $leadSourceName,
+                'created_date' => now(),
+                'updated_date' => now(),
+                'active' => 1,
+                'created_by' => session('username'),
+                'updated_by' => session('username')
+            ]);
+
+            $campaign_Id = (int)DB::getPdo()->lastInsertId();
+            
+            DB::table('campaign_accept')->insert([            
+                'camp_request' => 1,
+                'fk_user_id' => $userId->user_id,
+                'fk_campaign_id' => $campaign_Id,            
+                'created_date' => now(),
+                'updated_date' => now(),
+                'active' => 1,
+                'created_by' => session('username'),
+                'updated_by' => session('username')
+            ]);
+            
+            $msg = "Campaign created successfully.";
+        }
+        else 
+        {
+            DB::table('campaigns')->where('campaign_id', $req->hdncampaignId)->update([
+                'campaign_name' => $campaignName,
+                'fk_institution_id' => $institutionId,
+                'fk_course_id' => $courseId,
+                'fk_program_type_id' => $programTypeId,
+                'fk_agency_id' => $agencyId,
+                'fk_leadsource_id' => $leadSourceId,
+                'fk_persona_id' => $personaId,
+                'fk_campaign_price_id' => $priceId,
+                'campaign_date' => $campDate,
+                'fk_headline_id' => $headlineId,
+                'fk_target_location_id' => $targetLocationId,
+                'fk_target_segment_id' => $targetSegmentId,
+                'fk_campaign_size_id' => $campaignSizeId,
+                'fk_campaign_version_id' => $campaignVersionId,
+                'fk_campaign_type_id' => $campaignTypeId,
+                'fk_user_id' => $userId->user_id,
+                'fk_campaign_status_id' => $campStatusId[0],
+                'adset' => $campaignAdsetName,
+                'adname' => $campaignAdName,
+                'creative' => $campaignCreative,
+                'leadsource_name' => $leadSourceName,                
+                'updated_date' => now(),                
+                'updated_by' => session('username')
+            ]);
+
+            DB::table('campaign_accept')->where('fk_campaign_id', $req->hdncampaignId)->update([         
+                'camp_request' => 1,
+                'fk_user_id' => $userId->user_id,                          
+                'updated_date' => now(),
+                'active' => 1,                
+                'updated_by' => session('username')
+            ]);
+
+            $msg = "Campaign updated successfully.";
+
+            DB::table('campaign_edit')->where('fk_campaign_id', '=', $req->hdncampaignId)->update([
+                'updated_date' => now(),
+                'updated_by' => session('username'),
+                'active' => 0,
+            ]);
+        }
+                                            
+        return redirect()->back()->with('message', $msg);
+    }
+
+    public function ExtViewCampaign(Request $req)
+    {
+        $campaignId = $req->input('campaignId');
+        $campaignDetails = $this->ViewCampaignDetails($campaignId);
+        return response()->json(['campaignDetails' => $campaignDetails]);
+    }
+
+    public function ParameterCampaign(Request $req) 
+    {
+        $published = $req->input('published') == "true" ? 1 : 0;
+        $courseInterested = $req->input('course-campaign') == "true" ? 1 : 0;
+        $textParam = $req->input('text-param');
+        $paramComment = $req->input('parameterId');
+        $userId = DB::table('users')->select('user_id')->where('username', '=', session('username'))->first(); 
+
+        DB::table('campaign_parameter_check')->insert([
+            'fk_campaign_id' => $req->input('campaignId'),
+            'course_parameter' => $courseInterested,
+            'is_published' => $published,
+            'is_lead_field_added' => $textParam,
+            'lead_field' => $paramComment,
+            'fk_user_id' => $userId -> user_id,
             'created_date' => now(),
             'updated_date' => now(),
             'active' => 1,
@@ -396,6 +598,78 @@ class ExtHomeController extends BaseController
             'updated_by' => session('username')
         ]);
 
-        return redirect()->back()->with('message', 'Campaign created successfully.');
+        return redirect()->back()->with('message', ' Campaign parameter set successfully.');
+    }
+
+    public function ConfirmLeadCampaign(Request $req)
+    {
+        $campaignId = $req->campaignId;
+        $userId = DB::table('users')->select('user_id')->where('username', '=', session('username'))->first();
+        $status= DB::table('campaign_status')->select('campaign_status_id')->where('campaign_status_name', '=', 'Active')->first();
+
+        DB::table('campaign_lead_request')->where('fk_campaign_id', '=', $campaignId)->update([
+            'camp_lead_accept' => 1,
+            'updated_date' => now(),
+            'updated_by' => session('username')
+        ]);
+
+        DB::table('campaigns')->where('campaign_id', '=', $campaignId)->update([
+            'fk_campaign_status_id' => $status->campaign_status_id,
+            'updated_date' => now(),
+            'updated_by' => session('username')
+        ]);
+
+        DB::table('campaign_edit')->insert([
+            'fk_campaign_id' => $campaignId,
+            'fk_user_id' => $userId->user_id,
+            'created_date' => now(),
+            'updated_date' => now(),
+            'active' => 1,
+            'created_by' => session('username'),
+            'updated_by' => session('username')
+        ]);
+
+        return response()->json(['Test lead generated successfully.']);
+    }
+
+    public function ConfirmEditCampaign(Request $req)
+    {
+        $campaignId = $req->campaignId;
+        $userId = DB::table('users')->select('user_id')->where('username', '=', session('username'))->first();
+
+        DB::table('campaign_edit')->where('fk_campaign_id', '=', $campaignId)->update([
+            'camp_edit_request' => 1,            
+            'fk_user_id' => $userId->user_id,
+            'updated_date' => now(),
+            'updated_by' => session('username'),    
+        ]);
+
+        return response()->json(['Edit request sent successfully.']);
+    }
+
+    public function ChangeExtCampInstitution(Request $req)
+    {
+        $institutionName = $req->institution;
+        $institutionId = DB::table('institution')->where('institution_name', $institutionName)->value('institution_id');
+        $campaignList = $this->CampaignDetails($institutionName);
+        return response()->json(['campaignList' => $campaignList, 'institutionId' => $institutionId]);
+    }
+
+    //Landing Page
+
+    public function LandingPage()
+    {
+        $institutionList = DB::select("SELECT institution_id, institution_name, institution_code FROM institution WHERE active = 1");
+        $landingPageList = $this->ViewLandingPageList('AAFT Online'); 
+        $institutionId = DB::table('institution')->where('institution_name', 'AAFT Online')->value('institution_id');
+        return view('ext-marketing.ext-landing-page', ['landingPageList' => $landingPageList, 'institutionId' => $institutionId, 'institutionList' => $institutionList]);
+    }
+
+    public function ChangeExtLpInstitution(Request $req)
+    {
+        $institutionName = $req->institution;
+        $institutionId = DB::table('institution')->where('institution_name', $institutionName)->value('institution_id');
+        $lpList = $this->ViewLandingPageList($institutionName);
+        return response()->json(['landingPageList' => $lpList, 'institutionId' => $institutionId]);
     }
 }
