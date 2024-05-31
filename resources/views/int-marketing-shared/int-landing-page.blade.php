@@ -7,6 +7,26 @@
     <button type="button" onclick="campNotify();" class="btn-close" style="float: right;" aria-label="Close"></button>
   </div>
 @endif
+<div class="col-lg-12 mb-4">
+      <div class="nav-wrapper position-relative">
+        <ul class="nav nav-pills nav-tabs p-1" role="tablist">
+          @foreach($institutionList as $institute)
+            <li class="nav-item">
+              @if($institute->institution_name == "AAFT Online")
+                  <a class="nav-link mb-0 px-0 py-2 mx-1 active" data-bs-toggle="tab" onclick="changeInstitution('{{ $institute->institution_name }}')" role="tab">              
+                  <span class="ms-1 text-uppercase" style="padding: 5px;"> {{ $institute->institution_name }}</span>
+                  </a>
+              @else
+                  <a class="nav-link mb-0 px-0 py-2 mx-1" data-bs-toggle="tab" onclick="changeInstitution('{{ $institute->institution_name }}')" role="tab" >              
+                  <span class="ms-1 text-uppercase" style="padding: 5px;"> {{ $institute->institution_name }}</span>
+                  </a>
+              @endif
+            </li>
+          @endforeach          
+        </ul>
+      </div>
+    </div>
+
 <div class="row mt-4">
     <div class="col-lg-12 col-md-6 mb-md-0 mb-4">
         <div class="card">
@@ -17,45 +37,35 @@
                     </div>
                     <div class="col-lg-6 col-6 my-auto text-end">
                       <div class="dropdown float-lg-end pe-4">
-                          <a class="btn btn-primary" id="createCampaignID" onclick="editLandingPage(0);" href="{{ url('int-create-landing-page/0') }}">
-                              <i class="fa fa-plus" style="font-size: small;">&nbsp; Create</i>                            
-                          </a>                
+                                        
                       </div>
                     </div>                  
             </div>            
         </div>
         <div class="card-body px-1 pb-2">
             <div class="table-responsive">
-            <table class="table align-items-center mb-1" id="campaignTable">
-                <thead>
-                <tr>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">Institution</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">Course</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">Title</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">Description</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">Assigne</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">Assigner</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">Development Type</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">Issue</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">Priority</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">Status</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">Action</th> 
+            <table class="table table-striped mb-1" id="campaignTable">
+            <thead>
+                <tr>            
+                    <th class="opacity-10">PROGRAM TYPE</th>
+                    <th class="opacity-10">COURSE</th>                            
+                    <th class="opacity-10">URL</th>                            
+                    <th class="opacity-10">STATUS</th>                    
                 </tr>
                 </thead>
                 <tbody>
-                  @foreach($landingPageList as $landingPage)
-                    <tr>
-                        <td>{{ $landingPage->institution_name }}</td>
-                        <td>{{ $landingPage->course_name }}</td>
-                        <td>{{ $landingPage->title }}</td>
-                        <td>{{ $landingPage->description }}</td>
-                        <td>{{ $landingPage->assignee }}</td>
-                        <td>{{ $landingPage->assigner }}</td>
-                        <td>{{ $landingPage->development_type_name }}</td>
-                        <td>{{ $landingPage->issue_name }}</td>
-                        <td>{{ $landingPage->priority_name }}</td>
-                        <td>{{ $landingPage->lp_status }}</td>
-                        <td><a class="btn btn-primary" id="btnEditId" href="{{ url('int-create-landing-page/'. $landingPage->landing_page_id) }}"><i class="fa fa-pencil" style="font-size: small;">&nbsp;Edit</i></a></td>
+                  @foreach($landingPageList as $lp)
+                    <tr>                      
+                        <td style="padding-left: 15px;"><span class="text-primary">{{ $lp->program_type_name }}</span></td>
+                        <td style="padding-left: 15px;">{{ $lp->course_name }}</td>                                    
+                        <td class="text-wrap" style="padding-left: 15px;">{{ $lp->camp_url }}</td>                                                 
+                        <td style="padding-left: 15px;">
+                            @if($lp->active == 1)
+                                <button type="button" style="background-color: #1AD5984D; color: #1AD598; border:0px #1AD5984D;">Active</button>
+                            @elseif($lp->active == 0)
+                                <button type="button" style="background-color: #FFC1074D; color: #FFC107; border:0px #FFC1074D;">Inactive</button>  
+                            @endif
+                        </td>                                         
                     </tr>
                   @endforeach
                 </tbody>
@@ -65,6 +75,73 @@
         </div>
     </div>        
 </div>
+
+<!-- View Campaign Modal -->
+<div class="modal fade" id="viewCampaignModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalTitleId">Campaign</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">        
+        <table class="table table-bordered" id="viewTableId">
+            
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Approval Campaign Modal -->
+<div class="modal fade" id="approvalCampaignModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalTitleId">Campaign Approval</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">        
+        <input type="hidden" id="hdnCampId" name="hdnCampId" />
+        <p id="descriptionId">Do you wish to approve the campaign?</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="buttonId" title="Accept" onclick="acceptLpCampaign();">Accept</button>
+        <button type="button" class="btn btn-danger" title="Reject" onclick="rejectLpCampaign();">Reject</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Reject Comment Campaign Modal -->
+<div class="modal fade" id="rejectCampaignModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalTitleId">Campaign Rejection</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">        
+        <input type="hidden" id="hidnCampId" name="hidnCampId" />
+        <div class="row">
+            <div class="col-md-3">
+                <label for="rejectCampComment">Reason</label>
+                <span class="text-danger">*</span>
+            </div>
+            <div class="col-md-9">
+                <textarea class="form-control" name="rejectCampComment" id="rejectCampComment" cols="30" rows="5"></textarea>
+                <span class="text-danger" id="rejectReasonValId"></span>
+            </div>
+        </div>
+        <div class="row form-group mt-3">
+            <div class="col-md-5">
+              <button class="btn btn-primary" id="submit" title="submit" onclick="rejectCampaignComment();">Submit</button>
+              <button data-bs-dismiss="modal" class="btn btn-danger" title="Cancel">Cancel</button>
+            </div>                
+        </div>
+      </div>      
+    </div>
+  </div>
+</div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>  
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.js"></script>
 <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
@@ -73,175 +150,143 @@
 <script src="https://cdn.tutorialjinni.com/notify/0.4.2/notify.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function() {        
-        $("#intCampaignHomeID").removeClass( "active bg-gradient-primary" );
-        $("#intLandingPageID").addClass( "active bg-gradient-primary" );
-        $("#intCampaignID").removeClass( "active bg-gradient-primary" );   
+        $("#intCampaignHomeID").removeClass( "active bg-primary" );
+        $("#intLandingPageID").addClass( "active bg-primary" );
+        $("#intCampaignID").removeClass( "active bg-primary" ); 
+        $("#intCampaignFormID").removeClass("active bg-primary");
+        $("#campaignTable").dataTable();  
         if($("#successMesgID").text() !="") {
           $.notify($("#successMesgID").text(), "success");           
         }       
     });
 
-    function getLandingPageCourses(){
-      
-        var institutionId = $("#landing-page-institution").val();
+    function viewLpCampaign(id) {
+        $.ajax({
+          type:'get',
+          url: "/int-view-lp-campaign-form",
+          data: {'campaignId' : id},
+          success:function(data){
+            if(data){                
+               $("#viewCampaignModal").modal('show');
+               var campaignTable = $("#viewTableId").empty();
+               for(var i=0; i<data.campaignList.length; i++){
+                   var items  = "<tr><td>Insititution</td><td>" + data.campaignList[i]['institution_name'] + "</td></tr>"+
+                                "<tr><td>Program Type</td><td>" + data.campaignList[i]['program_type_name'] + "</td></tr>"+
+                                "<tr><td>Course</td><td>" + data.campaignList[i]['course_name'] + "</td></tr>"+
+                                "<tr><td>Campaign Name</td><td>" + data.campaignList[i]['campaign_name'] + "</td></tr>"+
+                                "<tr><td>Adset Name</td><td>" + data.campaignList[i]['adset_name'] +"</td></tr>" + 
+                                "<tr><td>Ad Name</td><td>" + data.campaignList[i]['adname'] + "</td></tr>" + 
+                                "<tr><td>Creative</td><td>" + data.campaignList[i]['creative'] + "</td></tr>" + 
+                                "<tr><td>Leadsource</td><td>"+ data.campaignList[i]['leadsource_name'] +"</td></tr>" +
+                                "<tr><td>Campaign Date</td><td>" + data.campaignList[i]["campaign_date"] + "</td></tr>" +
+                                "<tr><td>Campaign Status</td><td>" + data.campaignList[i]["campaign_status_name"] + "</td></tr>" +
+                                "<tr><td>Campaign Approval Status</td><td>" + data.campaignList[i]["campaign_size"] + "</td></tr>" +
+                                "<tr><td>Campaign Approval Comment</td><td>" + data.campaignList[i]["approval_date"] + "</td></tr>";
+                   campaignTable.append(items);
+               }
+            }
+          }
+      });
+    }
+
+    function approveLpCampaignForm(id) {
+      $("#approvalCampaignModal").modal('show');
+      $("#hdnCampId").val(id);
+    }
+
+    function rejectLpCampaign() {
+      $("#approvalCampaignModal").modal('hide');
+      $("#rejectCampaignModal").modal('show');
+      $("#hidnCampId").val($("#hdnCampId").val());
+      $("#rejectReasonValId").text('');
+      $("#rejectCampComment").val('');
+    }
+
+    function acceptLpCampaign() {
+      var campaignId = $("#hdnCampId").val();
+      $.ajax({
+          type:'get',
+          url: "/accept-lp-campaign-form",
+          data: {'campaignId' : campaignId, 'approval': 1, 'comment': ''},
+          success:function(data){           
+            if(data != ""){              
+              $.notify(data, "success");              
+              setTimeout(() => { window.location.href="{{'int-landing-page'}}"}, 2000);
+            }
+          }          
+      });
+    }
+
+    function rejectCampaignComment() {      
+      var campaignId = $("#hidnCampId").val();
+      var comment = $("#rejectCampComment").val();
+      $("#rejectReasonValId").text('');
+      if(comment == "") {
+        $("#rejectReasonValId").empty().text("Please enter the reason");
+        $("#submit").submit(function (e) {        
+          if($("#rejectReasonValId").text() != ""){
+            e.preventDefault();
+            return false;
+          }
+        });   
+      }
+      else {
         $.ajax({
             type:'get',
-            url: "/get-courses",
-            data: {'institutionId' : institutionId},
-            success:function(data) {
-              if(data) {
-                var courses = $("#landing-page-course").empty();
-                courses.append("<option value=''>--Select--</option>");
-                for(var i=0; i<data.courseList.length; i++){
-                  var course_item_el = '<option value="'+ data.courseList[i]['course_id']+'">'+ data.courseList[i]['course_name'] +'</option>';
-                  courses.append(course_item_el);
-                }
-              }    
-            }
+            url: "/accept-lp-campaign-form",
+            data: {'campaignId' : campaignId, 'comment' : comment, 'approval': 0},
+            success:function(data){            
+              if(data != ""){              
+                $("#rejectCampaignModal").modal('hide');
+                $.notify(data, "success");
+                setTimeout(() => { window.location.href="{{'int-landing-page'}}"}, 2000);
+              }
+            }          
         });
+      }
     }
 
-    function editLandingPage(lpId) {
-      
-      $.ajax({
-        type:'get',
-        url:"/int-create-landing-page",
-        data: {'lpId' : lpId}
-      });
-    }
-
-    function CreateLandingPage(lpId) {
-      $("#createLandingPageModal").modal('show');
+    function changeInstitution(institution) {
       $.ajax({
             type:'get',
-            url: "/create-landing-page",
-            data: {'lpId' : lpId},
-            success:function(data)
-            {                                                
-                if(lpId == 0)
-                {
-                  $("#landing-page-id").val(lpId);
-                  $("#institution-error").html(''); 
-                  $("#course-error").html(''); 
-                  $("#title-error").html('');
-                  $("#description-error").html('');
-                  $("#assignee-error").html('');
-                  $("#assigner-error").html('');
-                  $("#developmentType-error").html('');
-                  $("#issue-error").html('');
-                  $("#priority-error").html(''); 
-                  $("#status-error").html('');
-                  $("#landing-page-title").val('');
-                  $("#description").val('');
-                  $("#attach").val('');
-                  if(lpId == 0){
-                    $("#exampleModalLabel").html("Create New Landing Page");                                       
+            url: "/int-lp-change-institution",
+            data: {'institution' : institution},          
+            success:function(data){              
+              var campBody = $("#campaignTable").empty();
+              $("#hdnInstituteId").val(data.institutionId[0]);                
+              if(data.landingPageList != "" && data.landingPageList != undefined){
+                
+                var campTheadItem = "<thead>" +
+                "<tr>" +                    
+                    "<th class='opacity-10'>PROGRAM TYPE</th>" +
+                    "<th class='opacity-10'>COURSE</th>" +                    
+                    "<th class='opacity-10'>URL</th>" +                    
+                    "<th class='opacity-10'>STATUS</th>" +                    
+                "</tr>" +
+                "</thead><tbody>";
+                campBody.append(campTheadItem);
+                for(var i = 0; i < data.landingPageList.length;i++){
+                  var campStatusItem = "";
+                  if(data.landingPageList[i]['active'] == 1) {
+                    campStatusItem =  "<button type='button' style='background-color: #1AD5984D; color: #1AD598; border:0px #1AD5984D;'> " + "Active" + "</button>";
                   }
-                  else {
-                    $("#exampleModalLabel").html("Edit Landing Page");
-                    $("#landing-page-title").val(data.landingPageList[0]['title']);
-                    $("#description").val(data.landingPageList[0]['description']);
-                    //$("#attach").val(data.landingPageList[0]['file_name']);
-                  }
-                  var landingPageInstitution = $("#landing-page-institution").empty();
-                  landingPageInstitution.append("<option value=''>--Select--</option>");
-                  for(var i=0; i<data.institutionList.length; i++){
-                    
-                    if(lpId == 0) {
-                      var institution_item_el = '<option value="'+data.institutionList[i]['institution_id']+'">'+data.institutionList[i]['institution_name']+'</option>';
-                    }
-                    else if(data.landingPageList[0]['institution_id'] == data.institutionList[i]['institution_id'] ){
-                      var institution_item_el = '<option selected value="'+data.institutionList[i]['institution_id']+'">'+data.institutionList[i]['institution_name']+'</option>';
-                    }
-                    
-                    landingPageInstitution.append(institution_item_el);
-                  }
+                  else if (data.landingPageList[i]['active'] == 0) {
+                    campStatusItem = "<button type='button' style='background-color: #FFC1074D; color: #FFC107; border:0px #FFC1074D;'>" + "Inactive" + "</button>";
+                  }                                
 
-                  var assignee = $("#assignee").empty();
-                  assignee.append("<option value=''>--Select--</option>");
-                  for(var i=0; i<data.assigneeList.length; i++){
-                    
-                    if(lpId == 0) {
-                      var assignee_item_el = '<option value="'+ data.assigneeList[i]['user_id']+'">'+ data.assigneeList[i]['assignee'] +'</option>';
-                    }
-                    else if(data.landingPageList[i]['assignee'] == data.assigneeList[0]['user_id']){
-                      var assignee_item_el = '<option selected value="'+ data.assigneeList[i]['user_id']+'">'+ data.assigneeList[i]['assignee'] +'</option>';  
-                    }
-                    
-                    assignee.append(assignee_item_el);
-                  }
-
-                  var assigner = $("#assigner").empty();
-                  assigner.append("<option value=''>--Select--</option>");
-                  for(var i=0; i<data.assigneeList.length; i++){
-                    
-                    if(lpId == 0){
-                      var assigner_item_el = '<option value="'+ data.assigneeList[i]['user_id']+'">'+ data.assigneeList[i]['assignee'] +'</option>';
-                    }
-                    else if(data.landingPageList[i]['assigner'] == data.assingerList[0]['user_id']) {
-                      var assigner_item_el = '<option selected value="'+ data.assigneeList[i]['user_id']+'">'+ data.assigneeList[i]['assignee'] +'</option>';
-                    }
-                    
-                    assigner.append(assigner_item_el);
-                  }
-                  
-                  var developmentType = $("#developmentType").empty();
-                  developmentType.append("<option value=''>--Select--</option>");
-                  for(var i=0; i<data.developmentTypeList.length; i++){
-                    
-                    if(lpId == 0){
-                      var developmentType_item_el = '<option value="'+ data.developmentTypeList[i]['development_type_id']+'">'+ data.developmentTypeList[i]['development_type_name'] +'</option>';
-                    }
-                    else if(data.landingPageList[i]['fk_development_id'] == data.developmentTypeList[0]['development_type_id'] ){
-                      var developmentType_item_el = '<option selected value="'+ data.developmentTypeList[i]['development_type_id']+'">'+ data.developmentTypeList[i]['development_type_name'] +'</option>';
-                    }
-                    
-                    developmentType.append(developmentType_item_el);
-                  }
-
-                  var lpissue = $("#issue").empty();
-                  lpissue.append("<option value=''>--Select--</option>");
-                  for(var i=0; i<data.issueList.length; i++){                    
-                    if(lpId == 0){
-                      var issue_item_el = '<option value="'+ data.issueList[i]['issue_id']+'">'+ data.issueList[i]['issue_name'] +'</option>';
-                    }
-                    else if(data.landingPageList[i]['fk_issue_id'] == data.issueList[0]['issue_id'] ){
-                      var issue_item_el = '<option selected value="'+ data.issueList[i]['issue_id']+'">'+ data.issueList[i]['issue_name'] +'</option>';
-                    }
-                    
-                    lpissue.append(issue_item_el);
-                  }
-
-                  var lppriority = $("#priority").empty();
-                  lppriority.append("<option value=''>--Select--</option>");
-                  for(var i=0; i<data.priorityList.length; i++){                    
-                    if(lpId == 0){
-                      var priority_item_el = '<option value="'+ data.priorityList[i]['priority_id']+'">'+ data.priorityList[i]['priority_name'] +'</option>';
-                    }
-                    else if(data.landingPageList[i]['fk_priority_id'] == data.priorityList[0]['priority_id'] ){
-                      var priority_item_el = '<option selected value="'+ data.priorityList[i]['priority_id']+'">'+ data.priorityList[i]['priority_name'] +'</option>';
-                    }
-                    
-                    lppriority.append(priority_item_el);
-                  }
-                  
-                  var lpstatus = $("#status").empty();
-                  lpstatus.append("<option value=''>--Select--</option>");
-                  for(var i=0; i<data.statusList.length; i++){
-                    
-                    if(lpId == 0){
-                      var status_item_el = '<option value="'+ data.statusList[i]['lp_status_id']+'">'+ data.statusList[i]['lp_status'] +'</option>';
-                    }
-                    else if(data.landingPageList[i]['fk_lp_status_id'] == data.statusList[0]['lp_status_id'] ){
-                      var status_item_el = '<option selected value="'+ data.statusList[i]['lp_status_id']+'">'+ data.statusList[i]['lp_status'] +'</option>';
-                    } 
-                    lpstatus.append(status_item_el);
-                  }
-
+                  var campBodyItem = "<tr><td style='padding-left: 20px;'><span class='text-primary'>"+ data.landingPageList[i]['program_type_name'] +"</span></td>" +
+                                     "<td style='padding-left: 20px;'>"+ data.landingPageList[i]['course_name'] +"</td>" +                                     
+                                     "<td class='text-wrap' style='padding-left: 20px;'>"+ data.landingPageList[i]['camp_url'] +"</td>" +
+                                     "<td style='padding-left: 20px;'>"+ campStatusItem +"</td>" +
+                                     "</tr>";
+                  campBody.append(campBodyItem);
                 }
-            }      
-      });
-      
+                campBody.append("</tbody>")
+              }
+              $('#campaignTable').DataTable().destroy();
+              $("#campaignTable").dataTable();
+            }
+        });
     }
 </script>
 @endsection

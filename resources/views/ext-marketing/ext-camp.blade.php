@@ -99,16 +99,14 @@
                           <button type="button" class="btn btn-sm btn-primary" onclick="createCampaign({{ $campaign->campaign_id }})"><i class="fa fa-pencil" style="font-size: small;">&nbsp;Edit</i></button>
                         @elseif($campaign->camp_accept_id && $campaign->camp_accept == 1 && $campaign->camp_accept_active == 1 && !$campaign->camp_param_check_id)
                           <button type="button" class="btn btn-sm btn-info" onclick="parameterCampaign({{ $campaign->campaign_id }})"><i class="fa fa-sliders" style="font-size: small; color:white;">&nbsp;Parameter</i></button>
-                        @elseif($campaign->camp_param_check_id && !$campaign->camp_lead_request_id)
-                          <span>Campaign integration pending</span>
-                        @elseif($campaign->camp_lead_request_id && $campaign->camp_lead_request == 1 && $campaign->camp_lead_accept == 0 && $campaign->camp_lead_accept_active == 1)
-                          <button type="button" class="btn btn-sm btn-warning" onclick="leadRequestCampaign({{ $campaign->campaign_id }})"><i class="fa fa-users" style="font-size: small; color:white;">&nbsp;Lead Accept</i></button>
+                        @elseif($campaign->camp_param_check_id && !$campaign->camp_lead_request_id && ($campaign->camp_integrated == 0 || $campaign->lead_field ))
+                          <span>Integration pending</span>                        
                         @elseif($campaign->camp_edit_id && $campaign->camp_edit_active == 1 && $campaign->camp_edit_request == 0)
                           <button type="button" class="btn btn-sm btn-success" onclick="editRequestCampaign({{ $campaign->campaign_id }})"><i class="fa fa-pencil-square-o" style="font-size: small; color:white;">&nbsp;Edit Request</i></button>
                         @elseif($campaign->camp_edit_active == 1 && $campaign->camp_edit_request == 1 && $campaign->camp_edit_accept == 0) 
                           <span>Edit approval pending</span>
                         @endif
-                        <!-- <button type="button" class="btn btn-sm btn-primary" onclick="createCampaign({{ $campaign->campaign_id }})"><i class="fa fa-pencil" style="font-size: small;">&nbsp;Edit</i></button> -->
+                        
                       </td>
                     </tr>
                   @endforeach
@@ -745,7 +743,7 @@
                         }
                         courseId.append(course_item_el);
                       }
-                      debugger;
+                      
                       if(data.campaignList[0]['camp_edit_id'] != 0){
                         $("#campaignStatusDiv").show();
                         var campaignStatusId = $("#campaignStausId").empty();
@@ -772,81 +770,6 @@
             }
         });
     }
-
-    
-
-    // function VerifyCamp() {      
-      
-    //   var institution = $("#campaign-institution").val();
-    //   var programType = $("#programType").val();
-    //   var marketingAgency = $("#marketingAgency").val();
-    //   var leadSource = $("#leadSource").val();
-    //   var keyName = $("#keyName").val();
-    //   var courses = $("#courses").val();
-    //   var campDate = $("#campaignDate").val();
-      
-    //   if(institution == "" || institution == "undefined"){
-    //     $("#institution-error").html("Please select an Institution");         
-    //   }
-    //   else {
-    //     $("#institution-error").html(""); 
-    //   }
-    //   if(programType == "" || programType == "undefined"){
-    //     $("#programType-error").html("Please select a Program Type");        
-    //   }
-    //   else {
-    //     $("#programType-error").html("");
-    //   }
-    //   if(marketingAgency == "" || marketingAgency == "undefined"){
-    //     $("#marketingAgency-error").html("Please select a Marketing Agency");        
-    //   }
-    //   else {
-    //     $("#marketingAgency-error").html("");
-    //   }
-    //   if(leadSource == "" || leadSource == "undefined"){
-    //     $("#leadSource-error").html("Please select a Lead Source");        
-    //   }
-    //   else {
-    //     $("#leadSource-error").html("");
-    //   }
-      
-    //   if(courses == "" && institution == ""){
-    //     $("#courses-error").html("Please select an institution first");        
-    //   }
-    //   else {
-    //     $("#courses-error").html("");
-    //   }
-      
-    //   if(courses == "" || courses == "undefined"){
-    //     $("#courses-error").html("Please select a Course");        
-    //   }
-    //   else {
-    //     $("#courses-error").html("");
-    //   }
-      
-    //   if(campDate == "" || campDate == "undefined"){
-    //     $("#campaignDate-error").html("Please select a Date");        
-    //   }
-    //   else {
-    //     $("#campaignDate-error").html("");
-    //   }      
-      
-    //   if(keyName == "" || keyName == "undefined"){
-    //     $("#keyName-error").html("Please enter a Key");
-    //   }
-    //   else {
-    //     $("#keyName-error").html("");
-    //   }
-      
-    //   $("#add-camp").submit(function (e) {
-    //     if($("#institution-error").text() != "" || $("#programType-error").text() != "" || $("#campaignDate-error").text() != ""
-    //     || $("#courses-error").text() != "" || $("#marketingAgency-error").text() != "" || $("#leadSource-error").text() != ""){
-    //       e.preventDefault();
-    //       return false;
-    //     }
-    //   }); 
-          
-    // }
 
     function VerifyCamp() {      
       
@@ -984,8 +907,7 @@
           url: "/ext-view-campaign",
           data: {'campaignId' : campaignId},
           success:function(data){
-            if(data){
-              
+            if(data){              
               var camp_Table_View = $("#campaignTableDetails").empty();
               for(var i = 0; i < data.campaignDetails.length;i++){
                 var camp_Append = "<tr>" +
@@ -1101,8 +1023,7 @@
       }
     }
 
-    function VerifyParameter() {
-      
+    function VerifyParameter() {      
       if($("#published").prop('checked') == false ){
         $("#published-error").text('Please select form is published');
       }
@@ -1156,8 +1077,7 @@
         $("#hdnLeadCampaignId").val(campId);
     }
 
-    function confirmLeadGeneration() {
-     
+    function confirmLeadGeneration() {     
       var campaignId = $("#hdnLeadCampaignId").val();
       $.ajax({
           type:'get',
@@ -1183,7 +1103,6 @@
 
     function confirmEditRequest() {
       var campaignId = $("#editCampaignId").val();
-      debugger;
       $.ajax({
           type:'get',
           url: "/confirm-edit-campaign",
@@ -1201,14 +1120,12 @@
       });
     }
 
-    function changeCampInstitution(institution) {
-      
+    function changeCampInstitution(institution) {      
       $.ajax({
         type:'get',
         url: "/ext-camp-change-institution",
         data: {'institution' : institution},          
         success:function(data){
-          debugger;
           var campBody = $("#campaignTable").empty();         
           
           if(data.campaignList != "" && data.campaignList != undefined){
@@ -1253,18 +1170,15 @@
 
               var campFormButtonItem = "";
               var campAcceptComment = data.campaignList[i]['comments'] == null ? "" : data.campaignList[i]['comments'];
-              //if((data.campaignList[i]['camp_accept_id'] && data.campaignList[i]['camp_accept'] == 0 && data.campaignList[i]['camp_accept_active'] == 1 && !is_null(data.campaignList[i]['comments'])) || (data.campaignList[i]['camp_edit_request'] == 1 && data.campaignList[i]['camp_edit_accept'] == 1))
+              
               if((data.campaignList[i]['camp_accept_id'] && data.campaignList[i]['camp_accept'] == 0 && data.campaignList[i]['camp_accept_active'] == 1 && data.campaignList[i]['comments'] ) || (data.campaignList[i]['camp_edit_request'] == 1 && data.campaignList[i]['camp_edit_accept'] == 1 && data.campaignList[i]['camp_edit_active'] == 1)){                    
                 campFormButtonItem = "<button type='button' class='btn btn-sm btn-primary' onclick='createCampaign(" + data.campaignList[i]['campaign_id'] + ")'><span class='fa fa-pencil' style='font-size: small;'>&nbsp;Edit</span></button>";
               }
               else if(data.campaignList[i]['camp_accept_id'] && data.campaignList[i]['camp_accept'] == 1 && data.campaignList[i]['camp_accept_active'] == 1 && !data.campaignList[i]['camp_param_check_id']) {
                 campFormButtonItem = "<button type='button' class='btn btn-sm btn-info' onclick='parameterCampaign(" + data.campaignList[i]['campaign_id'] + ")'><span class='fa fa-sliders' style='font-size: small; color:white;'>&nbsp;Parameter</span></button>";
               }
-              else if(data.campaignList[i]['camp_param_check_id'] && !data.campaignList[i]['camp_lead_request_id']){
+              else if(data.campaignList[i]['camp_param_check_id'] && !data.campaignList[i]['camp_lead_request_id'] && (data.campaignList[i]['camp_integrated'] == 0 || data.campaignList[i]['lead_field'] )){
                 campFormButtonItem = "<span>Campaign integration pending</span>";
-              }
-              else if(data.campaignList[i]['camp_lead_request_id'] && data.campaignList[i]['camp_lead_request'] == 1 && data.campaignList[i]['camp_lead_accept'] == 0 && data.campaignList[i]['camp_lead_accept_active'] == 1){
-                campFormButtonItem = "<button type='button' class='btn btn-sm btn-warning' onclick='leadRequestCampaign(" + data.campaignList[i]['campaign_id'] + ")'><span class='fa fa-users' style='font-size: small; color:white;'>&nbsp;Lead Accept</span></button>";
               }
               else if(data.campaignList[i]['camp_edit_id'] && data.campaignList[i]['camp_edit_active'] == 1 && data.campaignList[i]['camp_edit_request'] == 0){
                 campFormButtonItem = "<button type='button' class='btn btn-sm btn-success' onclick='editRequestCampaign(" + data.campaignList[i]['campaign_id'] + ")'><span class='fa fa-pencil-square-o' style='font-size: small; color:white;'>&nbsp;Edit Request</span></button>";

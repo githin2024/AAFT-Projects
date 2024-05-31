@@ -32,10 +32,29 @@
       .card-backgroundcolor {
         background-color: white !important;
       }
+      .bg-primary{
+        background-color: #83b5ff !important;
+      }
+      .bg-gradient-light{
+        background-image: linear-gradient(195deg, #262de4 0%, #CED4DA 100%) !important;
+      }
+      .bg-skyblue{
+        background-color: #e1e8f3 !important;
+      }
+      #sidebar-text {
+        color:black;
+      }
+      .vertical {
+            border-left: 1px solid black;
+            height: 30px;
+        }
+      table.dataTable {
+        font-size:14px;
+      }
     </style>
   </head>
-  <body class="g-sidenav-show  bg-gray-200">  
-    <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3   bg-gradient-dark" id="sidenav-main">
+  <body class="g-sidenav-show  bg-skyblue">  
+    <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3   bg-gradient-light" id="sidenav-main">
       <div class="sidenav-header">
         <i class="fas fa-times p-3 cursor-pointer text-white opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
         <a class="navbar-brand m-0" href="{{ url('int-home') }}">        
@@ -46,27 +65,36 @@
       <div class="collapse navbar-collapse  w-auto " id="sidenav-collapse-main">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link text-white active bg-gradient-primary" id="intCampaignHomeID" href="{{ url('int-home') }}">
+            <a class="nav-link text-white active bg-primary" id="intCampaignHomeID" href="{{ url('int-home') }}">
               <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                 <i class="material-symbols-outlined">home</i>
               </div>
               <span class="nav-link-text ms-1">Home</span>
             </a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link text-white" id="intLandingPageID" href="{{ url('int-landing-page') }}">
-              <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-                <i class="material-symbols-outlined">newsmode</i>
-              </div>
-              <span class="nav-link-text ms-1">Landing Page</span>
-            </a>
-          </li>
+          
           <li class="nav-item">
             <a class="nav-link text-white" id="intCampaignID" href="{{ url('int-campaign') }}">
               <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                 <i class="material-symbols-outlined">campaign</i>
               </div>
               <span class="nav-link-text ms-1">Campaign</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" id="intCampaignFormID" href="{{ url('int-campaign-form') }}">
+              <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                <i class="material-symbols-outlined">article</i>
+              </div>
+              <span class="nav-link-text ms-1">Campaign Form</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" id="intLandingPageID" href="{{ url('int-landing-page') }}">
+              <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                <i class="material-symbols-outlined">web</i>
+              </div>
+              <span class="nav-link-text ms-1">Landing Page</span>
             </a>
           </li>        
         </ul>
@@ -84,18 +112,12 @@
             </div>
             <ul class="navbar-nav  justify-content-end">           
               <li class="nav-item dropdown pe-2 d-flex align-items-center">
-                <a href="javascript:;" class="nav-link text-body p-0" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                  <i class="fa fa-user me-sm-1">&nbsp;{{ session()->get('username') }}</i>
+                <a href="javascript:;" class="nav-link text-body p-0 dropdown-toggle" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="fa fa-user fa-lg" aria-hidden="true" style="size"></i>
                 </a>
                 <ul class="dropdown-menu  dropdown-menu-end  px-2 py-3 me-sm-n4" aria-labelledby="dropdownMenuButton">
-                  <li class="mb-2">
-                    <a class="dropdown-item border-radius-md" href="javascript:;">
-                      <div class="d-flex">                        
-                        <div class="my-auto">
-                          <a href="{{ url('logout') }}" class="dropdown-item">Logout</a>
-                        </div>
-                      </div>
-                    </a>
+                  <li class="text-end">
+                    <a href="{{ url('logout') }}" class="dropdown-item">Logout</a>
                   </li>                
               </li>
             </ul>

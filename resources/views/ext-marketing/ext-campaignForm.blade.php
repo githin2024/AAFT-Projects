@@ -102,7 +102,7 @@
                           <button type="button" class="btn btn-sm btn-primary" onclick="createCampaignForm({{ $campaign->campaign_form_id }})"><span class="fa fa-pencil" style="font-size: small;">&nbsp;Edit</span></button>
                         @elseif($campaign->camp_form_accept_id && $campaign->camp_form_accept == 1 && $campaign->camp_form_accept_active == 1 && !$campaign->camp_form_param_check_id)
                           <button type="button" class="btn btn-sm btn-info" onclick="parameterCheckCampaign({{ $campaign->campaign_form_id }})"><span class="fa fa-sliders" style="font-size: small; color:white;">&nbsp;Parameter</span></button>
-                        @elseif($campaign->camp_form_param_check_id && !$campaign->lead_request_id)
+                        @elseif($campaign->camp_form_param_check_id && !$campaign->lead_request_id && $campaign->form_integrated == 0)
                           <span>Campaign integration pending</span>
                         @elseif($campaign->lead_request_id && $campaign->camp_lead_request == 1 && $campaign->camp_lead_accept == 0 && $campaign->camp_form_lead_active == 1)
                           <button type="button" class="btn btn-sm btn-warning" onclick="leadRequestCampaign({{ $campaign->campaign_form_id }})"><span class="fa fa-users" style="font-size: small; color:white;">&nbsp;Lead Accept</span></button>
@@ -325,13 +325,37 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <input type="hidden" id="hdnLeadCampaignId" name="hdnLeadCampaignId" />
-        <p>Do you wish to confirm the lead generation is initiated? </p>
+        <form id="confirm-lead-form" name="confirm-lead-form" action="{{ url('confirm-lead-camp-form') }}" method="post">
+          @csrf
+          <input type="hidden" id="hdnLeadCampaignId" name="hdnLeadCampaignId" />
+          <div class="row form-group">
+            <div class="col-md-4">
+              <label class="form-label" for="leadEmailId">Email</label>              
+            </div>
+            <div class="col-md-8 ">
+              <input type="text" name="leadEmailId" id="leadEmailId" class="form-control" />
+              <span id="leadEmail-error" class="text-danger"></span>
+            </div>
+          </div>
+          <div class="row form-group mt-2">
+            <div class="col-md-4">
+              <label class="form-label" for="leadPhoneId">Phone Number</label>              
+            </div>
+            <div class="col-md-8 ">
+              <input type="text" name="leadPhoneId" id="leadPhoneId" class="form-control" />
+              <span id="leadPhone-error" class="text-danger"></span>
+            </div>
+          </div>
+          <hr />
+          <div class="row form-group mt-2" >
+            <div class="col-md-5">              
+              <button class="btn btn-sm btn-primary" id="confirmLeadbuttonId" title="Confirm Lead Generation" onclick="confirmLeadGeneration();">Confirm</button>
+              <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </form>       
       </div>
-      <div class="modal-footer">
-        <button class="btn btn-sm btn-primary" id="confirmLeadbuttonId" title="Confirm Lead Generation" onclick="confirmLeadGeneration();">Confirm</button>
-        <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal">Close</button>
-      </div>
+        
     </div>
   </div>
 </div>
@@ -523,6 +547,7 @@
       var courses = $("#courses").val();
       var campDate = $("#campaignDate").val();
       var campaignStatus = $("#campaignFormStatusId").val();
+      var campaign = $("#campaign").val();
 
       if(institution == "" || institution == "undefined"){
         $("#institution-error").html("Please select an Institution");         
@@ -530,6 +555,14 @@
       else {
         $("#institution-error").html(""); 
       }
+
+      if(campaign == "" || campaign == "undefined"){
+        $("#campaign-error").html("Please select a Campaign");
+      }
+      else {
+        $("#campaign-error").html("");
+      }
+
       if(programType == "" || programType == "undefined"){
         $("#programType-error").html("Please select a Program Type");        
       }
@@ -672,24 +705,29 @@
 
     function leadRequestCampaign(campaignId) {
       $("#confirmLeadFormModal").modal('show');
+      $("#leadEmailId").val('');
+      $("#leadPhoneId").val('');
+      $("#leadPhone-error").html("");
       $("#hdnLeadCampaignId").val(campaignId);
     }
 
     function confirmLeadGeneration(){
+      debugger;
       var campFormId = $("#hdnLeadCampaignId").val();
-      $.ajax({
-          type:'get',
-          url: "/confirm-lead-camp-form",
-          data: {'campaignFormId' : campFormId},
-          success:function(data){
-            if(data){
-              $.notify(data, "success");
-              $("#confirmLeadModal").modal('hide');
-              setTimeout(() => {
-                window.location.href="{{'campaignForm'}}";
-              }, "2000");
-            }
-          }
+      var email = $("#leadEmailId").val();
+      var phone = $("#leadPhoneId").val();
+      if(email == "" && phone == ""){
+        $("#leadPhone-error").html("Please enter email or phone number");
+      }
+      else {
+        $("#leadPhone-error").html("");
+      }
+
+      $("#confirm-lead-form").submit(function (e) { 
+        if ($("#leadPhone-error").text() != "") {
+          e.preventDefault();
+          return false;
+        }
       });
     }
 

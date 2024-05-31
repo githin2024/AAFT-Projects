@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -25,58 +24,84 @@
     <!-- Nepcha is a easy-to-use web analytics. No cookies and fully compliant with GDPR, CCPA and PECR. -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.1/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" rel="stylesheet">
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.1/js/bootstrap.min.js"></script>
+    <!-- <script src="https://cdn.datatables.net/2.0.0/js/dataTables.bootstrap5.min.js"></script> -->
+    <script defer data-site="YOUR_DOMAIN_HERE" src="https://api.nepcha.com/js/nepcha-analytics.js"></script>
     <style>
       .card-backgroundcolor {
         background-color: white !important;
       }
-
+      .bg-primary{
+        background-color: #83b5ff !important;
+      }
+      .bg-gradient-light{
+        background-image: linear-gradient(195deg, #262de4 0%, #CED4DA 100%) !important;
+      }
+      .bg-skyblue{
+        background-color: #e1e8f3 !important;
+      }
       #sidebar-text {
         color:black;
       }
+      .vertical {
+            border-left: 1px solid black;
+            height: 30px;
+        }
+      table.dataTable {
+        font-size:14px;
+      }
     </style>
   </head>
-  <body class="g-sidenav-show  bg-gray-200">  
-    <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3   bg-white" id="sidenav-main">
+  <body class="g-sidenav-show  bg-skyblue">  
+    <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3   bg-gradient-light" id="sidenav-main">
       <div class="sidenav-header">
-        <i class="fas fa-times p-3 cursor-pointer text-black opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
-        <a class="navbar-brand m-0" href="{{ url('admin-home') }}">        
-          <span class="ms-1 font-weight-bold text-black" style="font-size: xx-large">Task Minder</span>
+        <i class="fas fa-times p-3 cursor-pointer text-white opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
+        <a class="navbar-brand m-0" href="{{ url('it-admin-home') }}">        
+          <span class="ms-1 font-weight-bold text-white" style="font-size: xx-large">Task Minder</span>
         </a>
       </div>
       <hr class="horizontal light mt-0 mb-2">
       <div class="collapse navbar-collapse  w-auto " id="sidenav-collapse-main">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link text-black active bg-primary bg-gradient" id="it-adminHomeID" href="{{ url('it-admin-home') }}">
-              <div class="text-black text-center me-2 d-flex align-items-center justify-content-center">
-                <i id="sidebar-text" class="material-symbols-outlined">home</i>
+            <a class="nav-link text-white active bg-primary" id="it-adminHomeID" href="{{ url('it-admin-home') }}">
+              <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                <i class="material-symbols-outlined">home</i>
               </div>
-              <span id="sidebar-text" class="nav-link-text ms-1" >Home</span>
+              <span class="nav-link-text ms-1">Home</span>
+            </a>
+          </li>
+          
+          <li class="nav-item">
+            <a class="nav-link text-white" id="it-adminCampaignID" href="{{ url('it-admin-campaign') }}">
+              <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                <i class="material-symbols-outlined">campaign</i>
+              </div>
+              <span class="nav-link-text ms-1">Campaign</span>
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-black" id="it-adminCampaignID" href="{{ url('it-admin-campaign') }}">
-              <div class="text-black text-center me-2 d-flex align-items-center justify-content-center">
-                <i id="sidebar-text" class="material-symbols-outlined">campaign</i>
+            <a class="nav-link text-white" id="it-adminCampaignFormID" href="{{ url('it-admin-campaign-form') }}">
+              <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                <i class="material-symbols-outlined">article</i>
               </div>
-              <span id="sidebar-text" class="nav-link-text ms-1">Campaign</span>
+              <span class="nav-link-text ms-1">Campaign Form</span>
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-black" id="it-adminLandingPageID" href="{{ url('it-admin-landingpage') }}">
-              <div class="text-black text-center me-2 d-flex align-items-center justify-content-center">
-                <i id="sidebar-text" class="material-symbols-outlined">article</i>
+            <a class="nav-link text-white" id="it-adminLandingPageID" href="{{ url('it-admin-landing-page') }}">
+              <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                <i class="material-symbols-outlined">web</i>
               </div>
-              <span id="sidebar-text" class="nav-link-text ms-1">Landing Page</span>
+              <span class="nav-link-text ms-1">Landing Page</span>
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-black" id="it-adminSettingsID" href="{{ url('it-admin-settings') }}">
-              <div class="text-black text-center me-2 d-flex align-items-center justify-content-center">
-                <i id="sidebar-text" class="material-symbols-outlined">settings</i>
+            <a class="nav-link text-white" id="it-adminSettingsID" href="{{ url('it-admin-settings') }}">
+              <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                <i class="material-symbols-outlined">settings</i>
               </div>
-              <span id="sidebar-text" class="nav-link-text ms-1">Settings</span>
+              <span class="nav-link-text ms-1">Settings</span>
             </a>
           </li>        
         </ul>
@@ -89,42 +114,23 @@
           <nav aria-label="breadcrumb">          
             <h6 class="font-weight-bolder mb-0" style="font-size: x-large">Welcome {{ session()->get('firstName'). " " . session()->get('lastName') }}</h6>
           </nav>
-          
           <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
             <div class="ms-md-auto pe-md-3 d-flex align-items-center">
-              <!-- <div class="dropdown">
-                <a id="dropdownNotifyButton" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="color:black;">
-                  <i class="fa fa-bell-o" aria-hidden="true"></i>                  
-                </a>
-                <ul class="dropdown-menu" aria-labelledby="dropdownNotifyButton">
-                  <li class="dropdown-item">Link 1</li>
-                  <li class="dropdown-item">Link 2</li>
-                  <li class="dropdown-item">Link 3</li>
-                </ul>
-              </div> -->
             </div>
             <ul class="navbar-nav  justify-content-end">           
               <li class="nav-item dropdown pe-2 d-flex align-items-center">
                 <a href="javascript:;" class="nav-link text-body p-0 dropdown-toggle" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                  <i class="fa fa-user" aria-hidden="true"></i>
+                  <i class="fa fa-user fa-lg" aria-hidden="true" style="size"></i>
                 </a>
                 <ul class="dropdown-menu  dropdown-menu-end  px-2 py-3 me-sm-n4" aria-labelledby="dropdownMenuButton">
                   <li class="text-end">
                     <a href="{{ url('logout') }}" class="dropdown-item">Logout</a>
-                    <!-- <a class="dropdown-item border-radius-md" href="javascript:;">
-                      <div class="d-flex">                        
-                        <div class="my-auto">
-                          <a href="{{ url('logout') }}" class="dropdown-item">Logout</a>
-                        </div>
-                      </div>
-                    </a> -->
                   </li>                
               </li>
             </ul>
           </div>
         </div>
       </nav>
-      <hr class="mx-4">
       <!-- End Navbar -->
       <div class="container-fluid py-4">
         @yield('it-adminContent')
@@ -146,23 +152,26 @@
       </div>
     </main>
   </body>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.1/js/bootstrap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.js"></script>
-  <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.1/js/bootstrap.min.js"></script>
-  <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap5.min.js"></script>
-  <script src="https://cdn.tutorialjinni.com/notify/0.4.2/notify.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.slim.min.js"></script>    
-  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.9.1/popper.min.js"></script>     -->
 
 </html>
 
 <script type="text/javascript">
-  function goBack() 
-  {
-    window.location.href = "{{ url('it-admin-settings') }}";
+  function getCourses(){
+    var institutionCode = $("#campaign-institution").val();
+    $.ajax({
+      type:'get',
+      url: "/courses/",
+      data: {'institutionCode' : institutionCode},
+      success:function(data){
+        var coursesId = $("#courses").empty();
+        coursesId.append('<option selected="selected" value="">--Select--</option>');
+        if(data) {        
+          for(var i = 0; i < data.courses.length;i++){
+              var courses_item_el = '<option value="' + data.courses[i]['course_code']+'">'+ data.courses[i]['course_name']+'</option>';
+              coursesId.append(courses_item_el);
+          }
+        }
+      }
+    });
   }
-
-  
 </script>

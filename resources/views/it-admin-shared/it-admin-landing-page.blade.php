@@ -1,6 +1,6 @@
-@extends('ext-marketing.ext-master')
+@extends('it-admin-shared.it-admin-master')
 
-@section('content')
+@section('it-adminContent')
 
 <div class="row mt-4">
     @if(session()->has('message'))
@@ -36,11 +36,13 @@
                 <div class="row">
                     <div class="col-lg-6 col-6">
                         <h5>Landing Page</h5> 
-                        <input type="hidden" id="hdnInstituteId" value="{{ $institutionId }}" />               
+                        <input type="hidden" id="hdnInstituteId" value="{{ $instituteId[0] }}" />               
                     </div>
                     <div class="col-lg-6 col-6 my-auto text-end">
                       <div class="dropdown float-lg-end pe-4">
-                                         
+                          <a class="btn btn-sm btn-primary" id="createLPID" onclick="createLp(0);" title="Create">
+                              <i class="fa fa-plus" style="font-size: small;"> &nbsp;Create</i>
+                          </a>                
                       </div>
                 </div>                  
             </div>            
@@ -51,24 +53,37 @@
                 <thead>
                 <tr>            
                     <th class="opacity-10">PROGRAM TYPE</th>
-                    <th class="opacity-10">COURSE</th>                            
-                    <th class="opacity-10">URL</th>                            
-                    <th class="opacity-10">STATUS</th>                    
+                    <th class="opacity-10">COURSE</th>
+                    <!-- <th class="opacity-10">SOURCE TYPE</th> -->
+                    
+                    <!-- <th class="opacity-10">CAMPAIGN NAME</th> -->
+                    <th class="opacity-10">URL</th>
+                    <!-- <th class="opacity-10">APPROVAL STATUS</th> -->
+                    <th class="opacity-10">STATUS</th>
+                    <th class="opacity-10">ACTION</th>
                 </tr>
                 </thead>
                 <tbody>
                   @foreach($landingPageList as $lp)
                     <tr>                      
-                        <td style="padding-left: 15px;"><span class="text-primary">{{ $lp->program_type_name }}</span></td>
-                        <td style="padding-left: 15px;">{{ $lp->course_name }}</td>                                    
-                        <td class="text-wrap" style="padding-left: 15px;">{{ $lp->camp_url }}</td>                                                 
-                        <td style="padding-left: 15px;">
-                            @if($lp->active == 1)
-                                <button type="button" style="background-color: #1AD5984D; color: #1AD598; border:0px #1AD5984D;">Active</button>
-                            @elseif($lp->active == 0)
-                                <button type="button" style="background-color: #FFC1074D; color: #FFC107; border:0px #FFC1074D;">Inactive</button>  
-                            @endif
-                        </td>                                         
+                      <td style="padding-left: 15px;"><span class="text-primary">{{ $lp->program_type_name }}</span></td>
+                      <td style="padding-left: 15px;">{{ $lp->course_name }}</td>                   
+
+                      <td class="text-wrap" style="padding-left: 15px;">{{ $lp->camp_url }}</td>    
+                      
+                      <td style="padding-left: 15px;">
+                        @if($lp->active == 1)
+                          <button type="button" style="background-color: #1AD5984D; color: #1AD598; border:0px #1AD5984D;">Active</button>
+                        @elseif($lp->active == 0)
+                          <button type="button" style="background-color: #FFC1074D; color: #FFC107; border:0px #FFC1074D;">Inactive</button>  
+                        @endif
+                      </td>
+                      <td style="padding-left: 15px;">
+                        
+                        <button type="button" class="btn btn-sm btn-primary" onclick="createLp({{$lp->lp_campaign_id }})"><i class="fa fa-pencil" style="font-size: small;">&nbsp;Edit</i></button>
+                        <button type="button" class="btn btn-sm btn-danger" onclick="deleteLp({{$lp->lp_campaign_id }})"><i class="fa fa-trash" style="font-size: small;">&nbsp;Delete</i></button>
+
+                      </td>                      
                     </tr>
                   @endforeach
                 </tbody>
@@ -78,7 +93,7 @@
         </div>
     </div>        
 </div>
-<!-- Create Campaign Modal -->
+<!-- Create Landing Page Modal -->
 <div class="modal fade" id="createCampaignModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
@@ -87,9 +102,9 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form name="add-lp-campaign" id="add-lp-campaign" method="post" action="{{ url('store-lp-campaign') }}">
+        <form name="add-lp-campaign" id="add-lp-campaign" method="post" action="{{ url('it-admin-store-landing-page') }}">
           @csrf
-          <input type="hidden" name="hdncampaignId" id="hdncampaignId" />
+          <input type="hidden" name="hdnLPId" id="hdnLPId" />
           <div class="row form-group">
             <div class="col-md-3">
               <label class="form-label" for="campaign-institution">Institution</label>
@@ -112,7 +127,7 @@
               <span id="programType-error" class="text-danger"></span>
             </div>
           </div>
-          <div class="row form-group mt-2">
+          <!-- <div class="row form-group mt-2">
             <div class="col-md-3">
               <label class="form-label" for="marketingAgency">Marketing Agency</label>
               <span class="text-danger">*</span>
@@ -122,19 +137,8 @@
               </select>                
               <span id="marketingAgency-error" class="text-danger"></span>
             </div>
-          </div>
-          
-          <div class="row form-group mt-2">
-            <div class="col-md-3">
-              <label class="form-label" for="sourceType">Source Type</label>
-              <span class="text-danger">*</span>
-            </div>
-            <div class="col-md-7">
-              <select name="sourceType" class="form-control" id="sourceType">                  
-              </select>                
-              <span id="sourceType-error" class="text-danger"></span>
-            </div>
-          </div>          
+          </div> -->
+                  
           <div class="row form-group mt-2">
             <div class="col-md-3">
               <label class="form-label" for="courses">Courses</label>
@@ -149,16 +153,6 @@
           </div>
           <div class="row form-group mt-2">
             <div class="col-md-3">
-              <label class="form-label" for="keyName">Key</label>
-              <span class="text-danger">*</span>
-            </div>
-            <div class="col-md-7">
-              <input type="text" name="keyName" id="keyName" class="form-control" onchange="checkKeyName();" />                
-              <span id="keyName-error" class="text-danger"></span>
-            </div>
-          </div>
-          <div class="row form-group mt-2">
-            <div class="col-md-3">
               <label class="form-label" for="lpUrl">URL</label>
               <span class="text-danger">*</span>
             </div>
@@ -166,28 +160,8 @@
               <input type="text" name="lpUrl" id="lpUrl" class="form-control" />                
               <span id="lpUrl-error" class="text-danger"></span>
             </div>
-          </div>
-          <div class="row form-group mt-2">
-            <div class="col-md-3">
-              <label class="form-label" for="campaignDate">Date</label>
-              <span class="text-danger">*</span>
-            </div>
-            <div class="col-md-7">
-              <input type="date" name="campaignDate" class="form-control" id="campaignDate" />                
-              <span id="campaignDate-error" class="text-danger"></span>
-            </div>
-          </div>         
-          <div class="row form-group mt-2" id="campaignStatusDiv" style="display:none;">
-            <div class="col-md-3">
-              <label class="form-label" for="campaignStausId">Status</label>
-              <span class="text-danger">*</span>
-            </div>
-            <div class="col-md-7">
-              <select name="campaignStausId" class="form-control" id="campaignStausId">
-              </select>                
-              <span id="campaignStausId-error" class="text-danger"></span>
-            </div>
-          </div>
+          </div>       
+          
           <hr />
           <div class="row form-group mt-2">
             <div class="col-md-5">
@@ -201,127 +175,20 @@
   </div>
 </div>
 
-<!-- Parameter Check Modal -->
-<div class="modal fade" id="parameterCheckModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true">
-  <div class="modal-dialog modal-md">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" >Parameter Check</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form id="parameter-check" name="parameter-check" method="post" action="{{ url('parameter-campaign') }}">
-          @csrf
-          <input type="hidden" name="campaignId" id="campaignId" />
-          <div class="row form-group">
-            <div class="col-md-4 text-end">
-              <label class="form-label" for="published">Form published</label>
-              <span class="text-danger">*</span>                                        
-            </div>
-            <div class="col-md-8">
-              <input type="checkbox" id="published" name="published" />
-              <br />              
-              <span id="published-error" class="text-danger"></span>                
-            </div>
-          </div>
-          <div class="row form-group mt-2">
-            <div class="col-md-4 text-end">
-              <label class="form-label" for="course-campaign">Course integrated</label>
-              <span class="text-danger">*</span>                            
-            </div>
-            <div class="col-md-8">
-              <input type="checkbox" id="course-campaign" name="course-campaign" /> 
-              <br />              
-              <span id="course-campaign-error" class="text-danger"></span>
-            </div>
-          </div>
-          <div class="row form mt-2">
-            <div class="col-md-4 text-end">
-              <label class="form-label" for="text-param">Parameter Add</label>
-              <span class="text-danger">*</span>
-            </div>
-            <div class="col-md-8 text-start">
-              <label for="yes" style="margin-right: 15px;">Yes</label>
-              <input type="radio" class="paramCls" id="text-yes" name="text-param" value="1" onclick="showParameterDiv();" style="margin-right: 20px;">
-              <label for="no" style="margin-right: 15px;">No</label>
-              <input type="radio" class="paramCls" id="text-no" name="text-param" value="0" onclick="showParameterDiv();">
-              <br />
-              <span class="text-danger" id="text-param-error"></span>
-            </div>            
-          </div>            
-          <div class="row form mt-2" style="display:none;" id="parameterDiv">
-            <div class="col-md-4">
-              <label class="form-label" for="parameterId">Enter parameter info</label>
-              <span class="text-danger">*</span> 
-            </div>
-            <div class="col-md-8 ">
-              <textarea name="parameterId" id="parameterId" cols="35" rows="5" class="form-control"></textarea>
-              <span id="parameter-error" class="text-danger"></span>
-            </div>
-          </div>                    
-          <hr />
-          <div class="row form-group mt-2">
-            <div class="col-md-5">
-              <button class="btn btn-sm btn-primary" type="submit" id="confirmParameterCheck" title="Confirm" onclick="VerifyParameter();">Confirm</button>
-              <button data-bs-dismiss="modal" class="btn btn-sm btn-danger" title="Cancel">Cancel</button>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- View Campaign Check Modal -->
-<div class="modal fade" id="viewCampaignModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true" style="width:100%">
-  <div class="modal-dialog modal-xl">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Campaign Details</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <table class="table table-bordered" style="border: 1px solid black; " id="campaignTableDetails">          
-        </table>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Lead Acceptance Modal -->
-<div class="modal fade" id="confirmLeadFormModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true">
-  <div class="modal-dialog modal-md">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="leadTitleId">Lead Generation Confirmation</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <input type="hidden" id="hdnLeadCampaignId" name="hdnLeadCampaignId" />
-        <p>Do you wish to confirm the lead generation is initiated? </p>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-primary" id="confirmLeadbuttonId" title="Confirm Lead Generation" onclick="confirmLeadGeneration();">Confirm</button>
-        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- Edit Request Modal -->
 <div class="modal fade" id="editRequestFormModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true">
   <div class="modal-dialog modal-md">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="modalTitleId">Edit Request</h5>
+        <h5 class="modal-title" id="modalTitleId">Delete Landing Page</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <input type="hidden" id="editCampaignId" name="editCampaignId" />
-        <p id="descriptionId">Do you wish to edit the campaign? </p>
+        <input type="hidden" id="delLpId" name="delLpId" />
+        <p id="descriptionId">Do you wish to delete the Landing Page? </p>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-primary" id="buttonId" title="Request" onclick="confirmEditRequest();">Request</button>
+        <button class="btn btn-primary" id="buttonId" title="Request" onclick="confirmDeleteRequest();">Request</button>
         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
       </div>
     </div>
@@ -337,10 +204,11 @@
 <script type="text/javascript">
 
     $(document).ready(function() {               
-        $("#extCampaignID").removeClass( "active bg-primary bg-gradient" );
-        $("#extCampaignHomeID").removeClass( "active bg-primary bg-gradient" );
-        $("#extCampaignFormID").removeClass("active bg-primary bg-gradient");
-        $("#extLandingID").addClass( "active bg-primary bg-gradient" );
+        $("#it-adminCampaignID").removeClass( "active bg-primary" );
+          $("#it-adminLandingPageID").removeClass( "active bg-primary" );
+          $("#it-adminHomeID").removeClass( "active bg-primary" );
+          $("#it-adminCampaignFormID").removeClass("active bg-primary");
+          $("#it-adminLandingPageID").addClass("active bg-primary");
         $('#lpTable').dataTable();          
         if($("#successMesgID").text() !="") {
           $.notify($("#successMesgID").text(), "success");          
@@ -363,23 +231,29 @@
                     "<th class='opacity-10'>PROGRAM TYPE</th>" +
                     "<th class='opacity-10'>COURSE</th>" +                    
                     "<th class='opacity-10'>URL</th>" +                    
-                    "<th class='opacity-10'>STATUS</th>" +                    
+                    "<th class='opacity-10'>STATUS</th>" + 
+                    "<th class='opacity-10'>Action</th>" +                    
                 "</tr>" +
                 "</thead><tbody>";
                 campBody.append(campTheadItem);
                 for(var i = 0; i < data.landingPageList.length;i++){
                   var campStatusItem = "";
                   if(data.landingPageList[i]['active'] == 1) {
-                    campStatusItem =  "<button type='button' style='background-color: #1AD5984D; color: #1AD598;'> " + "Active" + "</button>";
+                    campStatusItem =  "<button type='button' style='background-color: #1AD5984D; color: #1AD598; border:0px #1AD5984D;'> " + "Active" + "</button>";
                   }
                   else if (data.landingPageList[i]['active'] == 0) {
-                    campStatusItem = "<button type='button' style='background-color: #FFC1074D; color: #FFC107;'>" + "Inactive" + "</button>";
+                    campStatusItem = "<button type='button' style='background-color: #FFC1074D; color: #FFC107; border:0px #FFC1074D;'>" + "Inactive" + "</button>";
                   }                                
 
                   var campBodyItem = "<tr><td style='padding-left: 20px;'><span class='text-primary'>"+ data.landingPageList[i]['program_type_name'] +"</span></td>" +
                                      "<td style='padding-left: 20px;'>"+ data.landingPageList[i]['course_name'] +"</td>" +                                     
                                      "<td class='text-wrap' style='padding-left: 20px;'>"+ data.landingPageList[i]['camp_url'] +"</td>" +
                                      "<td style='padding-left: 20px;'>"+ campStatusItem +"</td>" +
+                                     "<td style='padding-left: 20px;'>"+ 
+                                      "<button type='button' class='btn btn-sm btn-primary' onclick='createLp("+ data.landingPageList[i]['lp_campaign_id'] + ")'><i class='fa fa-pencil' style='font-size: small;'>&nbsp;Edit</i></button>" +
+                                      "<button type='button' class='btn btn-sm btn-danger' onclick='deleteLp("+ data.landingPageList[i]['lp_campaign_id'] + ")'><i class='fa fa-trash' style='font-size: small;'>&nbsp;Delete</i></button>" +
+                                      "</td>" +
+
                                      "</tr>";
                   campBody.append(campBodyItem);
                 }
@@ -391,9 +265,9 @@
         });
     }
 
-    function createCampaign(campaignId) {  
+    function createLp(campaignId) {  
       
-      $("#exampleModalLabel").html("Create New Campaign ");
+      $("#exampleModalLabel").html("Create New Landing Page");
         $("#createCampaignModal").modal('show');
         $("#institution-error").html(''); 
         $("#programType-error").html(''); 
@@ -405,19 +279,18 @@
         $("#keyName").val('');
         $("#lpUrl-error").html('');
         $("#lpUrl").val('');
-        $("#campaignDate").val('');        
+        $("#campaignDate").val('');            
         $.ajax({
             type:'get',
-            url: "/create-landing-page-campaign", 
+            url: "/it-admin-create-landing-page", 
             data: {'institute' : $("#hdnInstituteId").val(), 'lpCampId': campaignId},            
             success:function(data){
-                if(data){                                
+                if(data){                               
                   
                   var institutionId = $("#campaign-institution").empty();
-                    institutionId.append('<option selected="selected" value="">--Select--</option>');
-                    var institutionCode = data.instituteCode;
-                    for(var i = 0; i < Object.keys(data['institution']).length;i++){
-                        
+                    institutionId.append('<option selected="selected" value="">--Select--</option>');                    
+                    var institutionCode = data.institutionCode;
+                    for(var i = 0; i < Object.keys(data['institution']).length;i++){                        
                         if(data.institution[i]['institution_code'] == institutionCode){
                           var institution_item_el = '<option selected value="'+data.institution[i]['institution_code']+'">'+data.institution[i]['institution_name']+'</option>';
                         }
@@ -428,9 +301,10 @@
                     }                    
 
                     var programTypeId = $("#programType").empty();
+                    
                     programTypeId.append('<option selected="selected" value="">--Select--</option>');
                     for(var i = 0; i < data.programType.length;i++){                        
-                        if(campaignId != 0 && data.lpCampaignList[0]['program_code'] == data.programType[i]['program_code']){
+                        if(campaignId != 0 && data.lpCampaignList[0]['program_type_name'] == data.programType[i]['program_type_name']){
                           var programType_item_el = '<option selected value="'+ data.programType[i]['program_code'] +'">'+data.programType[i]['program_type_name']+'</option>';
                         } 
                         else {
@@ -439,36 +313,36 @@
                         programTypeId.append(programType_item_el);
                     }
 
-                    var marketingAgencyId = $("#marketingAgency").empty();
-                    marketingAgencyId.append('<option selected="selected" value="">--Select--</option>');
-                    for(var i = 0; i < data.marketingAgency.length;i++){
-                        if(campaignId != 0 && data.lpCampaignList[0]['agency_code'] == data.marketingAgency[i]['agency_code']){
-                          var marketingAgency_item_el = '<option selected value="'+ data.marketingAgency[i]['agency_code'] +'">'+data.marketingAgency[i]['agency_name']+'</option>';
-                        }
-                        else {
-                          var marketingAgency_item_el = '<option value="'+ data.marketingAgency[i]['agency_code'] +'">'+data.marketingAgency[i]['agency_name']+'</option>';
-                        }
-                        marketingAgencyId.append(marketingAgency_item_el);
-                    }
+                    // var marketingAgencyId = $("#marketingAgency").empty();
+                    // marketingAgencyId.append('<option selected="selected" value="">--Select--</option>');
+                    // for(var i = 0; i < data.marketingAgency.length;i++){
+                    //     if(campaignId != 0 && data.lpCampaignList[0]['agency_code'] == data.marketingAgency[i]['agency_code']){
+                    //       var marketingAgency_item_el = '<option selected value="'+ data.marketingAgency[i]['agency_code'] +'">'+data.marketingAgency[i]['agency_name']+'</option>';
+                    //     }
+                    //     else {
+                    //       var marketingAgency_item_el = '<option value="'+ data.marketingAgency[i]['agency_code'] +'">'+data.marketingAgency[i]['agency_name']+'</option>';
+                    //     }
+                    //     marketingAgencyId.append(marketingAgency_item_el);
+                    // }
                                         
-                    var sourceTypeId = $("#sourceType").empty();
-                    sourceTypeId.append('<option selected="selected" value="">--Select--</option>');
-                    for(var i = 0; i < data.sourceType.length;i++){
-                        if(campaignId != 0 && data.lpCampaignList[0]['source_type_id'] == data.sourceType[i]['source_type_id']){
-                          var sourceType_item_el = '<option selected value="'+ data.sourceType[i]['source_type_id'] +'">'+ data.sourceType[i]['source_name']+'</option>';
-                        }
-                        else {
-                          var sourceType_item_el = '<option value="'+ data.sourceType[i]['source_type_id'] +'">'+ data.sourceType[i]['source_name']+'</option>';
-                        }
-                        sourceTypeId.append(sourceType_item_el);
-                    }
+                    // var sourceTypeId = $("#sourceType").empty();
+                    // sourceTypeId.append('<option selected="selected" value="">--Select--</option>');
+                    // for(var i = 0; i < data.sourceType.length;i++){
+                    //     if(campaignId != 0 && data.lpCampaignList[0]['source_type_id'] == data.sourceType[i]['source_type_id']){
+                    //       var sourceType_item_el = '<option selected value="'+ data.sourceType[i]['source_type_id'] +'">'+ data.sourceType[i]['source_name']+'</option>';
+                    //     }
+                    //     else {
+                    //       var sourceType_item_el = '<option value="'+ data.sourceType[i]['source_type_id'] +'">'+ data.sourceType[i]['source_name']+'</option>';
+                    //     }
+                    //     sourceTypeId.append(sourceType_item_el);
+                    // }
                     if(campaignId != 0) {
                       var courseId = $("#courses").empty();
                       $("#keyName").val(data.lpCampaignList[0]['key_name']);
                       $("#lpUrl").val(data.lpCampaignList[0]['camp_url']);
                       courseId.append('<option selected="selected" value="">--Select--</option>');
                       for(var i = 0; i < data.courseList.length; i++){
-                        if(data.lpCampaignList[0]['course_code'] == data.courseList[i]['course_code']){
+                        if(data.lpCampaignList[0]['course_name'] == data.courseList[i]['course_name']){
                           var course_item_el = '<option selected value="'+ data.courseList[i]['course_code'] +'">'+ data.courseList[i]['course_name']+'</option>';
                         }
                         else {
@@ -477,24 +351,10 @@
                         courseId.append(course_item_el);
                       }
                       
-                      if(data.lpCampaignList[0]['lp_campaign_id'] != 0){
-                        $("#campaignStatusDiv").show();
-                        var campaignStatusId = $("#campaignStausId").empty();
-                        campaignStatusId.append('<option selected="selected" value="">--Select--</option>');
-                        for(var i = 0; i < data.campaignStatusList.length; i++){
-                          if(data.lpCampaignList[0]['campaign_status_id'] == data.campaignStatusList[i]['campaign_status_id']){
-                            var campstatus_item_el = '<option selected value="'+ data.campaignStatusList[i]['campaign_status_id'] +'">'+ data.campaignStatusList[i]['campaign_status_name']+'</option>';
-                          }
-                          else {
-                            var campstatus_item_el = '<option value="'+ data.campaignStatusList[i]['campaign_status_id'] +'">'+ data.campaignStatusList[i]['campaign_status_name']+'</option>';
-                          }
-                          campaignStatusId.append(campstatus_item_el);
-                        }
-                      }
-                      $("#campaignDate").val(data.lpCampaignList[0]['lp_camp_date']);
+                                           
                       $("#exampleModalLabel").html("Edit Campaign");
                       $("#generate").html("Update");
-                      $("#hdncampaignId").val(campaignId);
+                      $("#hdnLPId").val(campaignId);
                     }
                     else {
                       getCourses();
@@ -508,12 +368,12 @@
       
       var institution = $("#campaign-institution").val();
       var programType = $("#programType").val();
-      var marketingAgency = $("#marketingAgency").val();
-      var sourceType = $("#sourceType").val();
+    //   var marketingAgency = $("#marketingAgency").val();
+    //   var sourceType = $("#sourceType").val();
       var courses = $("#courses").val();
-      var campDate = $("#campaignDate").val();
-      var keyName = $("#keyName").val();
-      var campaignStatus = $("#campaignStausId").val();
+    //   var campDate = $("#campaignDate").val();
+    //   var keyName = $("#keyName").val();
+    //   var campaignStatus = $("#campaignStausId").val();
       var campUrl = $("#lpUrl").val();
       if(institution == "" || institution == "undefined"){
         $("#institution-error").html("Please select an Institution");         
@@ -527,19 +387,19 @@
       else {
         $("#programType-error").html("");
       }
-      if(marketingAgency == "" || marketingAgency == "undefined"){
-        $("#marketingAgency-error").html("Please select a Marketing Agency");        
-      }
-      else {
-        $("#marketingAgency-error").html("");
-      }
+    //   if(marketingAgency == "" || marketingAgency == "undefined"){
+    //     $("#marketingAgency-error").html("Please select a Marketing Agency");        
+    //   }
+    //   else {
+    //     $("#marketingAgency-error").html("");
+    //   }
 
-      if(sourceType == "" || sourceType == "undefined"){
-        $("#sourceType-error").html("Please select a Source Type");
-      }
-      else {
-        $("#sourceType-error").html("");
-      }
+    //   if(sourceType == "" || sourceType == "undefined"){
+    //     $("#sourceType-error").html("Please select a Source Type");
+    //   }
+    //   else {
+    //     $("#sourceType-error").html("");
+    //   }
 
       if(campUrl == "" || campUrl == "undefined"){
         $("#lpUrl-error").html("Please enter a URL");
@@ -548,12 +408,12 @@
         $("#lpUrl-error").html("");
       }
 
-      if(keyName == "" || keyName == "undefined"){
-        $("#keyName-error").html("Please enter a Key Name");
-      }
-      else {
-        $("#keyName-error").html("");
-      }
+    //   if(keyName == "" || keyName == "undefined"){
+    //     $("#keyName-error").html("Please enter a Key Name");
+    //   }
+    //   else {
+    //     $("#keyName-error").html("");
+    //   }
             
       if(courses == "" && institution == ""){
         $("#courses-error").html("Please select an institution first");        
@@ -567,23 +427,22 @@
       else {
         $("#courses-error").html("");
       }
-       if(campDate == "" || campDate == "undefined"){
-        $("#campaignDate-error").html("Please select a Date");        
-      }
-      else {
-        $("#campaignDate-error").html("");
-      }
+    //    if(campDate == "" || campDate == "undefined"){
+    //     $("#campaignDate-error").html("Please select a Date");        
+    //   }
+    //   else {
+    //     $("#campaignDate-error").html("");
+    //   }
             
-      if(campaignStausId == "" || campaignStausId == "undefined"){
-        $("#campaignStausId-error").html("Please select a Status");        
-      }
-      else {
-        $("#campaignStausId-error").html("");
-      }
+    //   if(campaignStausId == "" || campaignStausId == "undefined"){
+    //     $("#campaignStausId-error").html("Please select a Status");        
+    //   }
+    //   else {
+    //     $("#campaignStausId-error").html("");
+    //   }
       
       $("#add-lp-campaign").submit(function (e) {        
-        if($("#institution-error").text() != "" || $("#programType-error").text() != "" || $("#campaignDate-error").text() != "" || $("#sourceType-error").text() != "" || $("#lpUrl-error").text() != "" || $("#keyName-error").text() != ""
-        || $("#courses-error").text() != "" || $("#marketingAgency-error").text() != "" || $("#campaignStausId-error").text() != ""){
+        if($("#institution-error").text() != "" || $("#programType-error").text() != "" || $("#lpUrl-error").text() != "" || $("#courses-error").text() != ""){
           e.preventDefault();
           return false;
         }
@@ -690,23 +549,23 @@
       });
     }  
     
-    function editRequestCampaign(campId) {
+    function deleteLp(campId) {
         $("#editRequestFormModal").modal('show');
-        $("#editCampaignId").val(campId);
+        $("#delLpId").val(campId);
     }
 
-    function confirmEditRequest() {
-      var campaignId = $("#editCampaignId").val();
+    function confirmDeleteRequest() {
+      var lpId = $("#delLpId").val();
       $.ajax({
           type:'get',
-          url: "/confirm-edit-lp-campaign",
-          data: {'lpCampId' : campaignId},
+          url: "/it-admin-delete-landing-page",
+          data: {'lpId' : lpId},
           success:function(data){
             if(data){
               $.notify(data, "success");
               $("#editRequestFormModal").modal('hide');
               setTimeout(() => {
-                window.location.href="{{'landingPageForm'}}";
+                window.location.href="{{'it-admin-landing-page'}}";
               }, "2000");
               
             }

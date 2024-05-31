@@ -7,6 +7,7 @@ use App\Exports\ExportCampaign;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Components\BaseComponent;
 
 class ITAdminController extends Controller
 {
@@ -14,26 +15,56 @@ class ITAdminController extends Controller
     {
         if(session('username') != "")
         {
-            $campaignList = DB::select("SELECT c.campaign_id, i.institution_name, pt.program_type_name, cs.course_name, c.campaign_name, c.adset_name, c.adname, c.creative, l.leadsource_name, DATE_FORMAT(c.campaign_date, '%d %M %Y') campaign_date, cps.campaign_status_name FROM campaigns c
-                                        LEFT JOIN program_type pt ON c.fk_program_type_id = pt.program_type_id
-                                        LEFT JOIN courses cs ON cs.course_id = c.fk_course_id
-                                        LEFT JOIN institution i ON cs.fk_institution_id = i.institution_id
-                                        LEFT JOIN leadsource l ON c.fk_lead_source_id = l.leadsource_id
-                                        LEFT JOIN campaign_status cps ON c.fk_campaign_status_id = cps.campaign_status_id
-                                        WHERE c.active = 1"); 
-
-            $campaignLeadCount = DB::select("SELECT l.leadsource_name as `Leadsource_Name`, COUNT(c.campaign_id) AS `Campaign_Count` FROM campaigns c
-                                                LEFT JOIN leadsource l ON c.fk_lead_source_id = l.leadsource_id
-                                                LEFT JOIN courses cs ON c.fk_course_id = cs.course_id
-                                                LEFT JOIN institution i ON i.institution_id = cs.fk_institution_id                                            
-                                                GROUP BY l.leadsource_id, l.leadsource_name");
+            $institutionList = DB::select("SELECT institution_id, institution_name FROM institution WHERE active = 1");
+            $campaignList = BaseComponent::CampaignList("AAFT Online");
+            $landingPageList = BaseComponent::ViewLandingPageList('AAFT Online');
             
-            $campaignLeadCollect = collect($campaignLeadCount)->pluck('Campaign_Count', 'Leadsource_Name');
+            $campaignStatusChart = BaseComponent::CampaignStatusChart('AAFT Online');
+            $lpStatusChart = BaseComponent::LandingPageStatusChart('AAFT Online');
             
+            $campaignLeadCollect = collect($campaignStatusChart)->pluck('campaigncount', 'agency_name');
             $labels = $campaignLeadCollect->keys();
             $leadCount = $campaignLeadCollect->values();
+            
+            $lpCampLeadCollect = collect($lpStatusChart)->pluck('lpProgramCount', 'program_type_name');
+            $lpCamplabels = $lpCampLeadCollect->keys();
+            $lpCampCount = $lpCampLeadCollect->values();           
+                                                
+            $institutionId = DB::table('institution')->select('institution_id')->where('institution_name', '=', 'AAFT Online')->pluck('institution_id');
 
-            return view('it-admin-shared.it-admin-home', compact(['campaignList', 'labels', 'leadCount']));
+            return view('it-admin-shared.it-admin-home', compact(['campaignList', 'landingPageList', 'institutionId', 'institutionList', 
+                                                                    'lpCamplabels', 'lpCampCount', 'labels', 'leadCount']));
+        }
+        else 
+        {
+            return view('user-login');
+        }
+    }
+
+    public function ITAdminChangeInstitution(Request $req)
+    {
+        if(session('username') != "")
+        {
+            $institutionName = $req->institution;
+            $institutionList = DB::select("SELECT institution_id, institution_name FROM institution WHERE active = 1");
+            $campaignList = BaseComponent::CampaignList($institutionName);
+            $landingPageList = BaseComponent::ViewLandingPageList($institutionName);
+            
+            $campaignStatusChart = BaseComponent::CampaignStatusChart($institutionName);
+            $lpStatusChart = BaseComponent::LandingPageStatusChart($institutionName);
+            
+            $campaignLeadCollect = collect($campaignStatusChart)->pluck('campaigncount', 'agency_name');
+            $labels = $campaignLeadCollect->keys();
+            $leadCount = $campaignLeadCollect->values();
+            
+            $lpCampLeadCollect = collect($lpStatusChart)->pluck('lpProgramCount', 'program_type_name');
+            $lpCamplabels = $lpCampLeadCollect->keys();
+            $lpCampCount = $lpCampLeadCollect->values();           
+                                                
+            $institutionId = DB::table('institution')->select('institution_id')->where('institution_name', '=', $institutionName)->pluck('institution_id');
+
+            return response()->json(['campaignList' => $campaignList, 'landingPageList' => $landingPageList, 'institutionId' => $institutionId, 'institutionList' => $institutionList, 
+                                                                    'lpCamplabels' => $lpCamplabels, 'lpCampCount' => $lpCampCount, 'labels' => $labels, 'leadCount' => $leadCount]);
         }
         else 
         {
@@ -45,22 +76,28 @@ class ITAdminController extends Controller
     {
         if(session('username') != "")
         {
-            $campaignList = DB::select("SELECT c.campaign_id, i.institution_name, pt.program_type_name, c.campaign_name, c.adset_name, c.adname, c.creative, ls.leadsource_name, DATE_FORMAT(c.campaign_date, '%d %M %Y') campaign_date, 
-                                        cs.course_name, cps.campaign_status_name, cpc.camp_param_check_id, clr.lead_request_id, clr.campaign_lead_accept, clr.lead_comments, car.camp_approval_id, car.comments, car.camp_approve,
-                                        cer.camp_edit_request_id, cer.camp_edit_request, cer.camp_edit_accept, cer.edit_comments, cer.active AS `Edit_Active`, clr.active AS `Lead_Active` 
-                                        FROM campaigns c
-                                        LEFT JOIN program_type pt ON c.fk_program_type_id = pt.program_type_id 
-                                        LEFT JOIN leadsource ls ON c.fk_lead_source_id = ls.leadsource_id
-                                        LEFT JOIN courses cs ON c.fk_course_id = cs.course_id
-                                        LEFT JOIN institution i ON i.institution_id = cs.fk_institution_id
-                                        LEFT JOIN campaign_status cps ON c.fk_campaign_status_id = cps.campaign_status_id
-                                        LEFT JOIN campaign_parameters_check cpc ON cpc.fk_campaign_id = c.campaign_id
-                                        LEFT JOIN campaign_lead_request clr ON clr.fk_campaign_id = c.campaign_id
-                                        LEFT JOIN campaign_edit_request cer ON cer.fk_campaign_id = c.campaign_id                                                
-                                        LEFT JOIN campaign_approval_request	car ON car.fk_campaign_id = c.campaign_id
-                                        WHERE c.active = 1");
+            $institutionName = "AAFT Online";
+            $institutionList = DB::select("SELECT institution_id, institution_name, institution_code FROM institution WHERE active = 1");
+            $campaignList = BaseComponent::CampaignDetails("AAFT Online");
+            $instituteId = DB::table('institution')->select('institution_id')->where('institution_name', '=', $institutionName)->pluck('institution_id');
             
-            return view('it-admin-shared.it-admin-campaign', ['campaignList' => $campaignList]);
+            return view('it-admin-shared.it-admin-campaign', compact(['campaignList', 'instituteId', 'institutionList']));
+        }
+        else {
+            return view('user-login');
+        }
+    }
+
+    public function ITAdminCampaignChangeInstitution(Request $req)
+    {
+        if(session('username') != "")
+        {
+            $institutionName = $req->institution;
+            $institutionList = DB::select("SELECT institution_id, institution_name, institution_code FROM institution WHERE active = 1");
+            $campaignList = BaseComponent::CampaignDetails($institutionName);
+            $instituteId = DB::table('institution')->select('institution_id')->where('institution_name', '=', $institutionName)->pluck('institution_id');
+            
+            return response()->json(['campaignList'=>$campaignList, 'instituteId' => $instituteId, 'institutionList' => $institutionList]);
         }
         else {
             return view('user-login');
@@ -88,29 +125,34 @@ class ITAdminController extends Controller
 
     public function ITAdminView(Request $req)
     {
-        $campaignList = DB::select("SELECT i.institution_name, pt.program_type_name, c.campaign_name, ls.leadsource_name, 
-                                            cs.course_name, cps.campaign_status_name 
-                                            FROM campaigns c
-                                            LEFT JOIN program_type pt ON c.fk_program_type_id = pt.program_type_id 
-                                            LEFT JOIN leadsource ls ON c.fk_lead_source_id = ls.leadsource_id
-                                            LEFT JOIN courses cs ON c.fk_course_id = cs.course_id
-                                            LEFT JOIN institution i ON i.institution_id = cs.fk_institution_id
-                                            LEFT JOIN campaign_status cps ON c.fk_campaign_status_id = cps.campaign_status_id
-                                            WHERE c.active = 1 AND c.campaign_id = ?", [$req->get('campaignId')]);
+        $campaignId = $req->campaignId;
+        $campaignDetails = BaseComponent::ViewCampaignDetails($campaignId);
         
-        return response()->json(['campaignList' => $campaignList]);
+        return response()->json(['campaignDetails' => $campaignDetails]);
     }
 
     public function ITAdminEditAccept(Request $req)
     {
-        DB::table('campaign_edit_request')->where('fk_campaign_id', $req->get('campaignId'))->update([
-            'camp_edit_accept' => 1,
-            'camp_edit_accept_date' => now(),
-            'updated_by' => session('username'),
-            'updated_date' => now()
-        ]);
+        if(session('username') != "")
+        {
+            $campaignId = $req->campaignId;
+            $approval = $req-> approval;
+            $comment = $req->comment;
+            $userId = DB::table('users')->select('user_id')->where('username', '=', session('username'))->first();
+            DB::table('campaign_edit')->where('fk_campaign_id', $campaignId)->update([
+                'camp_edit_accept' => $approval == 1 ? 1 : 0,
+                'edit_comments' => $comment,
+                'fk_user_id' => $userId->user_id,
+                'updated_by' => session('username'),
+                'updated_date' => now()
+            ]);
 
-        return response()->json(["Edit request accepted successfully."]);
+            return response()->json(["Edit request accepted successfully."]);
+        }
+        else
+        {
+            return view('user-login');
+        }
     }
 
     public function ITAdminCampaignDownload()
@@ -123,6 +165,367 @@ class ITAdminController extends Controller
         if(session('username') != "")
         {
             return view('it-admin-shared.it-admin-settings');
+        }
+        else
+        {
+            return view('user-login');
+        }
+    }
+
+    public function ITAdminIntegrateCampaign(Request $req) 
+    {
+        if(session('username') != "")
+        {
+            $campaignId = $req->campaignId;
+            $comments = $req->comment;
+            $msg = $req->approval == 1 ? "Campaign integrated successfully." : "Campaign not integrated.";
+            $userId = DB::table('users')->select('user_id')->where('username', '=', session('username'))->first();
+            DB::table('campaign_parameter_check')->where('fk_campaign_id', $campaignId)->update([
+                'camp_integrated' => $req->approval == 1 ? 1 : 0, 
+                'fk_user_id' => $userId->user_id, 
+                'lead_field' => $comments,
+                'updated_by' => session("username"),
+                'updated_date' => now(), 
+                'active' => 1]);
+
+            if($req->approval == 1)
+            {           
+                $campaignStatusId = DB::table('campaign_status')->select('campaign_status_id')->where('campaign_status_name', 'Active')->first();
+                DB::table('campaigns')->where('campaign_id', $campaignId)->update([
+                    'fk_campaign_status_id' => $campaignStatusId->campaign_status_id,
+                    'updated_by' => session("username"),
+                    'updated_date' => now()
+                ]);
+
+                DB::table('campaign_edit')->insert([
+                    'fk_campaign_id' => $campaignId,
+                    'fk_user_id' => $userId->user_id,
+                    'created_date' => now(),
+                    'updated_date' => now(),
+                    'created_by' => session("username"),
+                    'updated_by' => session("username"),
+                    'active' => 1
+                ]);
+            }   
+            
+            return response()->json([$msg]);
+        }
+        else
+        {
+            return view('user-login');
+        }
+    }
+
+    public function ITAdminLeadCampaign(Request $req)
+    {
+        if(session('username') != "")
+        {
+            $campaignId = $req->campaignId;
+            $userId = DB::table('users')->select('user_id')->where('username', '=', session('username'))->first();
+            DB::table('campaign_lead_request')->insert([
+                'fk_campaign_id' => $campaignId,
+                'fk_user_id' => $userId->user_id,
+                'camp_lead_request'=> 1,
+                'created_by'=> session("username"),
+                'created_date' => now(),
+                'updated_by' => session("username"),
+                'updated_date' => now(),
+                'active' => 1
+            ]);
+
+            return response()->json(["Lead request sent successfully."]);
+        }
+        else 
+        {
+            return view('user-login');
+        }
+    }
+
+    //Campaign Form
+
+    public function ITAdminCampaignForm()
+    {
+        if(session('username') != "")
+        {
+            $institutionName = "AAFT Online";
+            $institutionList = DB::select("SELECT institution_id, institution_name, institution_code FROM institution WHERE active = 1");
+            $campaignFormList = BaseComponent::CampaignFormDetails($institutionName);
+            $instituteId = DB::table('institution')->select('institution_id')->where('institution_name', '=', $institutionName)->pluck('institution_id');
+            return view('it-admin-shared.it-admin-campaign-form', ['campaignFormList' => $campaignFormList, 'instituteId' => $instituteId, 'institutionList' => $institutionList]);
+        }
+        else
+        {
+            return view('user-login');
+        }
+    }
+
+    public function ITAdminChangeCampFormInstitution(Request $req)
+    {
+        if(session('username') != "")
+        {
+            $institutionName = $req->institution;
+            $institutionList = DB::select("SELECT institution_id, institution_name, institution_code FROM institution WHERE active = 1");
+            $campaignFormList = BaseComponent::CampaignFormDetails($institutionName);
+            $instituteId = DB::table('institution')->select('institution_id')->where('institution_name', '=', $institutionName)->pluck('institution_id');
+            return response()->json(['campaignFormList' => $campaignFormList, 'instituteId' => $instituteId, 'institutionList' => $institutionList]);
+        }
+        else
+        {
+            return view('user-login');
+        }
+    }
+
+    public function ITAdminIntegrateCampaignForm(Request $req)
+    {
+        if(session('username') != "")
+        {
+            $campaignId = $req->campaignId;
+            $comments = $req->comment;
+            $msg = $req->approval == 1 ? "Campaign form integrated successfully." : "Campaign form not integrated.";
+            $userId = DB::table('users')->select('user_id')->where('username', '=', session('username'))->first();
+            DB::table('campaign_form_parameter_check')->where('fk_camp_form_id', $campaignId)->update([
+                'form_integrated' => $req->approval == 1 ? 1 : 0, 
+                'fk_user_id' => $userId->user_id, 
+                'lead_field' => $comments,
+                'updated_by' => session("username"),
+                'updated_date' => now(), 
+                'active' => 1]);
+            
+            // if($req->approval == 1)
+            // {
+            //     $campaignStatusId = DB::table('campaign_status')->select('campaign_status_id')->where('campaign_status_name', 'Active')->first();
+            //     DB::table('campaign_form')->where('campaign_form_id', $campaignId)->update([
+            //         'fk_campaign_status_id' => $campaignStatusId->campaign_status_id,
+            //         'updated_by' => session("username"),
+            //         'updated_date' => now()
+            //     ]);
+
+            //     DB::table('campaign_form_edit')->insert([
+            //         'fk_campaign_form_id' => $campaignId,
+            //         'fk_user_id' => $userId->user_id,
+            //         'created_date' => now(),
+            //         'updated_date' => now(),
+            //         'created_by' => session("username"),
+            //         'updated_by' => session("username"),
+            //         'active' => 1
+            //     ]);
+            // }
+            
+            return response()->json([$msg]);
+        }
+        else
+        {
+            return view('user-login');
+        }
+    }
+
+    public function ITAdminLeadCampaignForm(Request $req)
+    {
+        if(session('username') != "")
+        {
+            $userId = DB::table('users')->select('user_id')->where('username', '=', session('username'))->first();
+            DB::table('campaign_form_lead_request')->insert([
+                'fk_campaign_form_id' => $req->campaignId,
+                'fk_user_id' => $userId->user_id,
+                'camp_lead_request'=> 1,
+                'created_by'=> session("username"),
+                'created_date' => now(),
+                'updated_by' => session("username"),
+                'updated_date' => now(),
+                'active' => 1
+            ]);
+
+            return response()->json(["Lead request sent successfully."]);
+        }
+        else
+        {
+            return view('user-login');
+        }
+    }
+    
+    public function ITAdminEditCampaignForm(Request $req)
+    {
+        if(session('username') != "")
+        {
+            $campaignId = $req->campaignId;
+            $approval = $req-> approval;
+            $msg = $req->approval == 1 ? "Edit request accepted successfully." : "Edit request not accepted.";
+            $comment = $req->comment;
+            $userId = DB::table('users')->select('user_id')->where('username', '=', session('username'))->first();
+            DB::table('campaign_form_edit')->where('fk_campaign_form_id', $campaignId)->update([
+                'camp_form_edit_accept' => $approval == 1 ? 1 : 0,
+                'camp_form_edit_comment' => $comment,
+                'fk_user_id' => $userId->user_id,
+                'updated_by' => session('username'),
+                'updated_date' => now()
+            ]);
+
+            return response()->json([$msg]);
+        }
+        else
+        {
+            return view('user-login');
+        }
+    }
+
+    public function ITAdminLeadVerifyCampaignForm(Request $req)
+    {
+        if(session('username') != "")
+        {
+            $leadId = $req->leadId;
+            $approval = $req-> approval;
+            $msg = $req->approval == 1 ? "Lead verified successfully." : "Lead not verified.";
+            $comment = $req->comment;
+            $userId = DB::table('users')->select('user_id')->where('username', '=', session('username'))->first();
+            $campFormId = DB::table('campaign_form_lead')->select('fk_camp_form_lead_request_id')->where('camp_form_lead_id', $leadId)->first();
+            DB::table('campaign_form_lead')->where('camp_form_lead_id', $leadId)->update([
+                'lead_verify' => $approval == 1 ? 1 : 0,
+                'lead_comment' => $comment,
+                'fk_user_id' => $userId->user_id,
+                'updated_by' => session('username'),
+                'updated_date' => now(),
+                'active' => $approval == 1 ? 1 : 0
+            ]);
+
+            if($req->approval == 0)
+            {
+                DB::table('campaign_form_lead_request')->where('lead_request_id', $campFormId->fk_camp_form_lead_request_id)->update([
+                    'camp_lead_accept' => 0,
+                    'updated_by' => session('username'),
+                    'comments' => $comment,
+                    'updated_date' => now()
+                ]);
+            }
+            else 
+            {
+                $campFormId = DB::table('campaign_form_lead_request')->select('fk_campaign_form_id')->where('lead_request_id', $campFormId->fk_camp_form_lead_request_id)->pluck('fk_campaign_form_id');
+                $campStatusId = DB::table('campaign_status')->select('campaign_status_id')->where('campaign_status_name', 'Active')->first();
+                DB::table('campaign_form')->where('campaign_form_id', $campFormId)->update([
+                    'fk_campaign_status_id' => $campStatusId->campaign_status_id,
+                    'updated_by' => session('username'),
+                    'updated_date' => now()
+                ]);
+            }
+
+            return response()->json([$msg]);
+        }
+        else
+        {
+            return view('user-login');
+        }
+    }
+
+    // Landing Page
+
+    public function ITAdminLandingPageList()
+    {
+        if(session('username') != "")
+        {
+            $institutionList = DB::select("SELECT institution_id, institution_name, institution_code FROM institution WHERE active = 1");
+            $instituteId = DB::table('institution')->select('institution_id')->where('institution_name', '=', 'AAFT Online')->pluck('institution_id');
+            $landingPageList = BaseComponent::ViewLandingPageList('AAFT Online');
+            return view('it-admin-shared.it-admin-landing-page', ['landingPageList' => $landingPageList, 'instituteId' => $instituteId, 'institutionList' => $institutionList]);
+        }
+        else
+        {
+            return view('user-login');
+        }
+    }
+
+    public function ITAdminCreateLandingPage(Request $req)
+    {
+        if(session('username') != "")
+        {
+            $instituteId = $req->institute;
+            $lpId = $req->lpCampId;
+            $lpCampaignList = "";
+            $campaignStatus = "";
+            $institution = DB::table('institution')->where('active', 1)->get();
+            $institutionCode = DB::table('institution')->where('institution_id', '=', $instituteId)->pluck('institution_code');
+            $programType = DB::table('program_type')->where('active', 1)->get();
+            // $marketingAgency = DB::table('agency')->where('active', 1)->get(); 
+            $courseList = DB::table('courses')->where('fk_institution_id', '=', $req->institute)->get();            
+
+            if($lpId != 0)
+            {
+                $lpCampaignList = BaseComponent::ViewLandingPageCampDetails($lpId);
+                $campaignStatus = DB::table('campaign_status')->where('active', 1)->get();
+            }
+            
+            return response()->json(['institution' => $institution, 'programType' => $programType, 'courseList' => $courseList, 
+            'institutionCode' => $institutionCode, 'lpCampaignList' => $lpCampaignList, 'campaignStatusList'=>$campaignStatus]);
+        }
+        else
+        {
+            return view('user-login');
+        }
+    }
+
+    public function ITAdminDeleteLandingPage(Request $req)
+    {
+        if(session('username') != "")
+        {
+            $lpCampId = $req->lpId;
+            DB::table('landing_page')->where('lp_campaign_id', $lpCampId)->update(['active' => 0]);
+            return response()->json(['Landing page deleted successfully.']);
+        }
+        else
+        {
+            return view('user-login');
+        }
+    }
+
+    public function ITAdminStoreLandingPage(Request $req)
+    {
+        if(session('username') != "")
+        {
+            $lpId = $req->hdnLPId;
+            $msg = "";
+            $institutionId = DB::table('institution')->where('institution_code', $req->input('campaign-institution'))->value('institution_id');
+            $programTypeCode = DB::table('program_type')->where('program_code', $req->programType)->value('program_type_id');
+            $agencyCode = DB::table('agency')->where('agency_code', $req->marketingAgency)->value('agency_id');
+            $courseCode = DB::table('courses')->where('course_code', $req->courses)->value('course_id');
+            $userId = DB::table('users')->where('username', '=', session('username'))->value('user_id');
+
+            if($lpId == 0)
+            {
+                $campStatusId = DB::table('campaign_status')->select('campaign_status_id')->where('campaign_status_name', 'New')->first();
+                DB::table('landing_page')->insert([
+                    'fk_program_type' => $programTypeCode,
+                    'fk_institution_id' => $institutionId,
+                    'fk_course_id' => $courseCode,
+                    
+                    'fk_campaign_status_id' => $campStatusId->campaign_status_id,
+                    'fk_user_id' => $userId,
+                    'camp_url' => $req->lpUrl,
+                    'created_by' => session('username'),
+                    'updated_by' => session('username'),
+                    'created_date' => now(),
+                    'updated_date' => now(),
+                    'active' => 1
+                ]);
+                $msg = "Landing page created successfully.";
+            }
+            else
+            {
+                // $campaignStatusId = DB::table('campaign_status')->where('campaign_status_id', '=', $req->campaignFormStatusId)->value('campaign_status_id');
+                DB::table('landing_page')->where('lp_campaign_id', $lpId)->update([
+                    'fk_program_type' => $programTypeCode,
+                    'fk_institution_id' => $institutionId,
+                    'fk_course_id' => $courseCode,
+                    
+                    'fk_campaign_status_id' => $req->campaignStausId,
+                    'fk_user_id' => $userId,
+                    'camp_url' => $req->lpUrl,                    
+                    'updated_by' => session('username'),                    
+                    'updated_date' => now(),
+                    'active' => 1
+                ]);
+
+                $msg = "Landing page updated successfully.";
+            }
+
+            return redirect()->back()->with('message', $msg);
         }
         else
         {

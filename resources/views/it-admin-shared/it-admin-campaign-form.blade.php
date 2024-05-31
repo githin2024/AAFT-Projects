@@ -26,7 +26,7 @@
             <div class="card-header pb-0 card-backgroundcolor">
                 <div class="row">
                     <div class="col-lg-6 col-6">
-                        <h5>Campaigns</h5>                
+                        <h5>Campaign Form</h5>                
                     </div>
                     <!-- <div class="col-lg-6 col-6 my-auto text-end">
                     <div class="dropdown float-lg-end pe-4">
@@ -54,13 +54,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                  @foreach($campaignList as $campaign)
+                  @foreach($campaignFormList as $campaign)
                     <tr>                      
                       <td style="padding-left: 15px;"><span class="text-primary">{{ $campaign->program_type_name }}</span></td>
                       <td style="padding-left: 15px;">{{ $campaign->course_name }}</td>
                       <td style="padding-left: 15px;">{{ $campaign->leadsource_name }}</td>
                       <td style="padding-left: 15px;">{{ $campaign->agency_name }}</td>
-                      <td style="padding-left: 15px;">{{ $campaign->campaign_name }}</td>                                         
+                      <td style="padding-left: 15px;">{{ $campaign->campaign_form_name }}</td>                                         
                       <td style="padding-left: 15px;">
                         @if($campaign->campaign_status_name == "Active")
                           <button type="button" style="background-color: #1AD5984D; color: #119a6d; border:0px #1AD5984D;">{{ $campaign->campaign_status_name }}</button>
@@ -71,26 +71,29 @@
                         @endif
                       </td>                      
                       <td style="padding-left: 15px;">
-                          @if($campaign->camp_accept_id && $campaign->camp_accept == 1 && $campaign->camp_accept_active == 1)
+                          @if($campaign->camp_form_accept_id && $campaign->camp_form_accept == 1 && $campaign->camp_form_accept_active == 1)
                               Yes 
-                          @elseif($campaign->camp_accept == 0 && $campaign->camp_request == 1 && $campaign->comments != null)
+                          @elseif($campaign->camp_form_accept == 0 && $campaign->camp_form_request == 1 && $campaign->camp_form_comments != null)
                               No
-                          @elseif($campaign->camp_accept == 0 && $campaign->camp_request == 1 && $campaign->comments == null)  
+                          @elseif($campaign->camp_form_accept == 0 && $campaign->camp_form_request == 1 && $campaign->camp_form_comments == null)  
                               Approval Pending 
                           @endif
                       </td>
                       <td style="padding-left: 15px;">
-                        @if($campaign->camp_accept_active == 1 && $campaign->camp_accept_id)                        
-                          {{ $campaign->comments }}
+                        @if($campaign->camp_form_accept_active == 1 && $campaign->camp_form_accept_id)                        
+                          {{ $campaign->camp_form_comments }}
                         @endif                         
                       </td>                                     
                       <td style="padding-left: 15px;">
-                        <button type="button" class="btn btn-sm btn-primary" onclick="viewCampaign({{ $campaign->campaign_id }})"><span class="fa fa-eye" style="font-size: small;">&nbsp;View</span></button>                        
-                        @if($campaign->camp_edit_id && $campaign->camp_edit_active == 1 && $campaign->camp_edit_request == 1 && $campaign->camp_edit_accept == 0 && $campaign->edit_comments == null) 
-                          <button type="button" class="btn btn-sm btn-success" onclick="approveCampaign({{ $campaign->campaign_id }})"><span class="fa fa-thumbs-o-up" style="font-size: small;">&nbsp;Edit Approval</span></button>
-                        @elseif($campaign->camp_param_check_id && !$campaign->camp_lead_request_id && ($campaign->camp_integrated == 0 || $campaign->lead_field ))
-                            <button type="button" class="btn btn-sm btn-success" onclick="integrateCampaign({{ $campaign->campaign_id }})"><span class="fa fa-compress" style="font-size:small;">&nbsp;Integrate</span></button>
-                        
+                        <button type="button" class="btn btn-sm btn-primary" onclick="viewCampaign({{ $campaign->campaign_form_id }})"><span class="fa fa-eye" style="font-size: small;">&nbsp;View</span></button>                        
+                        @if($campaign->camp_form_edit_id && $campaign->Edit_Active == 1 && $campaign->camp_form_edit_request == 1 && $campaign->camp_form_edit_accept == 0) 
+                          <button type="button" class="btn btn-sm btn-success" onclick="approveCampaign({{ $campaign->campaign_form_id }})"><span class="fa fa-thumbs-o-up" style="font-size: small;">&nbsp;Edit Approve</span></button>
+                        @elseif($campaign->camp_form_param_check_id && !$campaign->lead_request_id && ($campaign->form_integrated == 0 || $campaign->lead_field ))
+                            <button type="button" class="btn btn-sm btn-success" onclick="integrateCampaign({{ $campaign->campaign_form_id }})"><span class="fa fa-compress" style="font-size:small;">&nbsp;Integrate</span></button>
+                        @elseif($campaign->campaign_form_id && !$campaign->lead_request_id && $campaign->camp_form_param_check_id)
+                            <button type="button" class="btn btn-sm btn-warning" onclick="leadRequestCampaign({{ $campaign->campaign_form_id }})"><span class="fa fa-users" style="font-size:small;">&nbsp;Lead Request</span></button>                        
+                        @elseif($campaign->camp_form_lead_id && $campaign->campaign_form_lead_active == 1 && $campaign->lead_verify == 0)
+                          <button type="button" class="btn btn-sm btn-warning" onclick="leadVerifyCampaign('{{ $campaign->camp_form_lead_id }}', '{{ $campaign->lead_email}}', '{{ $campaign->lead_phone }} ')"><span class="fa fa-users" style="font-size:small;">&nbsp;Lead Verify</span></button>
                         @endif                        
                       </td>
                     </tr>
@@ -124,12 +127,12 @@
   <div class="modal-dialog modal-md">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="modalTitleId">Edit Campaign Approval</h5>
+        <h5 class="modal-title" id="modalTitleId">Edit Campaign Form Approval</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">        
         <input type="hidden" id="hdnCampId" name="hdnCampId" />
-        <p id="descriptionId">Do you wish to approve the edit request?</p>
+        <p id="descriptionId">Do you wish to approve edit request for campaing form?</p>
       </div>
       <div class="modal-footer">
         <button class="btn btn-primary" id="buttonId" title="Accept" onclick="acceptCampaign();">Accept</button>
@@ -239,6 +242,57 @@
   </div>
 </div>
 
+<!-- Lead Verify Campaign Modal -->
+<div class="modal fade" id="leadVerifyCampaignModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalTitleId">Lead Verify</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">        
+        <input type="hidden" id="hdnLeadId" name="hdnLeadId" />
+        <p id="leadDescriptionId"></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="buttonId" title="Accept" onclick="acceptLead();">Accept</button>
+        <button type="button" class="btn btn-danger" title="Reject" onclick="rejectLead();">Reject</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Reject Lead Modal -->
+<div class="modal fade" id="rejectLeadModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalTitleId">Lead Rejection</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">        
+        <input type="hidden" id="hidnLeadId" name="hidnLeadId" />
+        <div class="row">
+            <div class="col-md-3">
+                <label for="rejectLeadComment">Reason</label>
+                <span class="text-danger">*</span>
+            </div>
+            <div class="col-md-9">
+                <textarea class="form-control" name="rejectLeadComment" id="rejectLeadComment" cols="30" rows="5"></textarea>
+                <span class="text-danger" id="rejectLeadReasonValId"></span>
+            </div>
+        </div>
+        <div class="row form-group mt-3">
+            <div class="col-md-5">
+              <button class="btn btn-primary" id="submitLead" title="submit" onclick="rejLeadComment();">Submit</button>
+              <button data-bs-dismiss="modal" class="btn btn-danger" title="Cancel">Cancel</button>
+            </div>                
+        </div>
+      </div>      
+    </div>
+  </div>
+</div>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>  
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.js"></script>
 <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
@@ -247,10 +301,10 @@
 <script src="https://cdn.tutorialjinni.com/notify/0.4.2/notify.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function() {        
-        $("#it-adminCampaignID").addClass( "active bg-primary" );
+        $("#it-adminCampaignID").removeClass( "active bg-primary" );
           $("#it-adminLandingPageID").removeClass( "active bg-primary" );
           $("#it-adminHomeID").removeClass( "active bg-primary" );
-          $("#it-adminCampaignFormID").removeClass("active bg-primary");
+          $("#it-adminCampaignFormID").addClass("active bg-primary");
           $("#it-adminLandingPageID").removeClass("active bg-primary");
         $('#itAdminCampaignTable').dataTable();          
     });
@@ -369,12 +423,12 @@
       var campaignId = $("#hdnCampId").val();
       $.ajax({
           type:'get',
-          url: "/edit-accept-campaign",
+          url: "/it-admin-edit-campaign-form",
           data: {'campaignId' : campaignId, 'approval': 1, 'comment': ''},
           success:function(data){           
             if(data != ""){              
               $.notify(data, "success");              
-              setTimeout(() => { window.location.href="{{'it-admin-campaign'}}"}, 2000);
+              setTimeout(() => { window.location.href="{{'it-admin-campaign-form'}}"}, 2000);
             }
           }          
       });
@@ -398,13 +452,13 @@
         $("#rejectReasonValId").empty().text("");
         $.ajax({
             type:'get',
-            url: "/edit-accept-campaign",
+            url: "/it-admin-edit-campaign-form",
             data: {'campaignId' : campaignId, 'comment' : comment, 'approval': 0},
             success:function(data){            
               if(data != ""){              
                 $("#rejectCampaignModal").modal('hide');
                 $.notify(data, "success");
-                setTimeout(() => { window.location.href="{{'it-admin-campaign'}}"}, 2000);
+                setTimeout(() => { window.location.href="{{'it-admin-campaign-form'}}"}, 2000);
               }
             }          
         });
@@ -420,12 +474,12 @@
       var campaignId = $("#hdnCampaginId").val();
       $.ajax({
           type:'get',
-          url: "/it-admin-integrate-campaign",
+          url: "/it-admin-integrate-campaign-form",
           data: {'campaignId' : campaignId, 'approval': 1, 'comment': ''},
           success:function(data){           
             if(data != ""){              
               $.notify(data, "success");              
-              setTimeout(() => { window.location.href="{{'it-admin-campaign'}}"}, 2000);
+              setTimeout(() => { window.location.href="{{'it-admin-campaign-form'}}"}, 2000);
             }
           }          
       });
@@ -452,12 +506,12 @@
         $("#rejectIntegrateReasonValId").text("");
         $.ajax({
             type:'get',
-            url: "/it-admin-integrate-campaign",
+            url: "/it-admin-integrate-campaign-form",
             data: {'campaignId' : campaignId, 'approval': 0, 'comment': ''},
             success:function(data){           
               if(data != ""){              
                 $.notify(data, "success");              
-                setTimeout(() => { window.location.href="{{'it-admin-campaign'}}"}, 2000);
+                setTimeout(() => { window.location.href="{{'it-admin-campaign-form'}}"}, 2000);
               }
             }          
         });
@@ -474,34 +528,90 @@
       var campId = $("#hdnLeadCampaginId").val();
       $.ajax({
           type:'get',
-          url: "/it-admin-lead-campaign",
+          url: "/it-admin-lead-campaign-form",
           data: {'campaignId' : campId},
           success:function(data){           
             if(data != ""){              
               $.notify(data, "success");              
-              setTimeout(() => { window.location.href="{{'it-admin-campaign'}}"}, 2000);
+              setTimeout(() => { window.location.href="{{'it-admin-campaign-form'}}"}, 2000);
             }
           }          
       });
     }
 
-    function changeInstitution(institution) {      
+    function leadVerifyCampaign(leadId, email, phone) {
+      debugger;
+      $("#leadVerifyCampaignModal").modal('show');
+      $("#hdnLeadId").val(leadId);      
+      $("#leadDescriptionId").text("Do confirm whether the lead email: '" + email + "' or phone number: '" + phone + "' is integrated in the CRM ?");
+    }
+
+    function acceptLead() {
+      var leadId = $("#hdnLeadId").val();
+      $.ajax({
+          type:'get',
+          url: "/it-admin-lead-verify-campaign-form",
+          data: {'leadId' : leadId, 'approval': 1, 'comment': ''},
+          success:function(data){           
+            if(data != ""){              
+              $.notify(data, "success");              
+              setTimeout(() => { window.location.href="{{'it-admin-campaign-form'}}"}, 2000);
+            }
+          }          
+      });
+    }
+
+    function rejectLead() {
+      $("#rejectLeadModal").modal('show');
+      $("#hidnLeadId").val($("#hdnLeadId").val());
+    }
+
+    function rejLeadComment(){
+      var leadId = $("#hidnLeadId").val();
+      var rejectReason = $("#rejectLeadComment").val();
+      if(rejectReason == ""){
+        $("#rejectLeadReasonValId").text("Please enter the reason");
+        $("#submitLead").submit(function (e) {        
+          if($("#rejectLeadReasonValId").text() != ""){
+            e.preventDefault();
+            return false;
+          }
+        });
+      }
+      else {
+        $("#rejectIntegrateReasonValId").text("");
+        $.ajax({
+            type:'get',
+            url: "/it-admin-lead-verify-campaign-form",
+            data: {'leadId' : leadId, 'approval': 0, 'comment': ''},
+            success:function(data){           
+              if(data != ""){              
+                $.notify(data, "success");              
+                setTimeout(() => { window.location.href="{{'it-admin-campaign-form'}}"}, 2000);
+              }
+            }          
+        });
+      }
+    }
+    
+    function changeInstitution(institution) {
+      
       $.ajax({
         type:'get',
-        url: "/it-admin-change-camp-institution",
+        url: "/it-admin-camp-form-change-institution",
         data: {'institution' : institution},          
-        success:function(data){
+        success:function(data){          
           var campBody = $("#itAdminCampaignTable").empty();         
           
-          if(data.campaignList != "" && data.campaignList != undefined){
-            $("#hdnInstituteId").val(data.institutionId);            
+          if(data.campaignFormList != "" && data.campaignFormList != undefined){
+            $("#hdnInstitutionId").val(data.institutionId);            
             var campTheadItem = "<thead>" +
                 "<tr>" +                    
                     "<th class='opacity-10'>PROGRAM TYPE</th>" + 
                     "<th class='opacity-10'>COURSE</th>" +
                     "<th class='opacity-10'>LEADSOURCE</th>" +
                     "<th class='opacity-10'>AGENCY</th>" +
-                    "<th class='opacity-10'>CAMPAIGN NAME</th>" +                                   
+                    "<th class='opacity-10'>CAMPAIGN FORM NAME</th>" +                                   
                     "<th class='opacity-10'>STATUS</th>" +
                     "<th class='opacity-10'>APPROVAL STATUS</th>" +
                     "<th class='opacity-10'>APPROVAL COMMENTS</th>" +                                    
@@ -509,50 +619,56 @@
                 "</tr>" +
                 "</thead><tbody>";
             campBody.append(campTheadItem);
-            for(var i = 0; i < data.campaignList.length;i++){
+            for(var i = 0; i < data.campaignFormList.length;i++){
               
               var campStatusItem = "";
-              if(data.campaignList[i]['campaign_status_name'] == 'Active') {
-                campStatusItem =  "<button type='button' style='background-color: #1AD5984D; color: #1AD598; border: 0px #1AD5984D;'> " + data.campaignList[i]['campaign_status_name'] + "</button>";
+              if(data.campaignFormList[i]['campaign_status_name'] == 'Active') {
+                campStatusItem =  "<button type='button' style='background-color: #1AD5984D; color: #1AD598; border:0px #1AD5984D;'> " + data.campaignFormList[i]['campaign_status_name'] + "</button>";
               }
-              else if (data.campaignList[i]['campaign_status_name'] == 'On Hold') {
-                campStatusItem = "<button type='button' style='background-color: #FFC1074D; color: #FFC107; border:0px #FFC1074D;'>" + data.campaignList[i]['campaign_status_name'] + "</button>";
+              else if (data.campaignFormList[i]['campaign_status_name'] == 'On Hold') {
+                campStatusItem = "<button type='button' style='background-color: #FFC1074D; color: #FFC107; border:0px #FFC1074D;'>" + data.campaignFormList[i]['campaign_status_name'] + "</button>";
               }
-              else if (data.campaignList[i]['campaign_status_name'] == 'New') {
-                campStatusItem = "<button type='button' style='background-color: #217EFD4D; color: #217EFD; border:0px #217EFD4D;'>" + data.campaignList[i]['campaign_status_name'] + "</button>";
+              else if (data.campaignFormList[i]['campaign_status_name'] == 'New') {
+                campStatusItem = "<button type='button' style='background-color: #217EFD4D; color: #217EFD; border:0px #217EFD4D;'>" + data.campaignFormList[i]['campaign_status_name'] + "</button>";
               }
               
               var campApprovalStatusItem = "";
-              if(data.campaignList[i]["camp_accept_id"] && data.campaignList[i]["camp_accept"] == 1){
+              if(data.campaignFormList[i]["camp_form_accept_id"] && data.campaignFormList[i]["camp_form_accept"] == 1){
                 campApprovalStatusItem = "Yes"; 
               }
-              else if(data.campaignList[i]["camp_accept_id"] && data.campaignList[i]["camp_accept"] == 0 && data.campaignList[i]["comments"] != null){
+              else if(data.campaignFormList[i]["camp_form_accept_id"] && data.campaignFormList[i]["camp_form_accept"] == 0 && data.campaignFormList[i]["camp_form_comments"] != null){
                 campApprovalStatusItem = "No";
               }
-              else if(data.campaignList[i]["camp_accept_id"] && data.campaignList[i]["camp_request"] == 1 && data.campaignList[i]["camp_accept"] == 0) { 
+              else if(data.campaignFormList[i]["camp_form_accept_id"] && data.campaignFormList[i]["camp_form_request"] == 1 && data.campaignFormList[i]["camp_form_accept"] == 0) { 
                 campApprovalStatusItem = "Approval Pending"; 
               }
 
               var campFormButtonItem = "";
-              var campAcceptComment = data.campaignList[i]['comments'] == null ? "" : data.campaignList[i]['comments'];
               
-              if(data.campaignList[i]['camp_edit_id'] && data.campaignList[i]['camp_edit_active'] == 1 && data.campaignList[i]['camp_edit_request'] == 1 && data.campaignList[i]['camp_edit_accept'] == 0 && data.campaignList[i]['edit_comments'] == null) {
-                campFormButtonItem = "<button type='button' class='btn btn-sm btn-success' onclick='approveCampaign("+ data.campaignList[i]['campaign_id'] +")'><span class='fa fa-thumbs-o-up' style='font-size: small;'>&nbsp;Edit Approval</span></button>";
+              if(data.campaignFormList[i]['camp_form_edit_id'] && data.campaignFormList[i]['Edit_Active'] == 1 && data.campaignFormList[i]['camp_form_edit_request'] == 1 && data.campaignFormList[i]['camp_form_edit_accept'] == 0){ 
+                campFormButtonItem = "<button type='button' class='btn btn-sm btn-success' onclick='approveCampaign("+ data.campaignFormList[i]['campaign_form_id'] +")'><span class='fa fa-thumbs-o-up' style='font-size: small;'>&nbsp;Edit Approve</span></button>";
+              }          
+              else if(data.campaignFormList[i]['camp_form_param_check_id'] && !data.campaignFormList[i]['lead_request_id'] && (data.campaignFormList[i]['form_integrated'] == 0 ||data.campaignFormList[i]['lead_field'] )){
+                campFormButtonItem = "<button type='button' class='btn btn-sm btn-success' onclick='integrateCampaign("+ data.campaignFormList[i]['campaign_form_id'] +")'><span class='fa fa-compress' style='font-size:small;'>&nbsp;Integrate</span></button>";
               }
-              else if(data.campaignList[i]['camp_param_check_id'] && !data.campaignList[i]['camp_lead_request_id'] && (data.campaignList[i]['camp_integrated'] == 0 || data.campaignList[i]['lead_field'] )){
-                campFormButtonItem ="<button type='button' class='btn btn-sm btn-success' onclick='integrateCampaign("+ data.campaignList[i]['campaign_id'] +")'><span class='fa fa-compress' style='font-size:small;'>&nbsp;Integrate</span></button>";
-                        
+              else if(data.campaignFormList[i]['campaign_form_id'] && !data.campaignFormList[i]['lead_request_id'] && data.campaignFormList[i]['camp_form_param_check_id']) {
+                campFormButtonItem = "<button type='button' class='btn btn-sm btn-warning' onclick='leadRequestCampaign("+ data.campaignFormList[i]['campaign_form_id'] + ")'><span class='fa fa-users' style='font-size:small;'>&nbsp;Lead Request</span></button>";                        
               }
+              else if(data.campaignFormList[i]['camp_form_lead_id'] && data.campaignFormList[i]['campaign_form_lead_active'] == 1 && data.campaignFormList[i]['lead_verify'] == 0){
+                campFormButtonItem = "<button type='button' class='btn btn-sm btn-warning' onclick='leadVerifyCampaign("+ data.campaignFormList[i]['camp_form_lead_id'] +", " + data.campaignFormList[i]['lead_email'] +"," + data.campaignFormList[i]['lead_phone'] + ")'><span class='fa fa-users' style='font-size:small;'>&nbsp;Lead Verify</span></button>";
+              }
+
+              var campFormComments = data.campaignFormList[i]['camp_form_comments'] == null ? "" : data.campaignFormList[i]['camp_form_comments'];
               var campBodyItem = "<tr>" +
-                                  "<td style='padding-left: 20px;'><span class='text-primary'>"+ data.campaignList[i]['program_type_name'] +"</span></td>" +
-                                  "<td style='padding-left: 20px;'>"+ data.campaignList[i]['course_name'] +"</td>" +
-                                  "<td style='padding-left: 20px;'>"+ data.campaignList[i]['leadsource_name'] +"</td>" +
-                                  "<td style='padding-left: 20px;'>"+ data.campaignList[i]['agency_name'] +"</td>" +
-                                  "<td style='padding-left: 20px;'>"+ data.campaignList[i]['campaign_name'] +"</td>" +                                  
+                                  "<td style='padding-left: 20px;'><span class='text-primary'>"+ data.campaignFormList[i]['program_type_name'] +"</span></td>" +
+                                  "<td style='padding-left: 20px;'>"+ data.campaignFormList[i]['course_name'] +"</td>" +
+                                  "<td style='padding-left: 20px;'>"+ data.campaignFormList[i]['leadsource_name'] +"</td>" +
+                                  "<td style='padding-left: 20px;'>"+ data.campaignFormList[i]['agency_name'] +"</td>" +
+                                  "<td style='padding-left: 20px;'>"+ data.campaignFormList[i]['campaign_form_name'] +"</td>" +                                  
                                   "<td style='padding-left: 20px;'>"+ campStatusItem + "</td>" +
                                   "<td style='padding-left: 20px;'>"+ campApprovalStatusItem + "</td>" +
-                                  "<td style='padding-left: 20px;'>"+ campAcceptComment +"</td>" +
-                                  "<td style='padding-left: 20px;'> <button class='btn btn-sm btn-primary' style='margin-right: 5px;' onclick='viewCampaign(" + data.campaignList[i]['campaign_id'] + ")'><span class='fa fa-eye' style='font-size: small;'>&nbsp;View</span></button>"+ 
+                                  "<td style='padding-left: 20px;'>"+ campFormComments  +"</td>" +
+                                  "<td style='padding-left: 20px;'> <button class='btn btn-sm btn-primary' style='margin-right: 5px;' onclick='viewCampaignForm(" + data.campaignFormList[i]['campaign_form_id'] + ")'><span class='fa fa-eye' style='font-size: small;'>&nbsp;View</span></button>"+ 
                                     campFormButtonItem
                                     +"</td>" +
                                   "</tr>";

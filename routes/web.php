@@ -38,11 +38,11 @@ Route::get('create-campaign-form', [ExtHomeController::class, 'CreateCampaignFor
 Route::get('ext-camp-form-change-institution', [ExtHomeController::class, 'ChangeExtCampFormInstitution']);
 Route::get('courses', [ExtHomeController::class, 'GetCourses']);
 Route::get('courses-campaign', [ExtHomeController::class, 'GetCoursesCampaign']);
-//Route::get('excel-campaign/{institution}', [ExtHomeController::class, 'excelCampaign']);
+
 Route::post('store-camp-form', [ExtHomeController::class, 'StoreCampaignForm']);
 Route::get('ext-view-campaign-form',[ExtHomeController::class, 'ExtViewCampaignForm']);
 Route::post('parameter-campaign-form', [ExtHomeController::class, 'ParameterCampaignForm']);
-Route::get('confirm-lead-camp-form', [ExtHomeController::class, 'ConfirmLeadCampForm']);
+Route::post('confirm-lead-camp-form', [ExtHomeController::class, 'ConfirmLeadCampForm']);
 Route::get('confirm-edit-campaign-form', [ExtHomeController::class, 'EditCampaignFormRequest']);
 Route::get('camp-form-check-keyname', [ExtHomeController::class, 'CheckCampaignFormKeyName']);
 Route::get('ext-home-change-institution', [ExtHomeController::class, 'ChangeExtHomeInstitution']);
@@ -58,18 +58,32 @@ Route::get('ext-camp-change-institution', [ExtHomeController::class, 'ChangeExtC
 
 Route::get('landingPageForm', [ExtHomeController::class, 'LandingPage']);
 Route::get('ext-lp-change-institution', [ExtHomeController::class, 'ChangeExtLpInstitution']);
+Route::get('create-landing-page-campaign', [ExtHomeController::class, 'CreateLandingPageCampaign']);
+Route::get('lp-camp-check-keyname', [ExtHomeController::class, 'CheckLpCampKeyName']);
+Route::post('store-lp-campaign', [ExtHomeController::class, 'StoreLpCampaign']);
+Route::get('ext-view-lp-campaign', [ExtHomeController::class, 'ExtViewLpCampaign']);
+Route::get('confirm-lead-lp-camp-form', [ExtHomeController::class, 'ConfirmLeadLpCampForm']);
+Route::get('confirm-edit-lp-campaign', [ExtHomeController::class, 'ConfirmEditLpCampForm']);
+
 
 //Internal Marketing Dashboard
 Route::get('int-home', [IntHomeController::class, 'InternalIndex']);
+Route::get('int-home-change-institution', [IntHomeController::class, 'InternalChangeInstitution']);
 Route::get('int-landing-page', [IntHomeController::class, 'InternalLandingPage'])->name('intLandingPage');
 Route::get('int-campaign', [IntHomeController::class, 'InternalCampaign']);
+Route::get('int-camp-change-institution', [IntHomeController::class, 'InternalChangeInstitutionCampaign']);
+
 Route::get('int-view-campaign', [IntHomeController::class, 'ViewCampaign']);
 Route::get('int-campaign-download', [IntHomeController::class, 'DownloadCampaign']);
 Route::get('int-create-landing-page/{lpId}', [IntHomeController::class, 'GetLandingPage']);
 Route::get('get-courses', [IntHomeController::class, 'GetLandingPageCourses']);
 Route::post('store-landing-page', [IntHomeController::class, 'StoreLandingPage']);
-Route::get('accept-campaign', [IntHomeController::class, 'AcceptCampaign']);
-Route::get('reject-campaign', [IntHomeController::class, 'RejectCampaign']);
+Route::get('int-lp-change-institution', [IntHomeController::class, 'IntLPChangeInstitution']);
+
+Route::get('int-campaign-form', [IntHomeController::class, 'InternalCampaignForm']);
+Route::get('accept-campaign-form', [IntHomeController::class, 'AcceptCampaignForm']);
+Route::get('accept-lp-campaign-form', [IntHomeController::class, 'AcceptLpCampForm']);
+Route::get('int-camp-form-change-institution', [IntHomeController::class, 'InternalChangeCampFormInstitution']);
 
 //Admin Dashboard
 Route::get('admin-institution', [AdminController::class, 'AdminInstitution']);
@@ -80,13 +94,33 @@ Route::get('admin-campaign-download', [AdminController::class, 'AdminCampaignDow
 
 //IT Admin Dashboard
 Route::get('it-admin-home', [ITAdminController::class, 'ITAdminHome']);
+Route::get('it-admin-home-change-institution', [ITAdminController::class, 'ITAdminChangeInstitution']);
+
 Route::get('it-admin-campaign', [ITAdminController::class, 'ITAdminCampaign']);
+Route::get('it-admin-campaign-form', [ITAdminController::class, 'ITAdminCampaignForm']);
+Route::get('it-admin-integrate-campaign-form', [ITAdminController::class, 'ITAdminIntegrateCampaignForm']);
+Route::get('it-admin-lead-campaign-form', [ITAdminController::class, 'ITAdminLeadCampaignForm']);
+Route::get('it-admin-edit-campaign-form', [ITAdminController::class, 'ITAdminEditCampaignForm']);
+Route::get('it-admin-lead-verify-campaign-form', [ITAdminController::class, 'ITAdminLeadVerifyCampaignForm']);
+Route::get('it-admin-camp-form-change-institution', [ITAdminController::class, 'ITAdminChangeCampFormInstitution']);
+
+
 Route::get('lead-request-campaign', [ITAdminController::class, 'ITAdminCampaignLeadRequest']);
 Route::get('it-admin-view-campaign', [ITAdminController::class, 'ITAdminView']);
 Route::get('edit-accept-campaign', [ITAdminController::class, 'ITAdminEditAccept']);
 Route::get('it-admin-settings', [ITAdminController::class, 'ITAdminSettings']);
 Route::get('it-admin-campaign-download', [ITAdminController::class, 'ITAdminCampaignDownload']);
 Route::get('it-admin-users', [ITAdminController::class, 'ITAdminUsers']);
+Route::get('it-admin-integrate-campaign', [ITAdminController::class, 'ITAdminIntegrateCampaign']);
+Route::get('it-admin-lead-campaign', [ITAdminController::class, 'ITAdminLeadCampaign']);
+Route::get('it-admin-change-camp-institution', [ITAdminController::class, 'ITAdminCampaignChangeInstitution']);
+
+
+Route::get('it-admin-landing-page', [ITAdminController::class, 'ITAdminLandingPageList']);
+Route::get('it-admin-create-landing-page', [ITAdminController::class, 'ITAdminCreateLandingPage']);
+Route::post('it-admin-store-landing-page', [ITAdminController::class, 'ITAdminStoreLandingPage']);
+Route::get('it-admin-delete-landing-page', [ITAdminController::class, 'ITAdminDeleteLandingPage']);
+
 
 //Setting Role
 Route::get('it-admin-role', [ITAdminController::class, 'ITAdminRole']);

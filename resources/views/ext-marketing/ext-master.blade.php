@@ -43,49 +43,61 @@
       table.dataTable {
         font-size:14px;
       }
+      .card-backgroundcolor {
+        background-color: white !important;
+      }
+      .bg-primary{
+        background-color: #83b5ff !important;
+      }
+      .bg-gradient-light{
+        background-image: linear-gradient(195deg, #262de4 0%, #CED4DA 100%) !important;
+      }
+      .bg-skyblue{
+        background-color: #e1e8f3 !important;
+      }
     </style>
   </head>
-  <body class="g-sidenav-show  bg-gray-200">  
-    <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3   bg-white" id="sidenav-main">
+  <body class="g-sidenav-show bg-skyblue">  
+    <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 bg-gradient-light" id="sidenav-main">
       <div class="sidenav-header">
         <i class="fas fa-times p-3 cursor-pointer text-white opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
         <a class="navbar-brand m-0" href="{{ url('home') }}">        
-          <span class="ms-1 font-weight-bold text-black" style="font-size: xx-large">Task Minder</span>
+          <span class="ms-1 font-weight-bold text-white" style="font-size: xx-large">Task Minder</span>
         </a>
       </div>
       <hr class="horizontal light mt-0 mb-2">
       <div class="collapse navbar-collapse  w-auto " id="sidenav-collapse-main">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link text-black active bg-primary bg-gradient" id="extCampaignHomeID" href="{{ url('home') }}">
-              <div class="text-black text-center me-2 d-flex align-items-center justify-content-center">
-                <i id="sidebar-text" class="material-symbols-outlined">home</i>
+            <a class="nav-link text-white active bg-primary " id="extCampaignHomeID" href="{{ url('home') }}">
+              <div class="text-center text-white me-2 d-flex align-items-center justify-content-center">
+                <i id="sidebar-text " class="material-symbols-outlined">home</i>
               </div>
-              <span id="sidebar-text" class="nav-link-text ms-1">Home</span>
+              <span id="sidebar-text text-white" class="nav-link-text ms-1">Home</span>
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-black" id="extCampaignID" href="{{ url('ext-camp') }}">
-              <div class="text-black text-center me-2 d-flex align-items-center justify-content-center">
-                <i id="sidebar-text" class="material-symbols-outlined">campaign</i>
+            <a class="nav-link" id="extCampaignID" href="{{ url('ext-camp') }}">
+              <div class="text-center text-white me-2 d-flex align-items-center justify-content-center">
+                <i id="sidebar-text text-white" class="material-symbols-outlined">campaign</i>
               </div>
-              <span id="sidebar-text" class="nav-link-text ms-1">Campaign</span>
+              <span id="sidebar-text text-white" class="nav-link-text ms-1">Campaign</span>
             </a>
           </li> 
           <li class="nav-item">
-            <a class="nav-link text-black" id="extCampaignFormID" href="{{ url('campaignForm') }}">
-              <div class="text-black text-center me-2 d-flex align-items-center justify-content-center">
-                <i id="sidebar-text" class="material-symbols-outlined">article</i>
+            <a class="nav-link" id="extCampaignFormID" href="{{ url('campaignForm') }}">
+              <div class="text-center text-white me-2 d-flex align-items-center justify-content-center">
+                <i id="sidebar-text text-white" class="material-symbols-outlined">article</i>
               </div>
-              <span id="sidebar-text" class="nav-link-text ms-1">Campaign Form</span>
+              <span id="sidebar-text text-white" class="nav-link-text ms-1">Campaign Form</span>
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-black" id="extLandingID" href="{{ url('landingPageForm') }}">
-              <div class="text-black text-center me-2 d-flex align-items-center justify-content-center">
-                <i id="sidebar-text" class="material-symbols-outlined">web</i>
+            <a class="nav-link" id="extLandingID" href="{{ url('landingPageForm') }}">
+              <div class="text-center text-white me-2 d-flex align-items-center justify-content-center">
+                <i id="sidebar-text text-white" class="material-symbols-outlined">web</i>
               </div>
-              <span id="sidebar-text" class="nav-link-text ms-1">Landing Page</span>
+              <span id="sidebar-text text-white" class="nav-link-text ms-1">Landing Page</span>
             </a>
           </li>        
         </ul>
@@ -109,13 +121,6 @@
                 <ul class="dropdown-menu  dropdown-menu-end  px-2 py-3 me-sm-n4" aria-labelledby="dropdownMenuButton">
                   <li class="text-end">
                     <a href="{{ url('logout') }}" class="dropdown-item">Logout</a>
-                    <!-- <a class="dropdown-item border-radius-md" href="javascript:;">
-                      <div class="d-flex">                        
-                        <div class="my-auto">
-                          <a href="{{ url('logout') }}" class="dropdown-item">Logout</a>
-                        </div>
-                      </div>
-                    </a> -->
                   </li>                
               </li>
             </ul>
